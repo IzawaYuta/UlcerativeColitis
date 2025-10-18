@@ -20,8 +20,6 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		A66EEFB22EA1050E00E22E9D /* UlcerativeColitis */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = UlcerativeColitis;
 			sourceTree = "<group>";
 		};
@@ -71,7 +69,6 @@
 				B394A317F69D944D30AD3FED /* Pods-UlcerativeColitis.debug.xcconfig */,
 				49F2462A73806D14ACF600CC /* Pods-UlcerativeColitis.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
