@@ -12,6 +12,11 @@ struct CalendarView: View {
     @State private var month = Calendar.current.component(.month, from: Date())
     var day = Calendar.current.component(.day, from: Date())
     
+    @State private var showDatePicker = false
+    @State private var doneButton = false
+    @State private var cancelButton = false
+    @State private var date: Int = Calendar.current.component(.year, from: Date())
+    
     private let model = CalendarModel()
     private let weekdays = ["日", "月", "火", "水", "木", "金", "土"]
     
@@ -22,19 +27,33 @@ struct CalendarView: View {
         VStack {
             // 年月表示と切り替えボタン
             HStack {
-                Spacer()
                 Button(action: { changeMonth(-1) }) {
                     Image(systemName: "chevron.left")
                         .foregroundColor(.black)
                 }
-                Text("\(String(year))年\(month)月")
-                    .font(.title2)
-                    .bold()
-                    .padding(.horizontal, 5)
+                Button(action: {
+                    showDatePicker = true
+                }) {
+                    Text("\(String(year))年\(month)月")
+                        .font(.title2)
+                        .foregroundColor(.black)
+                        .bold()
+                        .padding(.horizontal, 5)
+                }
+                .sheet(isPresented: $showDatePicker) {
+                    YearPicker(yearPicker: $date,
+                               doneButton: {showDatePicker = false},
+                               cancelButton: {showDatePicker = false}
+                    )
+                    .presentationDetents([.height(200)])
+                    .interactiveDismissDisabled(true)
+                }
+                
                 Button(action: { changeMonth(1) }) {
                     Image(systemName: "chevron.right")
                         .foregroundColor(.black)
                 }
+                Spacer()
             }
             .padding(.horizontal)
             
@@ -69,6 +88,7 @@ struct CalendarView: View {
                             let text = allDays[index]
                             Text(text)
                                 .font(.system(size: 15))
+                                .bold()
                             Circle()
                                 .fill(Color.red)
                                 .frame(width: 5, height: 5)
