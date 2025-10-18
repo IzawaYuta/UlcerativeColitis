@@ -22,13 +22,16 @@ struct YearPicker: View {
                 Button("キャンセル", role: .cancel) {
                     cancelButton()
                 }
+                .foregroundColor(.black)
                 Spacer()
                 Button(action: {
                     doneButton()
                 }) {
                     Text("完了")
+                        .foregroundColor(.black)
                 }
             }
+            .padding(.horizontal)
             Picker("年", selection: $yearPicker) {
                 ForEach(years, id: \.self) { year in
                     Text("\(String(year))").tag(year)

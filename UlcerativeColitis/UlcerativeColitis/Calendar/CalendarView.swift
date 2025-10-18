@@ -42,7 +42,10 @@ struct CalendarView: View {
                 }
                 .sheet(isPresented: $showDatePicker) {
                     YearPicker(yearPicker: $date,
-                               doneButton: {showDatePicker = false},
+                               doneButton: {
+                        year = date
+                        showDatePicker = false
+                    },
                                cancelButton: {showDatePicker = false}
                     )
                     .presentationDetents([.height(200)])
