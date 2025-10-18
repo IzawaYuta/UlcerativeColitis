@@ -82,13 +82,26 @@ struct CalendarView: View {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 5) {
                 ForEach(allDays.indices, id: \.self) { index in
                     ZStack(alignment: .center) {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 40)
+                        let text = allDays[index]
+                        let dayInt = Int(text) ?? -1
+                        
+                        if (isToday(day: dayInt)) {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 40)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.black, lineWidth: 1.5)
+                                )
+                        } else {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 40)
+                        }
                         
                         VStack(spacing: 5) {
-                            let text = allDays[index]
                             Text(text)
                                 .font(.system(size: 15))
                                 .bold()
@@ -110,6 +123,15 @@ struct CalendarView: View {
         date = Calendar.current.date(byAdding: .month, value: offset, to: date)!
         year = Calendar.current.component(.year, from: date)
         month = Calendar.current.component(.month, from: date)
+    }
+    
+    private func isToday(day dayInt: Int) -> Bool {
+        let today = Calendar.current
+        let currentYear = today.component(.year, from: Date())
+        let currentMonth = today.component(.month, from: Date())
+        let currentDay = today.component(.day, from: Date())
+        
+        return year == currentYear && month == currentMonth && dayInt == currentDay
     }
 }
 
