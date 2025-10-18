@@ -8,7 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var selectedDate: Date? = nil
+    
     var body: some View {
+        VStack(spacing: 20) {
+            CalendarView(selectedDate: $selectedDate)
+            
+            RecordView(selectedDate: selectedDate)
+        }
     }
 }
 

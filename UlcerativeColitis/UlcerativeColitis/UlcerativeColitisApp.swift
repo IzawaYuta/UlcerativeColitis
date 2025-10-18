@@ -8,10 +8,10 @@
 import SwiftUI
 
 @main
-struct TestApp: App {
+struct UlcerativeColitisApp: App {
     var body: some Scene {
         WindowGroup {
-            CalendarView()
+            ContentView()
         }
     }
 }

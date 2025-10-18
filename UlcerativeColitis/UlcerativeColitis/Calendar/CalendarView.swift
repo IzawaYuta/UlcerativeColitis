@@ -17,6 +17,8 @@ struct CalendarView: View {
     @State private var cancelButton = false
     @State private var date: Int = Calendar.current.component(.year, from: Date())
     
+    @Binding var selectedDate: Date?
+    
     private let model = CalendarModel()
     private let weekdays = ["日", "月", "火", "水", "木", "金", "土"]
     
@@ -81,9 +83,9 @@ struct CalendarView: View {
             
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 5) {
                 ForEach(allDays.indices, id: \.self) { index in
+                    let text = allDays[index]
+                    let dayInt = Int(text) ?? -1
                     ZStack(alignment: .center) {
-                        let text = allDays[index]
-                        let dayInt = Int(text) ?? -1
                         
                         if (isToday(day: dayInt)) {
                             RoundedRectangle(cornerRadius: 8)
@@ -109,6 +111,11 @@ struct CalendarView: View {
                                 .fill(Color.red)
                                 .frame(width: 5, height: 5)
                         }
+                    }
+                    .onTapGesture {
+                        guard dayInt != -1 else { return }
+                        // 選択日付を設定
+                        selectedDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt))
                     }
                 }
             }
@@ -136,5 +143,5 @@ struct CalendarView: View {
 }
 
 #Preview {
-    CalendarView()
+    CalendarView(selectedDate: .constant(Date()))
 }
