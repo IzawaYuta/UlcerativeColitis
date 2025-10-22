@@ -13,10 +13,11 @@ struct CalendarView: View {
     var day = Calendar.current.component(.day, from: Date())
     
     @State private var showDatePicker = false
-    @State private var doneButton = false
-    @State private var cancelButton = false
-    @State private var date: Int = Calendar.current.component(.year, from: Date())
+    @State private var yearDate: Int = Calendar.current.component(.year, from: Date())
+    @State private var monthDate: Int = Calendar.current.component(.month, from: Date())
     
+    @Binding var selectedYear: Date?
+    @Binding var selectedMonth: Date?
     @Binding var selectedDate: Date?
     
     private let model = CalendarModel()
@@ -43,15 +44,39 @@ struct CalendarView: View {
                         .padding(.horizontal, 5)
                 }
                 .sheet(isPresented: $showDatePicker) {
-                    YearPicker(yearPicker: $date,
-                               doneButton: {
-                        year = date
-                        showDatePicker = false
-                    },
-                               cancelButton: {showDatePicker = false}
-                    )
-                    .presentationDetents([.height(200)])
-                    .interactiveDismissDisabled(true)
+                    VStack {
+                        HStack {
+                            Button("キャンセル", role: .cancel) {
+                                showDatePicker = false
+                            }
+                            .foregroundColor(.black)
+                            Spacer()
+                            Button(action: {
+                                showDatePicker = false
+                                year = yearDate
+                                month = monthDate
+                            }) {
+                                Text("完了")
+                                    .foregroundColor(.black)
+                            }
+                        }
+                        .padding(.horizontal)
+                        
+                        HStack {
+                            
+                            YearPicker(yearPicker: $yearDate,
+                                       doneButton: {},
+                                       cancelButton: {}
+                            )
+                            .presentationDetents([.height(200)])
+                            .interactiveDismissDisabled(true)
+                            
+                            MonthPicker(monthPicker: $monthDate,
+                                        doneButton: {},
+                                        cancelButton: {}
+                            )
+                        }
+                    }
                 }
                 
                 Button(action: { changeMonth(1) }) {
@@ -115,6 +140,8 @@ struct CalendarView: View {
                     .onTapGesture {
                         guard dayInt != -1 else { return }
                         // 選択日付を設定
+                        selectedYear = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt))
+                        selectedMonth = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt))
                         selectedDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt))
                     }
                 }
@@ -143,5 +170,5 @@ struct CalendarView: View {
 }
 
 #Preview {
-    CalendarView(selectedDate: .constant(Date()))
+    CalendarView(selectedYear: .constant(Date()), selectedMonth: .constant(Date()), selectedDate: .constant(Date()))
 }

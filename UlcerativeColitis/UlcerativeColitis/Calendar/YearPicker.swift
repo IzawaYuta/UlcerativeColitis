@@ -18,20 +18,6 @@ struct YearPicker: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Button("キャンセル", role: .cancel) {
-                    cancelButton()
-                }
-                .foregroundColor(.black)
-                Spacer()
-                Button(action: {
-                    doneButton()
-                }) {
-                    Text("完了")
-                        .foregroundColor(.black)
-                }
-            }
-            .padding(.horizontal)
             Picker("年", selection: $yearPicker) {
                 ForEach(years, id: \.self) { year in
                     Text("\(String(year))").tag(year)
@@ -45,5 +31,5 @@ struct YearPicker: View {
 }
 
 #Preview {
-    YearPicker(yearPicker: .constant(2025), doneButton: {}, cancelButton: {})
+    YearPicker(yearPicker: .constant(Calendar.current.component(.year, from: Date())), doneButton: {}, cancelButton: {})
 }

@@ -8,17 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selectedDate: Date? = nil
+    
+    @State private var selectedYear: Date? = Date()
+    @State private var selectedMonth: Date? = Date()
+    @State private var selectedDate: Date? = Date()
     
     var body: some View {
-        VStack(spacing: 20) {
-            CalendarView(selectedDate: $selectedDate)
-            
-            RecordView(selectedDate: selectedDate)
-        }
+        CalendarView(selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDate: $selectedDate)
+        RecordView(selectedYear: selectedYear, selectedMonth: selectedMonth, selectedDate: selectedDate)
     }
 }
-
 #Preview {
     ContentView()
 }
