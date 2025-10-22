@@ -62,21 +62,21 @@ struct CalendarView: View {
                         }
                         .padding(.horizontal)
                         
-                        HStack {
-                            
+                        HStack(spacing: 5) {
                             YearPicker(yearPicker: $yearDate,
                                        doneButton: {},
                                        cancelButton: {}
                             )
-                            .presentationDetents([.height(200)])
-                            .interactiveDismissDisabled(true)
-                            
                             MonthPicker(monthPicker: $monthDate,
                                         doneButton: {},
                                         cancelButton: {}
                             )
                         }
                     }
+                    .padding(.vertical)
+                    .padding(.horizontal)
+                    .presentationDetents([.height(200)])
+                    .interactiveDismissDisabled(true)
                 }
                 
                 Button(action: { changeMonth(1) }) {
