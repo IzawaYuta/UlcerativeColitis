@@ -19,6 +19,7 @@ struct RecordView: View {
     @Binding var selectDay: Date
     
     @State private var count: Int = 0
+    @State private var showStoolRecordList = false
     
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -58,19 +59,6 @@ struct RecordView: View {
                     Image(systemName: "plus")
                 }
                 
-                        let day = dayRecord.first { Calendar.current.isDate($0.date, inSameDayAs: selectDay) }
-
-            if let day = day {
-                List {
-                    ForEach(day.stoolRecord, id: \.self) { stool in
-                        HStack {
-                            Text(dateFormatter.string(from: day.date))       // 日付（DayRecord）
-                            Text(dateFormatter.string(from: stool.time))     // 時刻（StoolRecord）
-                            Text("\(stool.amount)")                           // 回数
-                        }
-                    }
-                }
-            }
             
             ZStack {
                 CustomBackground()
@@ -83,10 +71,13 @@ struct RecordView: View {
                                 .foregroundColor(.black)
                         }
                         Button(action: {
-                            
+                            showStoolRecordList.toggle()
                         }) {
                             Image(systemName: "list.bullet")
                                 .foregroundColor(.black)
+                        }
+                        .sheet(isPresented: $showStoolRecordList) {
+                            StoolRecordList(selectDay: $selectDay)
                         }
                     }
                     Text("\(stoolRecords.filter{Calendar.current.isDate($0.time, inSameDayAs: selectDay)}.count)")
