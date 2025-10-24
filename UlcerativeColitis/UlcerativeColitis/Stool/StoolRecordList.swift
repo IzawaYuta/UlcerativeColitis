@@ -27,11 +27,18 @@ struct StoolRecordList: View {
         if let day = day {
             List {
                 ForEach(day.stoolRecord, id: \.self) { stool in
-                    HStack {
-//                        Text(dateFormatter.string(from: day.date))       // 日付（DayRecord）
-                        Text(dateFormatter.string(from: stool.time))     // 時刻（StoolRecord）
-                        Spacer()
-                        Text("\(stool.amount)")                           // 回数
+                    VStack {
+                        HStack {
+                            //                        Text(dateFormatter.string(from: day.date))       // 日付（DayRecord）
+                            Text(dateFormatter.string(from: stool.time))
+                            Spacer()
+                            Text("\(stool.amount)")
+                        }
+                        if stool.type.isEmpty {
+                            Text("-")
+                        } else {
+                            Text(stool.type.map { $0.rawValue }.joined(separator: "、"))
+                        }
                     }
                 }
             }

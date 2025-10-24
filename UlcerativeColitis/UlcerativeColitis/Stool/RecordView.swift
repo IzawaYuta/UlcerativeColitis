@@ -20,6 +20,7 @@ struct RecordView: View {
     
     @State private var count: Int = 0
     @State private var showStoolRecordList = false
+    @State private var showAddStoolRecord = false
     
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -53,8 +54,7 @@ struct RecordView: View {
             
             
                 Button(action: {
-                    count += 1
-                    addStoolRecord(selectDay: selectDay, count: count)
+                    
                 }) {
                     Image(systemName: "plus")
                 }
@@ -65,10 +65,13 @@ struct RecordView: View {
                 VStack {
                     HStack {
                         Button(action: {
-                            
+                            showAddStoolRecord.toggle()
                         }) {
                             Image(systemName: "plus")
                                 .foregroundColor(.black)
+                        }
+                        .sheet(isPresented: $showAddStoolRecord) {
+                            AddStoolRecord(selectDay: $selectDay)
                         }
                         Button(action: {
                             showStoolRecordList.toggle()
@@ -87,50 +90,7 @@ struct RecordView: View {
         .padding()
     }
     
-    private func addStoolRecord(selectDay: Date, count: Int) {
-        let realm = try! Realm()
-        let startOfDay = Calendar.current.startOfDay(for: selectDay)
-        
-        let now = Date()
-        let timeComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: now)
-        
-        // 選択した日付 + 現在時刻 を合成
-        guard let combinedDate = Calendar.current.date(bySettingHour: timeComponents.hour ?? 0,
-                                                       minute: timeComponents.minute ?? 0,
-                                                       second: timeComponents.second ?? 0,
-                                                       of: selectDay)
-        else { return }
-
-        
-        try! realm.write {
-            // 既存のDayRecordがあるか検索
-            if let existingDayRecord = realm.objects(DayRecord.self)
-                .filter("date == %@", startOfDay)
-                .first {
-                
-                let stool = StoolRecord()
-                stool.id = UUID().uuidString
-                stool.time = combinedDate
-                stool.amount = count
-                stool.type = .normal
-                
-                existingDayRecord.stoolRecord.append(stool)
-            } else {
-                // まだ無ければ新規作成
-                let newDayRecord = DayRecord()
-                newDayRecord.date = startOfDay
-                
-                let stool = StoolRecord()
-                stool.id = UUID().uuidString
-                stool.time = combinedDate
-                stool.amount = count
-                stool.type = .normal
-                
-                newDayRecord.stoolRecord.append(stool)
-                realm.add(newDayRecord)
-            }
-        }
-    }
+    
 }
 
 #Preview {

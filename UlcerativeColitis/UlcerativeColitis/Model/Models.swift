@@ -25,5 +25,5 @@ class StoolRecord: Object, Identifiable {
     @Persisted(primaryKey: true) var id: String = UUID().uuidString
     @Persisted var time: Date //時間
     @Persisted var amount: Int //回数
-    @Persisted var type: StoolType //種類
+    @Persisted var type = List<StoolType>() //種類
 }
