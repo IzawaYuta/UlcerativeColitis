@@ -12,10 +12,11 @@ struct ContentView: View {
     @State private var selectedYear: Date? = Date()
     @State private var selectedMonth: Date? = Date()
     @State private var selectedDate: Date? = Date()
+    @State private var selectDay: Date = Date()
     
     var body: some View {
-        CalendarView(selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDate: $selectedDate)
-        RecordView(selectedYear: selectedYear, selectedMonth: selectedMonth, selectedDate: selectedDate)
+        CalendarView(selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDate: $selectedDate, selectDay: $selectDay)
+        RecordView(selectedYear: selectedYear, selectedMonth: selectedMonth, selectedDate: selectedDate, selectDay: $selectDay)
     }
 }
 #Preview {

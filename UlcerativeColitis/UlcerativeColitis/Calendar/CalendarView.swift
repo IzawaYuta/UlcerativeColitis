@@ -21,6 +21,7 @@ struct CalendarView: View {
     @Binding var selectedDate: Date?
     
     @State private var selectedDay: Date = Date() //選択中の日付
+    @Binding var selectDay: Date //配布用日付
     @State private var isSelected = false //初期は選択しない
     
     private let model = CalendarModel()
@@ -160,6 +161,7 @@ struct CalendarView: View {
                         guard dayInt != -1 else { return }
                         if let newDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt)) {
                             selectedDay = newDate
+                            selectDay = newDate
                             isSelected = true
                         }
                         // 選択日付を設定
@@ -195,5 +197,5 @@ struct CalendarView: View {
 }
 
 #Preview {
-    CalendarView(selectedYear: .constant(Date()), selectedMonth: .constant(Date()), selectedDate: .constant(Date()))
+    CalendarView(selectedYear: .constant(Date()), selectedMonth: .constant(Date()), selectedDate: .constant(Date()), selectDay: .constant(Date()))
 }
