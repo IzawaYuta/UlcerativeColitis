@@ -13,14 +13,25 @@ struct CalendarView: View {
     var day = Calendar.current.component(.day, from: Date())
     
     @State private var showDatePicker = false
-    @State private var doneButton = false
-    @State private var cancelButton = false
-    @State private var date: Int = Calendar.current.component(.year, from: Date())
+    @State private var yearDate: Int = Calendar.current.component(.year, from: Date())
+    @State private var monthDate: Int = Calendar.current.component(.month, from: Date())
     
+    @Binding var selectedYear: Date?
+    @Binding var selectedMonth: Date?
     @Binding var selectedDate: Date?
+    
+    @State private var selectedDay: Date = Date() //選択中の日付
+    @Binding var selectDay: Date //配布用日付
+    @State private var isSelected = false //初期は選択しない
     
     private let model = CalendarModel()
     private let weekdays = ["日", "月", "火", "水", "木", "金", "土"]
+    
+    let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy/MM/dd"
+        return formatter
+    }()
     
     var body: some View {
         let dates = model.dates(forYear: year, month: month)
@@ -43,13 +54,37 @@ struct CalendarView: View {
                         .padding(.horizontal, 5)
                 }
                 .sheet(isPresented: $showDatePicker) {
-                    YearPicker(yearPicker: $date,
-                               doneButton: {
-                        year = date
-                        showDatePicker = false
-                    },
-                               cancelButton: {showDatePicker = false}
-                    )
+                    VStack {
+                        HStack {
+                            Button("キャンセル", role: .cancel) {
+                                showDatePicker = false
+                            }
+                            .foregroundColor(.black)
+                            Spacer()
+                            Button(action: {
+                                showDatePicker = false
+                                year = yearDate
+                                month = monthDate
+                            }) {
+                                Text("完了")
+                                    .foregroundColor(.black)
+                            }
+                        }
+                        .padding(.horizontal)
+                        
+                        HStack(spacing: 5) {
+                            YearPicker(yearPicker: $yearDate,
+                                       doneButton: {},
+                                       cancelButton: {}
+                            )
+                            MonthPicker(monthPicker: $monthDate,
+                                        doneButton: {},
+                                        cancelButton: {}
+                            )
+                        }
+                    }
+                    .padding(.vertical)
+                    .padding(.horizontal)
                     .presentationDetents([.height(200)])
                     .interactiveDismissDisabled(true)
                 }
@@ -86,15 +121,25 @@ struct CalendarView: View {
                     let text = allDays[index]
                     let dayInt = Int(text) ?? -1
                     ZStack(alignment: .center) {
-                        
-                        if (isToday(day: dayInt)) {
+                        // 選択中の日付なら青く塗る
+                        if isSelected, let cellDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt)),
+                           Calendar.current.isDate(cellDate, inSameDayAs: selectedDay) {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.gray.opacity(0.2))
+                                .fill(Color.orange.opacity(0.3))
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 40)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
-                                        .stroke(Color.black, lineWidth: 1.5)
+                                        .stroke(Color.orange, lineWidth: 2)
+                                )
+                        } else if (isToday(day: dayInt)) {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.blue.opacity(0.3))
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 40)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.blue, lineWidth: 2)
                                 )
                         } else {
                             RoundedRectangle(cornerRadius: 8)
@@ -114,12 +159,21 @@ struct CalendarView: View {
                     }
                     .onTapGesture {
                         guard dayInt != -1 else { return }
+                        if let newDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt)) {
+                            selectedDay = newDate
+                            selectDay = newDate
+                            isSelected = true
+                        }
                         // 選択日付を設定
+                        selectedYear = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt))
+                        selectedMonth = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt))
                         selectedDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt))
                     }
                 }
             }
             .padding(.horizontal, 8)
+            
+            Text(dateFormatter.string(from: selectedDay))
             
             Spacer()
         }
@@ -143,5 +197,5 @@ struct CalendarView: View {
 }
 
 #Preview {
-    CalendarView(selectedDate: .constant(Date()))
+    CalendarView(selectedYear: .constant(Date()), selectedMonth: .constant(Date()), selectedDate: .constant(Date()), selectDay: .constant(Date()))
 }
