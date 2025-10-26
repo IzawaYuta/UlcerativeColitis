@@ -44,7 +44,21 @@ struct StoolRecordList: View {
                     }
                     .padding(.horizontal, 7)
                 }
+                .onDelete { indexSet in
+                    deleteStoolRecords(at: indexSet, in: day)
+                }
             }
+        }
+    }
+    
+    private func deleteStoolRecords(at offsets: IndexSet, in day: DayRecord) {
+        let realm = try! Realm()
+        
+        guard let thawedDay = day.thaw() else { return }
+        
+        try! realm.write {
+            let itemsToDelete = offsets.map { thawedDay.stoolRecord[$0] }
+            realm.delete(itemsToDelete)
         }
     }
 }
