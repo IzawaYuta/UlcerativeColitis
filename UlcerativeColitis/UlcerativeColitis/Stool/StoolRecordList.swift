@@ -17,7 +17,7 @@ struct StoolRecordList: View {
     
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy/MM/dd HH:mm"
+        formatter.dateFormat = "HH:mm"
         return formatter
     }()
     
@@ -27,19 +27,22 @@ struct StoolRecordList: View {
         if let day = day {
             List {
                 ForEach(day.stoolRecord, id: \.self) { stool in
-                    VStack {
-                        HStack {
-                            //                        Text(dateFormatter.string(from: day.date))       // 日付（DayRecord）
-                            Text(dateFormatter.string(from: stool.time))
-                            Spacer()
-                            Text("\(stool.amount)")
-                        }
+                    HStack {
+                        Text("\(stool.amount)")
+                        
+                        Spacer()
+                        
                         if stool.type.isEmpty {
                             Text("-")
                         } else {
                             Text(stool.type.map { $0.rawValue }.joined(separator: "、"))
                         }
+                        
+                        Spacer()
+                        
+                        Text(dateFormatter.string(from: stool.time))
                     }
+                    .padding(.horizontal, 7)
                 }
             }
         }
