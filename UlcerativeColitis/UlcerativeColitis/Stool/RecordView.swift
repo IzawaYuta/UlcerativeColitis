@@ -70,7 +70,11 @@ struct RecordView: View {
                                     .font(.system(size: 20))
                             }
                             .sheet(isPresented: $showAddStoolRecord) {
-                                AddStoolRecord(selectDay: $selectDay)
+                                AddStoolRecord(selectDay: $selectDay,
+                                               showView: {
+                                    showAddStoolRecord = false
+                                })
+                                    .presentationDetents([.height(170)])
                             }
                         }
                         .frame(width: 50, height: 50)
