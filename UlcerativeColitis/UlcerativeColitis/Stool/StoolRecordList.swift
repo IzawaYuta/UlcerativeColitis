@@ -15,6 +15,8 @@ struct StoolRecordList: View {
     
     @Binding var selectDay: Date
     
+    var showView: () -> Void
+    
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
@@ -23,32 +25,49 @@ struct StoolRecordList: View {
     
     var body: some View {
         let day = dayRecord.first { Calendar.current.isDate($0.date, inSameDayAs: selectDay) }
-        
-        if let day = day {
-            List {
-                ForEach(day.stoolRecord, id: \.self) { stool in
-                    HStack {
-                        Text("\(stool.amount)")
-                        
-                        Spacer()
-                        
-                        if stool.type.isEmpty {
-                            Text("-")
-                        } else {
-                            Text(stool.type.map { $0.rawValue }.joined(separator: "、"))
+        VStack(alignment: .leading, spacing: -25) {
+            if let day = day {
+                List {
+                    ForEach(day.stoolRecord, id: \.self) { stool in
+                        HStack {
+                            Text("\(stool.amount)")
+                            
+                            Spacer()
+                            
+                            if stool.type.isEmpty {
+                                Text("-")
+                            } else {
+                                Text(stool.type.map { $0.rawValue }.joined(separator: "、"))
+                            }
+                            
+                            Spacer()
+                            
+                            Text(dateFormatter.string(from: stool.time))
                         }
-                        
-                        Spacer()
-                        
-                        Text(dateFormatter.string(from: stool.time))
+                        .padding(.horizontal, 7)
                     }
-                    .padding(.horizontal, 7)
-                }
-                .onDelete { indexSet in
-                    deleteStoolRecords(at: indexSet, in: day)
+                    .onDelete { indexSet in
+                        deleteStoolRecords(at: indexSet, in: day)
+                    }
                 }
             }
+            Button(action: {
+                showView()
+            }) {
+                Text("閉じる")
+                    .foregroundColor(.black)
+                    .font(.system(size: 15))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 40)
+                    .background(
+                        RoundedRectangle(cornerRadius: 18)
+                            .fill(Color.gray.opacity(0.4))
+                    )
+            }
+            .padding(.horizontal)
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.gray.opacity(0.1).ignoresSafeArea())
     }
     
     private func deleteStoolRecords(at offsets: IndexSet, in day: DayRecord) {
@@ -69,5 +88,5 @@ struct StoolRecordList: View {
 }
 
 #Preview {
-    StoolRecordList(selectDay: .constant(Date()))
+    StoolRecordList(selectDay: .constant(Date()), showView: {})
 }

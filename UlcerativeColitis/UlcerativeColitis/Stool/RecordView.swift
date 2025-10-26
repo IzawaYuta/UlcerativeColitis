@@ -91,7 +91,12 @@ struct RecordView: View {
                                     .font(.system(size: 20))
                             }
                             .sheet(isPresented: $showStoolRecordList) {
-                                StoolRecordList(selectDay: $selectDay)
+                                StoolRecordList(selectDay: $selectDay,
+                                                showView: {
+                                    showStoolRecordList = false
+                                })
+                                    .presentationDetents([.height(400), .large])
+                                    .presentationDragIndicator(.visible)
                             }
                         }
                         .frame(width: 50, height: 50)
