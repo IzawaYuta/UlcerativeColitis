@@ -50,41 +50,60 @@ struct RecordView: View {
 //                    .font(.title2)
 //            }
             
-                Text("選択日: \(selectDay.formatted(.dateTime.year().month().day()))")
+                    Text("選択日: \(selectDay.formatted(.dateTime.year().month().day()))")
             
             
-                Button(action: {
-                    
-                }) {
-                    Image(systemName: "plus")
-                }
                 
             
             ZStack {
                 CustomBackground()
+                
                 VStack {
                     HStack {
-                        Button(action: {
-                            showAddStoolRecord.toggle()
-                        }) {
-                            Image(systemName: "plus")
-                                .foregroundColor(.black)
+                        // 左上の＋ボタン
+                        CustomShadow() {
+                            Button(action: {
+                                showAddStoolRecord.toggle()
+                            }) {
+                                Image(systemName: "plus")
+                                    .foregroundColor(.black)
+                                    .font(.system(size: 30))
+                            }
+                            .sheet(isPresented: $showAddStoolRecord) {
+                                AddStoolRecord(selectDay: $selectDay)
+                            }
                         }
-                        .sheet(isPresented: $showAddStoolRecord) {
-                            AddStoolRecord(selectDay: $selectDay)
+                        .frame(width: 50, height: 50)
+                        
+                        Spacer()
+                        
+                        // 右上のリストボタン
+                        CustomShadow() {
+                            Button(action: {
+                                showStoolRecordList.toggle()
+                            }) {
+                                Image(systemName: "list.bullet")
+                                    .foregroundColor(.black)
+                                    .font(.system(size: 20))
+                            }
+                            .sheet(isPresented: $showStoolRecordList) {
+                                StoolRecordList(selectDay: $selectDay)
+                            }
                         }
-                        Button(action: {
-                            showStoolRecordList.toggle()
-                        }) {
-                            Image(systemName: "list.bullet")
-                                .foregroundColor(.black)
-                        }
-                        .sheet(isPresented: $showStoolRecordList) {
-                            StoolRecordList(selectDay: $selectDay)
-                        }
+                        .frame(width: 50, height: 50)
+                        
                     }
-                    Text("\(stoolRecords.filter{Calendar.current.isDate($0.time, inSameDayAs: selectDay)}.count)")
+                    .padding(.horizontal, 15)
+                    .padding(.top, 15)
+                    
+                    Spacer()
+                    
+                    // 真ん中下のテキスト
+                    Text("\(stoolRecords.filter { Calendar.current.isDate($0.time, inSameDayAs: selectDay) }.count)")
+                        .font(.system(size: 90))
+                        .padding(.bottom, 20)
                 }
+                .frame(width: 200, height: 200)
             }
         }
         .padding()
