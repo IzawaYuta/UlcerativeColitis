@@ -67,7 +67,7 @@ struct RecordView: View {
                             }) {
                                 Image(systemName: "plus")
                                     .foregroundColor(.black)
-                                    .font(.system(size: 30))
+                                    .font(.system(size: 20))
                             }
                             .sheet(isPresented: $showAddStoolRecord) {
                                 AddStoolRecord(selectDay: $selectDay)

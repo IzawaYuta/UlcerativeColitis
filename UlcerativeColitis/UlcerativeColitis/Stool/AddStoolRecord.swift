@@ -26,7 +26,7 @@ struct AddStoolRecord: View {
         VStack {
             Button(action: {
                 count += 1
-                addStoolRecord(selectDay: selectDay, count: count)
+                addStoolRecord(selectDay: selectDay)
             }) {
                 Image(systemName: "plus")
             }
@@ -80,50 +80,85 @@ struct AddStoolRecord: View {
     }
     
     //追加メソッド
-    private func addStoolRecord(selectDay: Date, count: Int) {
+//    private func addStoolRecord(selectDay: Date, count: Int) {
+//        let realm = try! Realm()
+//        let startOfDay = Calendar.current.startOfDay(for: selectDay)
+//        
+//        let now = Date()
+//        let timeComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: now)
+//        
+//        // 選択した日付 + 現在時刻 を合成
+//        guard let combinedDate = Calendar.current.date(bySettingHour: timeComponents.hour ?? 0,
+//                                                       minute: timeComponents.minute ?? 0,
+//                                                       second: timeComponents.second ?? 0,
+//                                                       of: selectDay)
+//        else { return }
+//        
+//        
+//        try! realm.write {
+//            // 既存のDayRecordがあるか検索
+//            if let existingDayRecord = realm.objects(DayRecord.self)
+//                .filter("date == %@", startOfDay)
+//                .first {
+//                
+//                let stool = StoolRecord()
+//                stool.id = UUID().uuidString
+//                stool.time = combinedDate
+//                stool.amount = count
+//                stool.type.append(objectsIn: selectedType)
+//                
+//                existingDayRecord.stoolRecord.append(stool)
+//            } else {
+//                // まだ無ければ新規作成
+//                let newDayRecord = DayRecord()
+//                newDayRecord.date = startOfDay
+//                
+//                let stool = StoolRecord()
+//                stool.id = UUID().uuidString
+//                stool.time = combinedDate
+//                stool.amount = count
+//                stool.type.append(objectsIn: selectedType)
+//                
+//                newDayRecord.stoolRecord.append(stool)
+//                realm.add(newDayRecord)
+//            }
+//        }
+//    }
+    private func addStoolRecord(selectDay: Date) {
         let realm = try! Realm()
         let startOfDay = Calendar.current.startOfDay(for: selectDay)
-        
         let now = Date()
-        let timeComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: now)
         
-        // 選択した日付 + 現在時刻 を合成
+        let timeComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: now)
         guard let combinedDate = Calendar.current.date(bySettingHour: timeComponents.hour ?? 0,
                                                        minute: timeComponents.minute ?? 0,
                                                        second: timeComponents.second ?? 0,
                                                        of: selectDay)
         else { return }
         
-        
         try! realm.write {
             // 既存のDayRecordがあるか検索
-            if let existingDayRecord = realm.objects(DayRecord.self)
-                .filter("date == %@", startOfDay)
-                .first {
-                
-                let stool = StoolRecord()
-                stool.id = UUID().uuidString
-                stool.time = combinedDate
-                stool.amount = count
-                stool.type.append(objectsIn: selectedType)
-                
-                existingDayRecord.stoolRecord.append(stool)
+            let dayRecord = realm.objects(DayRecord.self).filter("date == %@", startOfDay).first
+            
+            let stool = StoolRecord()
+            stool.id = UUID().uuidString
+            stool.time = combinedDate
+            stool.type.append(objectsIn: selectedType)
+            
+            // 連番を決める
+            if let dayRecord = dayRecord {
+                stool.amount = dayRecord.stoolRecord.count + 1
+                dayRecord.stoolRecord.append(stool)
             } else {
-                // まだ無ければ新規作成
                 let newDayRecord = DayRecord()
                 newDayRecord.date = startOfDay
-                
-                let stool = StoolRecord()
-                stool.id = UUID().uuidString
-                stool.time = combinedDate
-                stool.amount = count
-                stool.type.append(objectsIn: selectedType)
-                
+                stool.amount = 1
                 newDayRecord.stoolRecord.append(stool)
                 realm.add(newDayRecord)
             }
         }
     }
+
 }
 
 #Preview {

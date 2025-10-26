@@ -59,6 +59,11 @@ struct StoolRecordList: View {
         try! realm.write {
             let itemsToDelete = offsets.map { thawedDay.stoolRecord[$0] }
             realm.delete(itemsToDelete)
+            
+            // 削除後に amount を再設定
+            for (index, stool) in thawedDay.stoolRecord.enumerated() {
+                stool.amount = index + 1
+            }
         }
     }
 }
