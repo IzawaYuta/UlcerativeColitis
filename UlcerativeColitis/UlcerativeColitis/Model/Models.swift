@@ -50,4 +50,5 @@ class MedicineInfo: Object, Identifiable {
     @Persisted var time: Date //服用時間
     @Persisted var effect: String //効果
     @Persisted var stock: Int //在庫
+    @Persisted var isUsing: Bool = true //使用or不使用
 }
