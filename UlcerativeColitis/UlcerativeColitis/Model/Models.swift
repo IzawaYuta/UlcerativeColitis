@@ -15,6 +15,19 @@ enum StoolType: String, PersistableEnum {
     case blood //血便
 }
 
+enum Timing: String, PersistableEnum {
+    case morning //朝
+    case noon //昼
+    case evening //夕
+    case wakeUp //起床時
+    case bedtime //就寝前
+    case justBeforeMeals //食直前
+    case beforeMeals //食前
+    case immediatelyAfterMeals //食直後
+    case afterMeals //食後
+    case temporaryClothes //頓服
+}
+
 class DayRecord: Object, Identifiable {
     @Persisted(primaryKey: true) var id: ObjectId
     @Persisted var date: Date
@@ -26,4 +39,15 @@ class StoolRecord: Object, Identifiable {
     @Persisted var time: Date //時間
     @Persisted var amount: Int //回数
     @Persisted var type = List<StoolType>() //種類
+}
+
+class MedicineInfo: Object, Identifiable {
+    @Persisted(primaryKey: true) var id: String = UUID().uuidString
+    @Persisted var medicineName: String //お薬の名前
+    @Persisted var unit: String //単位
+    @Persisted var dosage: Int //用量
+    @Persisted var timing = List<Timing>() //服用タイミング
+    @Persisted var time: Date //服用時間
+    @Persisted var effect: String //効果
+    @Persisted var stock: Int //在庫
 }
