@@ -26,6 +26,31 @@ enum Timing: String, PersistableEnum {
     case immediatelyAfterMeals //食直後
     case afterMeals //食後
     case temporaryClothes //頓服
+    
+    var japaneseText: String {
+        switch self {
+        case .morning: 
+            return "朝"
+        case .noon: return 
+            "昼"
+        case .evening: 
+            return "夕"
+        case .wakeUp: 
+            return "起床時"
+        case .bedtime: 
+            return "就寝前"
+        case .justBeforeMeals: 
+            return "食直前"
+        case .beforeMeals: 
+            return "食前"
+        case .immediatelyAfterMeals: 
+            return "食直後"
+        case .afterMeals: 
+            return "食後"
+        case .temporaryClothes: 
+            return "頓服"
+        }
+    }
 }
 
 class DayRecord: Object, Identifiable {
