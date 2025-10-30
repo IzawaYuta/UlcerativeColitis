@@ -21,6 +21,7 @@ struct RecordView: View {
     @State private var count: Int = 0
     @State private var showStoolRecordList = false
     @State private var showAddStoolRecord = false
+    @State private var showCharts = false
     
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -80,6 +81,15 @@ struct RecordView: View {
                         .frame(width: 50, height: 50)
                         
                         Spacer()
+                        
+                        Button(action: {
+                            showCharts.toggle()
+                        }) {
+                            Image(systemName: "plus")
+                        }
+                        .sheet(isPresented: $showCharts) {
+                            StoolRecordCharts(selectedDay: $selectDay)
+                        }
                         
                         // 右上のリストボタン
                         CustomShadow() {
