@@ -57,6 +57,7 @@ class DayRecord: Object, Identifiable {
     @Persisted(primaryKey: true) var id: ObjectId
     @Persisted var date: Date
     @Persisted var stoolRecord = List<StoolRecord>()
+    @Persisted var schedule = List<Schedule>()
 }
 
 class StoolRecord: Object, Identifiable {
@@ -76,4 +77,10 @@ class MedicineInfo: Object, Identifiable {
     @Persisted var effect: String //効果
     @Persisted var stock: Int //在庫
     @Persisted var isUsing: Bool = true //使用or不使用
+}
+
+class Schedule: Object, Identifiable {
+    @Persisted(primaryKey: true) var id: String = UUID().uuidString
+    @Persisted var title: String
+    @Persisted var date: Date
 }
