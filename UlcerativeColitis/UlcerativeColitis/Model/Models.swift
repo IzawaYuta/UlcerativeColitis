@@ -82,5 +82,8 @@ class MedicineInfo: Object, Identifiable {
 class Schedule: Object, Identifiable {
     @Persisted(primaryKey: true) var id: String = UUID().uuidString
     @Persisted var title: String
-    @Persisted var date: Date
+    @Persisted var allDate: Bool = false
+    @Persisted var startDate: Date?
+    @Persisted var endDate: Date?
+    @Persisted var memo: String?
 }

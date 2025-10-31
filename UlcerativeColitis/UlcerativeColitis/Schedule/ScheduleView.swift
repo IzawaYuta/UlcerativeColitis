@@ -29,7 +29,13 @@ struct ScheduleView: View {
                     Image(systemName: "plus")
                 }
                 .sheet(isPresented: $showAddScheduleView) {
-                    AddSchedule(selectDay: $selectDay)
+                    AddSchedule(selectDay: $selectDay, cancelButton: {
+                        showAddScheduleView = false
+                    }, doneButton: {
+                        showAddScheduleView = false
+                    })
+                        .presentationDetents([.height(470)])
+                        .presentationCornerRadius(30)
                 }
                 
                 if let day = day {
