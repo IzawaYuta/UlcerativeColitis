@@ -6,8 +6,13 @@
 //
 
 import SwiftUI
+import RealmSwift
 
 struct CalendarView: View {
+    
+    @ObservedResults(DayRecord.self) var dayRecord
+    @ObservedResults(Schedule.self) var schedule
+    
     @State private var year = Calendar.current.component(.year, from: Date())
     @State private var month = Calendar.current.component(.month, from: Date())
     var day = Calendar.current.component(.day, from: Date())
@@ -120,6 +125,8 @@ struct CalendarView: View {
                 ForEach(allDays.indices, id: \.self) { index in
                     let text = allDays[index]
                     let dayInt = Int(text) ?? -1
+                    let cellDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt))
+                    let cellDayRecord = dayRecord.first { Calendar.current.isDate($0.date, inSameDayAs: cellDate ?? Date()) }
                     ZStack(alignment: .center) {
                         // 選択中の日付なら青く塗る
                         if isSelected, let cellDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt)),
@@ -152,9 +159,15 @@ struct CalendarView: View {
                             Text(text)
                                 .font(.system(size: 15))
                                 .bold()
-                            Circle()
-                                .fill(Color.red)
-                                .frame(width: 5, height: 5)
+                            if let cellDayRecord = cellDayRecord, !cellDayRecord.schedule.isEmpty {
+                                Circle()
+                                    .fill(Color.red)
+                                    .frame(width: 5, height: 5)
+                            } else {
+                                Circle()
+                                    .fill(Color.clear)
+                                    .frame(width: 5, height: 5)
+                            }
                         }
                     }
                     .onTapGesture {
