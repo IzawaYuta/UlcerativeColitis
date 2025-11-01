@@ -21,38 +21,54 @@ struct AddSchedule: View {
     @State private var endDate: Date = Calendar.current.date(byAdding: .hour, value: 1, to: Date())!
     @State private var memo: String = ""
     
+    @FocusState private var titleFocus: Bool
+    
     var cancelButton: () -> Void
     var doneButton: () -> Void
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 25) {
-                Divider()
-                TextField("タイトル", text: $title)
+                TextField("病院・クリニック", text: $title)
                     .frame(/*width: 380, */height: 35)
                     .padding(.horizontal, 5)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: 14)
                             .stroke(Color.gray.opacity(0.5), lineWidth: 1)
                             .frame(/*width: 390, */height: 35)
                     )
                     .padding(.horizontal, 5)
+//                    .focused($titleFocus)
+//                    .onAppear {
+//                        titleFocus = true
+//                    }
                 
                 ZStack {
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: 14)
                         .stroke(Color.gray.opacity(0.5), lineWidth: 1)
-                        .frame(/*width: 390, */height: 160)
-                    VStack(spacing: 20) {
+                        .frame(/*width: 390, */height: 120)
+                    VStack(spacing: 23) {
                         Toggle(" 終日", isOn: $allDate)
-                        DatePicker(" 開始", selection: $startDate, displayedComponents: .hourAndMinute)
-                            .disabled(allDate == true)
-                            .opacity(allDate ? 0.5 : 1.0)
-                        DatePicker(" 終了", selection: $endDate, displayedComponents: .hourAndMinute)
-                            .disabled(allDate == true)
-                            .opacity(allDate ? 0.5 : 1.0)
-                            .onChange(of: startDate) { newStart in
-                                endDate = Calendar.current.date(byAdding: .hour, value: 1, to: newStart) ?? newStart
+                        HStack {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.clear)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 40)
+                                DatePicker(" 開始", selection: $startDate, displayedComponents: .hourAndMinute)
+                                    .disabled(allDate == true)
+                                    .opacity(allDate ? 0.5 : 1.0)
                             }
+                            Text("-")
+                                .opacity(allDate ? 0.5 : 1.0)
+                                .padding(.horizontal)
+                            DatePicker(" 終了", selection: $endDate, displayedComponents: .hourAndMinute)
+                                .disabled(allDate == true)
+                                .opacity(allDate ? 0.5 : 1.0)
+                                .onChange(of: startDate) { newStart in
+                                    endDate = Calendar.current.date(byAdding: .hour, value: 1, to: newStart) ?? newStart
+                                }
+                        }
                     }
                     .padding(.horizontal, 5)
                 }
@@ -69,12 +85,12 @@ struct AddSchedule: View {
                     }
                     
                     TextEditor(text: $memo)
-                        .frame(/*width: 380, */height: 150)
+                        .frame(/*width: 380, */height: 140)
                         .padding(4)
                         .background(Color.clear)
                         .scrollContentBackground(.hidden)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: 14)
                                 .stroke(Color.gray.opacity(0.5), lineWidth: 1)
                         )
                 }
@@ -112,6 +128,8 @@ struct AddSchedule: View {
             }
             .navigationTitle("通院予定")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Color.gray.opacity(0.01), for: .navigationBar)
         }
     }
     

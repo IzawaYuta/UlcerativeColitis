@@ -38,7 +38,8 @@ struct ScheduleView: View {
                             }, doneButton: {
                                 showAddScheduleView = false
                             })
-                            .presentationDetents([.height(470)])
+//                            .presentationDetents([.height(470)])
+                            .presentationDetents([.medium])
                             .presentationCornerRadius(30)
                         }
                     }
