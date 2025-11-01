@@ -29,17 +29,19 @@ struct AddSchedule: View {
             VStack(spacing: 25) {
                 Divider()
                 TextField("タイトル", text: $title)
-                    .frame(width: 380, height: 35)
+                    .frame(/*width: 380, */height: 35)
+                    .padding(.horizontal, 5)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color.gray.opacity(0.5), lineWidth: 1)
-                            .frame(width: 390, height: 35)
+                            .frame(/*width: 390, */height: 35)
                     )
+                    .padding(.horizontal, 5)
                 
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.gray.opacity(0.5), lineWidth: 1)
-                        .frame(width: 390, height: 160)
+                        .frame(/*width: 390, */height: 160)
                     VStack(spacing: 20) {
                         Toggle(" 終日", isOn: $allDate)
                         DatePicker(" 開始", selection: $startDate, displayedComponents: .hourAndMinute)
@@ -54,7 +56,8 @@ struct AddSchedule: View {
                     }
                     .padding(.horizontal, 5)
                 }
-                .frame(width: 380)
+//                .frame(width: 380)
+                .padding(.horizontal, 5)
                 
                 ZStack(alignment: .topLeading) {
                     // プレースホルダー
@@ -66,7 +69,7 @@ struct AddSchedule: View {
                     }
                     
                     TextEditor(text: $memo)
-                        .frame(width: 380,height: 150)
+                        .frame(/*width: 380, */height: 150)
                         .padding(4)
                         .background(Color.clear)
                         .scrollContentBackground(.hidden)
@@ -75,6 +78,7 @@ struct AddSchedule: View {
                                 .stroke(Color.gray.opacity(0.5), lineWidth: 1)
                         )
                 }
+                .padding(.horizontal, 5)
                 
                 Spacer()
             }
