@@ -30,7 +30,7 @@ struct RecordView: View {
     }()
     
     var body: some View {
-        VStack {
+//        VStack {
 //                        if let year = selectedYear {
 //            Text("選択日: \(year.formatted(.dateTime.year()))")
 //                .font(.title2)
@@ -51,7 +51,7 @@ struct RecordView: View {
 //                    .font(.title2)
 //            }
             
-                    Text("選択日: \(selectDay.formatted(.dateTime.year().month().day()))")
+//                    Text("選択日: \(selectDay.formatted(.dateTime.year().month().day()))")
             
             
                 
@@ -124,8 +124,8 @@ struct RecordView: View {
                 }
                 .frame(width: 200, height: 200)
             }
-        }
-        .padding()
+//        }
+//        .padding()
     }
     
     

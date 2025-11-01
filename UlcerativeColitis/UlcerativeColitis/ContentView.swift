@@ -16,8 +16,10 @@ struct ContentView: View {
     
     var body: some View {
         CalendarView(selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDate: $selectedDate, selectDay: $selectDay)
-        RecordView(selectedYear: selectedYear, selectedMonth: selectedMonth, selectedDate: selectedDate, selectDay: $selectDay)
-        ScheduleView(selectDay: $selectDay)
+        HStack {
+            RecordView(selectedYear: selectedYear, selectedMonth: selectedMonth, selectedDate: selectedDate, selectDay: $selectDay)
+            ScheduleView(selectDay: $selectDay)
+        }
     }
 }
 #Preview {
