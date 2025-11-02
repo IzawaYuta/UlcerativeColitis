@@ -10,16 +10,16 @@ import SwiftUI
 struct CustomButton<Content: View>: View {
     let color: Color
     let shadowRadius: CGFloat
-    let selected: Set<Timing>
+    let selected: Set<FirstTiming>
     let action: () -> Void
     let content: () -> Content
-    let timing: Timing
+    let timing: FirstTiming
     
     init(
         color: Color = .white,
         shadowRadius: CGFloat = 3,
-        selected: Set<Timing> = [],
-        timing: Timing = .morning,
+        selected: Set<FirstTiming> = [],
+        timing: FirstTiming = .morning,
         action: @escaping () -> Void,
         @ViewBuilder content: @escaping () -> Content
     ) {

@@ -15,40 +15,54 @@ enum StoolType: String, PersistableEnum {
     case blood //血便
 }
 
-enum Timing: String, PersistableEnum {
+enum FirstTiming: String, PersistableEnum {
     case morning //朝
     case noon //昼
     case evening //夕
     case wakeUp //起床時
     case bedtime //就寝前
-    case justBeforeMeals //食直前
-    case beforeMeals //食前
-    case immediatelyAfterMeals //食直後
-    case afterMeals //食後
     case temporaryClothes //頓服
     
     var japaneseText: String {
         switch self {
         case .morning: 
             return "朝"
-        case .noon: return 
-            "昼"
-        case .evening: 
+        case .noon:
+            return "昼"
+        case .evening:
             return "夕"
         case .wakeUp: 
             return "起床時"
         case .bedtime: 
             return "就寝前"
-        case .justBeforeMeals: 
-            return "食直前"
-        case .beforeMeals: 
-            return "食前"
-        case .immediatelyAfterMeals: 
-            return "食直後"
-        case .afterMeals: 
-            return "食後"
-        case .temporaryClothes: 
+        case .temporaryClothes:
             return "頓服"
+        }
+    }
+}
+
+enum SecondTiming: String, PersistableEnum {
+    case justBeforeMeals //食直前
+    case beforeMeals //食前
+    case immediatelyAfterMeals //食直後
+    case afterMeals //食後
+    case betweenMeals //食間
+    case customDefault //デフォルト
+    
+    var japaneseText: String {
+        switch self {
+        case .justBeforeMeals:
+            return "食直前"
+        case .beforeMeals:
+            return "食前"
+        case .immediatelyAfterMeals:
+            return "食直後"
+        case .afterMeals:
+            return "食後"
+        case .betweenMeals:
+            return "食間"
+        case .customDefault:
+            return "-"
         }
     }
 }
@@ -72,11 +86,13 @@ class MedicineInfo: Object, Identifiable {
     @Persisted var medicineName: String //お薬の名前
     @Persisted var unit: String //単位
     @Persisted var dosage: Int //用量
-    @Persisted var timing = List<Timing>() //服用タイミング
+    @Persisted var firstTiming = List<FirstTiming>() //服用タイミング
+    @Persisted var secondTiming: SecondTiming //服用タイミング
     @Persisted var time: Date //服用時間
     @Persisted var effect: String //効果
     @Persisted var stock: Int //在庫
     @Persisted var isUsing: Bool = true //使用or不使用
+    @Persisted var memo: String //メモ
 }
 
 class Schedule: Object, Identifiable {
