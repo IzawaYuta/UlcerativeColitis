@@ -98,6 +98,24 @@ struct CalendarView: View {
                     Image(systemName: "chevron.right")
                         .foregroundColor(.black)
                 }
+                
+                Button(action: {
+                    let today = Date()
+                    let calendar = Calendar.current
+                    year = calendar.component(.year, from: today)
+                    month = calendar.component(.month, from: today)
+                    selectedDay = today
+                    selectDay = today
+                    isSelected = true
+                }) {
+                    Text("今日")
+                        .font(.subheadline)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(8)
+                }
+                
                 Spacer()
             }
             .padding(.horizontal)
@@ -129,17 +147,7 @@ struct CalendarView: View {
                     let cellDayRecord = dayRecord.first { Calendar.current.isDate($0.date, inSameDayAs: cellDate ?? Date()) }
                     ZStack(alignment: .center) {
                         // 選択中の日付なら青く塗る
-                        if isSelected, let cellDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt)),
-                           Calendar.current.isDate(cellDate, inSameDayAs: selectedDay) {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.orange.opacity(0.3))
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 40)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(Color.orange, lineWidth: 2)
-                                )
-                        } else if (isToday(day: dayInt)) {
+                        if (isToday(day: dayInt)) {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.blue.opacity(0.3))
                                 .frame(maxWidth: .infinity)
@@ -147,6 +155,16 @@ struct CalendarView: View {
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
                                         .stroke(Color.blue, lineWidth: 2)
+                                )
+                        } else if isSelected, let cellDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt)),
+                                  Calendar.current.isDate(cellDate, inSameDayAs: selectedDay) {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.orange.opacity(0.3))
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 40)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.orange, lineWidth: 2)
                                 )
                         } else {
                             RoundedRectangle(cornerRadius: 8)
