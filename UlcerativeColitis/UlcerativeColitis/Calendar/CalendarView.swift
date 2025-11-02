@@ -52,7 +52,7 @@ struct CalendarView: View {
                 Button(action: {
                     showDatePicker = true
                 }) {
-                    Text("\(String(year))年\(month)月")
+                    Text("\(String(year))年\(month)月\(Calendar.current.component(.day, from: selectedDay))日")
                         .font(.title2)
                         .foregroundColor(.black)
                         .bold()
@@ -219,7 +219,7 @@ struct CalendarView: View {
                     }
             )
             
-            Text(dateFormatter.string(from: selectedDay))
+//            Text(dateFormatter.string(from: selectedDay))
             
             Spacer()
         }
