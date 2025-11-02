@@ -203,6 +203,21 @@ struct CalendarView: View {
                 }
             }
             .padding(.horizontal, 8)
+            .gesture(
+                DragGesture()
+                    .onEnded { value in
+                        // 横方向の移動距離
+                        let horizontalAmount = value.translation.width
+                        
+                        if horizontalAmount < -50 {
+                            // 左スワイプ → 次の月へ
+                            changeMonth(1)
+                        } else if horizontalAmount > 50 {
+                            // 右スワイプ → 前の月へ
+                            changeMonth(-1)
+                        }
+                    }
+            )
             
             Text(dateFormatter.string(from: selectedDay))
             
