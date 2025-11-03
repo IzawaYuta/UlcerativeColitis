@@ -20,6 +20,7 @@ struct MedicineInfoView: View {
     @State private var draftSecondTiming: SecondTiming = .justBeforeMeals
     @State private var effect: String = ""
     @State private var stock: String = ""
+    @State private var memo: String = ""
     @State private var showPicker = false
     
     @State private var showCustomUnitView = false
@@ -205,6 +206,25 @@ struct MedicineInfoView: View {
                     .frame(width: 100)
             }
             .padding(.horizontal)
+            
+            Divider()
+                .background(.gray)
+                .padding(.horizontal)
+            
+            VStack(alignment: .leading) {
+                Text("メモ")
+                    .font(.callout)
+                TextEditor(text: $memo)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 60)
+                    .padding(2)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.4))
+                    )
+            }
+            .padding(.horizontal)
+            
             Spacer()
         }
         .background(Color.gray.opacity(0.1))
