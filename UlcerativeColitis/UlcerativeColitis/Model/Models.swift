@@ -88,12 +88,17 @@ class MedicineInfo: Object, Identifiable {
     @Persisted var dosage: Int //用量
     @Persisted var firstTiming = List<FirstTiming>() //服用タイミング
     @Persisted var secondTiming: SecondTiming //服用タイミング
-    @Persisted var time: Date //服用時間
+    @Persisted var time = List<MedicineTime>() //服用時間
     @Persisted var effect: String //効果
     @Persisted var stock: Int //在庫
     @Persisted var stockUnit = List<StockUnit>() //在庫よう単位
     @Persisted var isUsing: Bool = true //使用or不使用
     @Persisted var memo: String //メモ
+}
+
+class MedicineTime: Object, Identifiable {
+    @Persisted(primaryKey: true) var id: String = UUID().uuidString
+    @Persisted var time: Date
 }
 
 class UnitArray: Object, Identifiable {

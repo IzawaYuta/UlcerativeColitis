@@ -12,6 +12,8 @@ struct MedicineInfoView: View {
     
     @ObservedResults(MedicineInfo.self) var medicineInfo
     @ObservedResults(UnitArray.self) var unitArray
+//    @ObservedResults(MedicineInfo.self) var medicineInfo
+    @ObservedResults(MedicineTime.self) var times
     
     @State private var medicineName: String = ""
     @State private var dosage: Int = 0
@@ -23,9 +25,11 @@ struct MedicineInfoView: View {
     @State private var memo: String = ""
     @State private var morningDosage: String = ""
     @State private var showPicker = false
+    @State private var time: Date = Date()
     
     @State private var showCustomUnitView = false
     @State private var showStockUnitView = false //在庫単位選択用シート表示
+    @State private var showTimeView = false
     
     @State private var selectedUnit: UnitArray?
     @State private var selectedStockUnit: UnitArray? //在庫用単位の選択状態
@@ -187,6 +191,48 @@ struct MedicineInfoView: View {
                             
                         }
                     }
+                    
+                    ForEach(times, id: \.id) { timeEntry in
+                        HStack {
+                            Text(timeEntry.time.formatted(date: .omitted, time: .shortened))
+                                .font(.system(size: 15))
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                deleteTime(timeEntry)
+                            }) {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                                    .font(.system(size: 14))
+                            }
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.white)
+                        )
+                    }
+                    
+                    Button(action: {
+                        showTimeView.toggle()
+                    }) {
+                        Text("時間を追加")
+                            .foregroundColor(.black.opacity(0.7))
+                            .font(.system(size: 14))
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.gray.opacity(0.2))
+                                    .frame(width: 80, height: 25)
+                            )
+                    }
+                    .sheet(isPresented: $showTimeView) {
+                        TimeView(done: {
+                            showTimeView = false
+                            saveTime()
+                        })
+                    }
                 }
             }
             .padding(.horizontal)
@@ -328,6 +374,28 @@ struct MedicineInfoView: View {
                 let model = MedicineInfo()
                 model.secondTiming = selectedSecondTiming
                 realm.add(model)
+            }
+        }
+    }
+    
+    private func saveTime() {
+        let realm = try! Realm()
+        
+        
+        try! realm.write {
+            let model = MedicineTime()
+            model.time = time
+            realm.add(model)
+        }
+    }
+
+    
+    private func deleteTime(_ timeEntry: MedicineTime) {
+        let realm = try! Realm()
+        
+        if let objectToDelete = realm.object(ofType: MedicineTime.self, forPrimaryKey: timeEntry.id) {
+            try! realm.write {
+                realm.delete(objectToDelete)
             }
         }
     }
