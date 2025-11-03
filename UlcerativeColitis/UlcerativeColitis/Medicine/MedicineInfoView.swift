@@ -16,7 +16,8 @@ struct MedicineInfoView: View {
     @State private var medicineName: String = ""
     @State private var dosage: Int = 0
     @State private var selectedFirstTimings: Set<FirstTiming> = []
-    @State private var selectedSecondTiming: SecondTiming = .afterMeals
+    @State private var selectedSecondTiming: SecondTiming = .justBeforeMeals
+    @State private var draftSecondTiming: SecondTiming = .justBeforeMeals
     @State private var effect: String = ""
     @State private var stock: String = ""
     @State private var showPicker = false
@@ -68,7 +69,7 @@ struct MedicineInfoView: View {
                 }
                 .sheet(isPresented: $showCustomUnitView) {
                     CustomUnitView(selectedUnit: $selectedUnit,
-                    onTap: { showCustomUnitView = false })
+                                   onTap: { showCustomUnitView = false })
                 }
             }
             .padding(.horizontal)
@@ -93,11 +94,16 @@ struct MedicineInfoView: View {
                             .padding(.horizontal, 8)
                         
                         Button(action: {
+                            draftSecondTiming = selectedSecondTiming
                             showPicker.toggle()
                         }) {
-                            Text(selectedSecondTiming.japaneseText)
-                                .foregroundColor(.black)
-                            
+                            if let firstMedicine = medicineInfo.first {
+                                Text(firstMedicine.secondTiming.japaneseText)
+                                    .foregroundColor(.black)
+                            } else {
+                                Text(selectedSecondTiming.japaneseText)
+                                    .foregroundColor(.black)
+                            }
                         }
                         .padding(.horizontal)
                         .background(
@@ -106,9 +112,10 @@ struct MedicineInfoView: View {
                         )
                         .padding(.horizontal)
                         .sheet(isPresented: $showPicker) {
-                            TimingPickerView(timing: $selectedSecondTiming,
-                                             cancel: { showPicker = false },
+                            TimingPickerView(timing: $draftSecondTiming,
+                                             cancel: { showPicker = false},
                                              done: { showPicker = false
+                                selectedSecondTiming = draftSecondTiming
                                 saveSecondTiming()
                             }
                             )
@@ -204,7 +211,6 @@ struct MedicineInfoView: View {
         .onAppear {
             if let loadMedicineInfo = medicineInfo.first {
                 selectedFirstTimings = Set(loadMedicineInfo.firstTiming)
-                selectedSecondTiming = loadMedicineInfo.secondTiming
             }
         }
     }
