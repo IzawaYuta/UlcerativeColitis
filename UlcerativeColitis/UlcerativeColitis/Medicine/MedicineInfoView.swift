@@ -21,6 +21,7 @@ struct MedicineInfoView: View {
     @State private var effect: String = ""
     @State private var stock: String = ""
     @State private var memo: String = ""
+    @State private var morningDosage: String = ""
     @State private var showPicker = false
     
     @State private var showCustomUnitView = false
@@ -126,21 +127,37 @@ struct MedicineInfoView: View {
                         }
                     }
                     HStack {
-                        VStack(alignment: .trailing) {
-                            HStack {
+                        VStack(alignment: .center) {
+                            VStack {
                                 ForEach([FirstTiming.morning, .noon, .evening], id: \.self) { timing in
-                                    CustomButton(
-                                        color: selectedFirstTimings.contains(timing) ? getColor(for: timing) : .white,
-                                        selected: selectedFirstTimings,
-                                        timing: timing,
-                                        action: {
-                                            toggle(timing)
-                                            saveTiming()
-                                        }) {
-                                            Text(timing.japaneseText)
-                                                .font(.system(size: 17))
+                                    HStack {
+                                        CustomButton(
+                                            color: selectedFirstTimings.contains(timing) ? getColor(for: timing) : .white,
+                                            selected: selectedFirstTimings,
+                                            timing: timing,
+                                            action: {
+                                                toggle(timing)
+                                                saveTiming()
+                                            }) {
+                                                Text(timing.japaneseText)
+                                                    .font(.system(size: 17))
+                                            }
+                                            .frame(width: 100, height: 30)
+                                        HStack {
+                                            TextField("", text: $morningDosage)
+                                                .textFieldStyle(.roundedBorder)
+                                                .multilineTextAlignment(.trailing)
+                                                .frame(width: 100)
+                                            if let selectedUnit = selectedUnit,
+                                               unitArray.contains(where: { $0.id == selectedUnit.id }) {
+                                                Text(selectedUnit.unitName)
+                                            } else if let firstUnit = unitArray.first {
+                                                Text(firstUnit.unitName)  // 配列の最初を表示
+                                            } else {
+                                                Text("-")  // 何もなければ "-"
+                                            }
                                         }
-                                        .frame(width: 100, height: 30)
+                                    }
                                 }
                             }
                             .padding(.vertical, 5)
