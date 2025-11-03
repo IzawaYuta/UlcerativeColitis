@@ -11,6 +11,7 @@ import RealmSwift
 struct MedicineInfoView: View {
     
     @ObservedResults(MedicineInfo.self) var medicineInfo
+    @ObservedResults(UnitArray.self) var unitArray
     
     @State private var medicineName: String = ""
     @State private var dosage: Int = 0
@@ -19,6 +20,10 @@ struct MedicineInfoView: View {
     @State private var effect: String = ""
     @State private var stock: String = ""
     @State private var showPicker = false
+    
+    @State private var showCustomUnitView = false
+    
+    @State private var selectedUnit: UnitArray?
     
     var body: some View {
         VStack(spacing: 20) {
@@ -48,10 +53,22 @@ struct MedicineInfoView: View {
                     .multilineTextAlignment(.trailing)
                     .frame(width: 100)
                     .textFieldStyle(.roundedBorder)
-                if let firstUnit = medicineInfo.first?.unit {
-                    Text(firstUnit)
-                } else {
-                    Text("錠")
+                
+                Button(action: {
+                    showCustomUnitView.toggle()
+                }) {
+                    if let selectedUnit = selectedUnit,
+                       unitArray.contains(where: { $0.id == selectedUnit.id }) {
+                        Text(selectedUnit.unitName)
+                    } else if let firstUnit = unitArray.first {
+                        Text(firstUnit.unitName)  // 配列の最初を表示
+                    } else {
+                        Text("-")  // 何もなければ "-"
+                    }
+                }
+                .sheet(isPresented: $showCustomUnitView) {
+                    CustomUnitView(selectedUnit: $selectedUnit,
+                    onTap: { showCustomUnitView = false })
                 }
             }
             .padding(.horizontal)

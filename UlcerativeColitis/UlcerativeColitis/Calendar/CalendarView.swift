@@ -29,6 +29,8 @@ struct CalendarView: View {
     @Binding var selectDay: Date //配布用日付
     @State private var isSelected = false //初期は選択しない
     
+    @State var show = false
+    
     private let model = CalendarModel()
     private let weekdays = ["日", "月", "火", "水", "木", "金", "土"]
     
@@ -220,6 +222,15 @@ struct CalendarView: View {
             )
             
 //            Text(dateFormatter.string(from: selectedDay))
+            Button {
+                show.toggle()
+            } label: {
+                Image(systemName: "plus")
+            }
+            .sheet(isPresented: $show) {
+                MedicineInfoView()
+            }
+
             
             Spacer()
         }
