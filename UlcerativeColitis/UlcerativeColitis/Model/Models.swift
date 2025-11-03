@@ -91,6 +91,7 @@ class MedicineInfo: Object, Identifiable {
     @Persisted var time: Date //服用時間
     @Persisted var effect: String //効果
     @Persisted var stock: Int //在庫
+    @Persisted var stockUnit = List<StockUnit>() //在庫よう単位
     @Persisted var isUsing: Bool = true //使用or不使用
     @Persisted var memo: String //メモ
 }
@@ -103,6 +104,11 @@ class UnitArray: Object, Identifiable {
         self.init()
         self.unitName = unitName
     }
+}
+
+class StockUnit: Object, Identifiable {
+    @Persisted(primaryKey: true) var id: String = UUID().uuidString
+    @Persisted var unit = List<UnitArray>()
 }
 
 class Schedule: Object, Identifiable {

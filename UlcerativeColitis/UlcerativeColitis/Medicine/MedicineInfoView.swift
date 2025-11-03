@@ -25,8 +25,10 @@ struct MedicineInfoView: View {
     @State private var showPicker = false
     
     @State private var showCustomUnitView = false
+    @State private var showStockUnitView = false //在庫単位選択用シート表示
     
     @State private var selectedUnit: UnitArray?
+    @State private var selectedStockUnit: UnitArray? //在庫用単位の選択状態
     
     var body: some View {
         VStack(spacing: 20) {
@@ -63,10 +65,13 @@ struct MedicineInfoView: View {
                     if let selectedUnit = selectedUnit,
                        unitArray.contains(where: { $0.id == selectedUnit.id }) {
                         Text(selectedUnit.unitName)
+                            .borderedTextStyle()
                     } else if let firstUnit = unitArray.first {
                         Text(firstUnit.unitName)  // 配列の最初を表示
+                            .borderedTextStyle()
                     } else {
                         Text("-")  // 何もなければ "-"
+                            .borderedTextStyle()
                     }
                 }
                 .sheet(isPresented: $showCustomUnitView) {
@@ -219,8 +224,34 @@ struct MedicineInfoView: View {
                 
                 TextField("", text: $stock)
                     .textFieldStyle(.roundedBorder)
-                    .gridColumnAlignment(.trailing)
+                    .multilineTextAlignment(.trailing)
                     .frame(width: 100)
+                
+                Button(action: {
+                    showStockUnitView.toggle()
+                }) {
+                    if let firstStockUnit = medicineInfo.first?.stockUnit.first?.unit.first {
+                        Text(firstStockUnit.unitName)
+                            .borderedTextStyle()
+                    } else if let selectedStockUnit = selectedStockUnit,
+                              unitArray.contains(where: { $0.id == selectedStockUnit.id }) {
+                        Text(selectedStockUnit.unitName)
+                            .borderedTextStyle()
+                    } else if let selectedUnit = selectedUnit,
+                              unitArray.contains(where: { $0.id == selectedUnit.id }) {
+                        Text(selectedUnit.unitName)
+                            .borderedTextStyle()
+                    } else if let firstUnit = unitArray.first {
+                        Text(firstUnit.unitName)
+                            .borderedTextStyle()
+                    } else {
+                        Text("-")
+                    }
+                }
+                .sheet(isPresented: $showStockUnitView) {
+                    CustomUnitView(selectedUnit: $selectedStockUnit,
+                                   onTap: { showStockUnitView = false })
+                }
             }
             .padding(.horizontal)
             
@@ -317,4 +348,23 @@ struct MedicineInfoView: View {
 
 #Preview {
     MedicineInfoView()
+}
+
+struct BorderedTextStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .foregroundColor(.black)
+            .padding(4.5)
+            .background(
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(Color.white)
+                    .stroke(Color.gray.opacity(0.5), lineWidth: 1)
+            )
+    }
+}
+
+extension View {
+    func borderedTextStyle() -> some View {
+        self.modifier(BorderedTextStyle())
+    }
 }
