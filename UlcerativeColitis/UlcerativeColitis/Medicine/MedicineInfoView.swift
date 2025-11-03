@@ -195,9 +195,7 @@ struct MedicineInfoView: View {
                 .background(.gray)
                 .padding(.horizontal)
             
-            VStack(alignment: .leading) {
-                Text("効果")
-                    .font(.callout)
+            ZStack(alignment: .topLeading) {
                 TextEditor(text: $effect)
                     .frame(maxWidth: .infinity)
                     .frame(height: 60)
@@ -206,6 +204,10 @@ struct MedicineInfoView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color.gray.opacity(0.4))
                     )
+                Text("効果")
+                    .foregroundColor(effect.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 10)
             }
             .padding(.horizontal)
             
@@ -259,24 +261,19 @@ struct MedicineInfoView: View {
                 .background(.gray)
                 .padding(.horizontal)
             
-            VStack(alignment: .leading) {
+            ZStack(alignment: .topLeading) {
+                TextEditor(text: $memo)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 60)
+                    .padding(2)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.4))
+                    )
                 Text("メモ")
-                    .font(.callout)
-                ZStack(alignment: .topLeading) {
-                    TextEditor(text: $memo)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 60)
-                        .padding(2)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.gray.opacity(0.4))
-                        )
-                    Text("メモ")
-//                        .foregroundColor(memo.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 10)
-                    
-                }
+                    .foregroundColor(memo.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 10)
             }
             .padding(.horizontal)
             
