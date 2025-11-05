@@ -39,6 +39,12 @@ struct MedicineInfoView: View {
     @State private var selectedUnit: UnitArray?
     @State private var selectedStockUnit: UnitArray? //在庫用単位の選択状態
     
+    var isNewMedicine: Bool {
+        // IDが空文字列なら新規（実際にはUUIDが自動生成されるので別の判定が必要）
+        // または、medicine.medicineNameが空なら新規と判定
+        medicine.realm == nil  // Realmに保存されていなければ新規
+    }
+    
     var body: some View {
         VStack(spacing: 20) {
             VStack(alignment: .leading) {
@@ -340,47 +346,87 @@ struct MedicineInfoView: View {
         let realm = try! Realm()
         
         try! realm.write {
-            let model = MedicineInfo()
-            model.medicineName = medicineName
-            model.dosage = dosage
-            model.morningDosage = morningDosage
-            model.noonDosage = noonDosage
-            model.eveningDosage = eveningDosage
-            model.effect = effect
-            model.memo = memo
-            model.secondTiming = selectedSecondTiming
-            model.firstTiming.append(objectsIn: Array(selectedFirstTimings))
-            if let stockInt = Int(stock) {
-                model.stock = stockInt
+            if isNewMedicine {
+                // 新規作成
+                let model = MedicineInfo()
+                model.medicineName = medicineName
+                model.dosage = dosage
+                model.morningDosage = morningDosage
+                model.noonDosage = noonDosage
+                model.eveningDosage = eveningDosage
+                model.effect = effect
+                model.memo = memo
+                model.secondTiming = selectedSecondTiming
+                model.firstTiming.append(objectsIn: Array(selectedFirstTimings))
+                
+                if let selectedUnit = selectedUnit {
+                    model.unit = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
+                }
+                
+                if let selectedStockUnit = selectedStockUnit {
+                    let stockUnit = StockUnit()
+                    stockUnit.unit = realm.create(UnitArray.self, value: selectedStockUnit, update: .modified)
+                    model.stockUnit = stockUnit
+                }
+                
+                if let stockInt = Int(stock) {
+                    model.stock = stockInt
+                }
+                
+                for t in tentativeTime {
+                    let tModel = MedicineTime()
+                    tModel.time = t
+                    model.time.append(tModel)
+                }
+                
+                realm.add(model)
             } else {
-                model.stock = 0 // またはエラーハンドリング
+                // 既存データの更新
+                if let thawedMedicine = medicine.thaw() {
+                    thawedMedicine.medicineName = medicineName
+                    thawedMedicine.dosage = dosage
+                    thawedMedicine.morningDosage = morningDosage
+                    thawedMedicine.noonDosage = noonDosage
+                    thawedMedicine.eveningDosage = eveningDosage
+                    thawedMedicine.effect = effect
+                    thawedMedicine.memo = memo
+                    thawedMedicine.secondTiming = selectedSecondTiming
+                    
+                    thawedMedicine.firstTiming.removeAll()
+                    thawedMedicine.firstTiming.append(objectsIn: Array(selectedFirstTimings))
+                    
+                    if let selectedUnit = selectedUnit {
+                        thawedMedicine.unit = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
+                    } else {
+                        thawedMedicine.unit = nil
+                    }
+                    
+                    if let selectedStockUnit = selectedStockUnit {
+                        if thawedMedicine.stockUnit == nil {
+                            thawedMedicine.stockUnit = StockUnit()
+                        }
+                        thawedMedicine.stockUnit?.unit = realm.create(UnitArray.self, value: selectedStockUnit, update: .modified)
+                    } else {
+                        thawedMedicine.stockUnit = nil
+                    }
+                    
+                    if let stockInt = Int(stock) {
+                        thawedMedicine.stock = stockInt
+                    } else {
+                        thawedMedicine.stock = nil
+                    }
+                    
+                    thawedMedicine.time.removeAll()
+                    for t in tentativeTime {
+                        let tModel = MedicineTime()
+                        tModel.time = t
+                        thawedMedicine.time.append(tModel)
+                    }
+                }
             }
-
-            // Optional に安全代入
-            if let selectedUnit = selectedUnit {
-                model.unit = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
-            }
-            
-            if let selectedStockUnit = selectedStockUnit {
-                let stockUnit = StockUnit()
-                stockUnit.unit = realm.create(UnitArray.self, value: selectedStockUnit, update: .modified)
-                model.stockUnit = stockUnit
-            }
-            
-            
-            // 時間リストの仮保存（tentativeTime → MedicineTime 変換）
-            for t in tentativeTime {
-                let tModel = MedicineTime()
-                tModel.time = t
-                model.time.append(tModel)
-            }
-            
-            realm.add(model)
-            
-            selectedFirstTimings = []
         }
     }
-
+    
     private func toggle(_ timing: FirstTiming) {
         if selectedFirstTimings.contains(timing) {
             selectedFirstTimings.remove(timing)
