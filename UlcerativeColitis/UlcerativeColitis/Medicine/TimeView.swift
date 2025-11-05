@@ -11,7 +11,8 @@ import RealmSwift
 struct TimeView: View {
     
     
-    @State private var time: Date = Date()
+//    @State private var time: Date = Date()
+    @Binding var time: Date
     
     var done: () -> Void
     

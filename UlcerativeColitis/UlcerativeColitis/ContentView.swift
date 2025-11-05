@@ -15,10 +15,12 @@ struct ContentView: View {
     @State private var selectDay: Date = Date()
     
     var body: some View {
-        CalendarView(selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDate: $selectedDate, selectDay: $selectDay)
-        HStack {
-            RecordView(selectedYear: selectedYear, selectedMonth: selectedMonth, selectedDate: selectedDate, selectDay: $selectDay)
-            ScheduleView(selectDay: $selectDay)
+        VStack {
+            CalendarView(selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDate: $selectedDate, selectDay: $selectDay)
+            HStack {
+                RecordView(selectedYear: selectedYear, selectedMonth: selectedMonth, selectedDate: selectedDate, selectDay: $selectDay)
+                ScheduleView(selectDay: $selectDay)
+            }
         }
     }
 }

@@ -221,16 +221,16 @@ struct CalendarView: View {
                     }
             )
             
-//            Text(dateFormatter.string(from: selectedDay))
-            Button {
-                show.toggle()
-            } label: {
-                Image(systemName: "plus")
-            }
-            .sheet(isPresented: $show) {
-                MedicineInfoView()
-            }
-
+            //            Text(dateFormatter.string(from: selectedDay))
+//            Button {
+//                show.toggle()
+//            } label: {
+//                Image(systemName: "plus")
+//            }
+//            .sheet(isPresented: $show) {
+//                MedicineInfoView(medicine: MedicineInfo())
+//            }
+            
             
             Spacer()
         }

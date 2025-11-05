@@ -84,16 +84,21 @@ class StoolRecord: Object, Identifiable {
 class MedicineInfo: Object, Identifiable {
     @Persisted(primaryKey: true) var id: String = UUID().uuidString
     @Persisted var medicineName: String //お薬の名前
-    @Persisted var unit = List<UnitArray>() //単位
-    @Persisted var dosage: Int //用量
+//    @Persisted var unit = List<UnitArray>() //単位
+    @Persisted var unit: UnitArray? //単位
+    @Persisted var dosage: Int? //用量
+    @Persisted var morningDosage: Int? //朝用量
+    @Persisted var noonDosage: Int? //昼用量
+    @Persisted var eveningDosage: Int? //夕用量
     @Persisted var firstTiming = List<FirstTiming>() //服用タイミング
     @Persisted var secondTiming: SecondTiming //服用タイミング
     @Persisted var time = List<MedicineTime>() //服用時間
-    @Persisted var effect: String //効果
-    @Persisted var stock: Int //在庫
-    @Persisted var stockUnit = List<StockUnit>() //在庫よう単位
+    @Persisted var effect: String? //効果
+    @Persisted var stock: Int? //在庫
+//    @Persisted var stockUnit = List<StockUnit>() //在庫よう単位
+    @Persisted var stockUnit: StockUnit? //在庫用単位
     @Persisted var isUsing: Bool = true //使用or不使用
-    @Persisted var memo: String //メモ
+    @Persisted var memo: String? //メモ
 }
 
 class MedicineTime: Object, Identifiable {
@@ -113,7 +118,7 @@ class UnitArray: Object, Identifiable {
 
 class StockUnit: Object, Identifiable {
     @Persisted(primaryKey: true) var id: String = UUID().uuidString
-    @Persisted var unit = List<UnitArray>()
+    @Persisted var unit: UnitArray?
 }
 
 class Schedule: Object, Identifiable {

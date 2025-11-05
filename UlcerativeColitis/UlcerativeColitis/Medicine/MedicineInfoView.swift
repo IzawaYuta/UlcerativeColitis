@@ -15,15 +15,20 @@ struct MedicineInfoView: View {
 //    @ObservedResults(MedicineInfo.self) var medicineInfo
     @ObservedResults(MedicineTime.self) var times
     
+    @ObservedRealmObject var medicine: MedicineInfo
+    
     @State private var medicineName: String = ""
     @State private var dosage: Int = 0
     @State private var selectedFirstTimings: Set<FirstTiming> = []
+    @State private var tentativeTime: [Date] = []
     @State private var selectedSecondTiming: SecondTiming = .justBeforeMeals
     @State private var draftSecondTiming: SecondTiming = .justBeforeMeals
     @State private var effect: String = ""
     @State private var stock: String = ""
     @State private var memo: String = ""
-    @State private var morningDosage: String = ""
+    @State private var morningDosage: Int = 0
+    @State private var noonDosage: Int = 0
+    @State private var eveningDosage: Int = 0
     @State private var showPicker = false
     @State private var time: Date = Date()
     
@@ -66,17 +71,8 @@ struct MedicineInfoView: View {
                 Button(action: {
                     showCustomUnitView.toggle()
                 }) {
-                    if let selectedUnit = selectedUnit,
-                       unitArray.contains(where: { $0.id == selectedUnit.id }) {
-                        Text(selectedUnit.unitName)
-                            .borderedTextStyle()
-                    } else if let firstUnit = unitArray.first {
-                        Text(firstUnit.unitName)  // 配列の最初を表示
-                            .borderedTextStyle()
-                    } else {
-                        Text("-")  // 何もなければ "-"
-                            .borderedTextStyle()
-                    }
+                    Text(getDosageUnitDisplayText())
+                        .borderedTextStyle()
                 }
                 .sheet(isPresented: $showCustomUnitView) {
                     CustomUnitView(selectedUnit: $selectedUnit,
@@ -108,13 +104,13 @@ struct MedicineInfoView: View {
                             draftSecondTiming = selectedSecondTiming
                             showPicker.toggle()
                         }) {
-                            if let firstMedicine = medicineInfo.first {
-                                Text(firstMedicine.secondTiming.japaneseText)
-                                    .foregroundColor(.black)
-                            } else {
+//                            if let firstMedicine = medicineInfo.first {
+//                                Text(firstMedicine.secondTiming.japaneseText)
+//                                    .foregroundColor(.black)
+//                            } else {
                                 Text(selectedSecondTiming.japaneseText)
                                     .foregroundColor(.black)
-                            }
+//                            }
                         }
                         .padding(.horizontal)
                         .background(
@@ -127,7 +123,7 @@ struct MedicineInfoView: View {
                                              cancel: { showPicker = false},
                                              done: { showPicker = false
                                 selectedSecondTiming = draftSecondTiming
-                                saveSecondTiming()
+//                                saveSecondTiming()
                             }
                             )
                             .presentationDetents([.height(250)])
@@ -153,18 +149,8 @@ struct MedicineInfoView: View {
                                             }
                                             .frame(width: 100, height: 30)
                                         HStack {
-                                            TextField("", text: $morningDosage)
-                                                .textFieldStyle(.roundedBorder)
-                                                .multilineTextAlignment(.trailing)
-                                                .frame(width: 100)
-                                            if let selectedUnit = selectedUnit,
-                                               unitArray.contains(where: { $0.id == selectedUnit.id }) {
-                                                Text(selectedUnit.unitName)
-                                            } else if let firstUnit = unitArray.first {
-                                                Text(firstUnit.unitName)  // 配列の最初を表示
-                                            } else {
-                                                Text("-")  // 何もなければ "-"
-                                            }
+                                            dosageTextField(for: timing)
+                                            Text(getUnitDisplayText())
                                         }
                                     }
                                 }
@@ -192,27 +178,37 @@ struct MedicineInfoView: View {
                         }
                     }
                     
-                    ForEach(times, id: \.id) { timeEntry in
-                        HStack {
+//                    ForEach(times, id: \.id) { timeEntry in
+//                        HStack {
+//                            Text(timeEntry.time.formatted(date: .omitted, time: .shortened))
+//                                .font(.system(size: 15))
+//                            
+//                            Spacer()
+//                            
+//                            Button(action: {
+//                                deleteTime(timeEntry)
+//                            }) {
+//                                Image(systemName: "trash")
+//                                    .foregroundColor(.red)
+//                                    .font(.system(size: 14))
+//                            }
+//                        }
+//                        .padding(.horizontal, 12)
+//                        .padding(.vertical, 8)
+//                        .background(
+//                            RoundedRectangle(cornerRadius: 8)
+//                                .fill(Color.white)
+//                        )
+//                    }
+                    
+                    if let firstMedicine = medicineInfo.first, !firstMedicine.time.isEmpty {
+                        ForEach(firstMedicine.time, id: \.id) { timeEntry in
                             Text(timeEntry.time.formatted(date: .omitted, time: .shortened))
-                                .font(.system(size: 15))
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                deleteTime(timeEntry)
-                            }) {
-                                Image(systemName: "trash")
-                                    .foregroundColor(.red)
-                                    .font(.system(size: 14))
-                            }
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.white)
-                        )
+                    } else {
+                        ForEach(tentativeTime, id: \.self) { time in
+                            Text(time.formatted(date: .omitted, time: .shortened))
+                        }
                     }
                     
                     Button(action: {
@@ -228,9 +224,10 @@ struct MedicineInfoView: View {
                             )
                     }
                     .sheet(isPresented: $showTimeView) {
-                        TimeView(done: {
+                        TimeView(time: $time, done: {
                             showTimeView = false
-                            saveTime()
+                            tentativeTime.append(time)
+//                            saveTime()
                         })
                     }
                 }
@@ -270,31 +267,19 @@ struct MedicineInfoView: View {
                     .background(Color.gray.opacity(0.2))
                     .padding(.horizontal, 8)
                 
-                TextField("", text: $stock)
+//                TextField("", text: String($stock))
+//                    .textFieldStyle(.roundedBorder)
+//                    .multilineTextAlignment(.trailing)
+//                    .frame(width: 100)
+                TextField("在庫数", text: $stock)
+                    .keyboardType(.numberPad)
                     .textFieldStyle(.roundedBorder)
-                    .multilineTextAlignment(.trailing)
-                    .frame(width: 100)
-                
+
                 Button(action: {
                     showStockUnitView.toggle()
                 }) {
-                    if let firstStockUnit = medicineInfo.first?.stockUnit.first?.unit.first {
-                        Text(firstStockUnit.unitName)
-                            .borderedTextStyle()
-                    } else if let selectedStockUnit = selectedStockUnit,
-                              unitArray.contains(where: { $0.id == selectedStockUnit.id }) {
-                        Text(selectedStockUnit.unitName)
-                            .borderedTextStyle()
-                    } else if let selectedUnit = selectedUnit,
-                              unitArray.contains(where: { $0.id == selectedUnit.id }) {
-                        Text(selectedUnit.unitName)
-                            .borderedTextStyle()
-                    } else if let firstUnit = unitArray.first {
-                        Text(firstUnit.unitName)
-                            .borderedTextStyle()
-                    } else {
-                        Text("-")
-                    }
+                    Text(getStockUnitDisplayText())
+                        .borderedTextStyle()
                 }
                 .sheet(isPresented: $showStockUnitView) {
                     CustomUnitView(selectedUnit: $selectedStockUnit,
@@ -323,16 +308,79 @@ struct MedicineInfoView: View {
             }
             .padding(.horizontal)
             
+            Button(action: {
+                saveMedicine()
+            }) {
+                Text("保存")
+            }
+            
             Spacer()
         }
+        .padding()
         .background(Color.gray.opacity(0.1))
         .onAppear {
-            if let loadMedicineInfo = medicineInfo.first {
-                selectedFirstTimings = Set(loadMedicineInfo.firstTiming)
-            }
+            // 既存の medicine オブジェクトから値を反映
+            selectedFirstTimings = Set(medicine.firstTiming)
+            medicineName = medicine.medicineName
+            dosage = medicine.dosage ?? 0
+            morningDosage = medicine.morningDosage ?? 0
+            noonDosage = medicine.noonDosage ?? 0
+            eveningDosage = medicine.eveningDosage ?? 0
+            effect = medicine.effect ?? ""
+            stock = String(medicine.stock ?? 0)
+            memo = medicine.memo ?? ""
+            selectedSecondTiming = medicine.secondTiming
+            selectedUnit = medicine.unit
+            selectedStockUnit = medicine.stockUnit?.unit
+            tentativeTime = medicine.time.map { $0.time }
         }
     }
     
+    private func saveMedicine() {
+        let realm = try! Realm()
+        
+        try! realm.write {
+            let model = MedicineInfo()
+            model.medicineName = medicineName
+            model.dosage = dosage
+            model.morningDosage = morningDosage
+            model.noonDosage = noonDosage
+            model.eveningDosage = eveningDosage
+            model.effect = effect
+            model.memo = memo
+            model.secondTiming = selectedSecondTiming
+            model.firstTiming.append(objectsIn: Array(selectedFirstTimings))
+            if let stockInt = Int(stock) {
+                model.stock = stockInt
+            } else {
+                model.stock = 0 // またはエラーハンドリング
+            }
+
+            // Optional に安全代入
+            if let selectedUnit = selectedUnit {
+                model.unit = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
+            }
+            
+            if let selectedStockUnit = selectedStockUnit {
+                let stockUnit = StockUnit()
+                stockUnit.unit = realm.create(UnitArray.self, value: selectedStockUnit, update: .modified)
+                model.stockUnit = stockUnit
+            }
+            
+            
+            // 時間リストの仮保存（tentativeTime → MedicineTime 変換）
+            for t in tentativeTime {
+                let tModel = MedicineTime()
+                tModel.time = t
+                model.time.append(tModel)
+            }
+            
+            realm.add(model)
+            
+            selectedFirstTimings = []
+        }
+    }
+
     private func toggle(_ timing: FirstTiming) {
         if selectedFirstTimings.contains(timing) {
             selectedFirstTimings.remove(timing)
@@ -379,14 +427,14 @@ struct MedicineInfoView: View {
     }
     
     private func saveTime() {
-        let realm = try! Realm()
-        
-        
-        try! realm.write {
-            let model = MedicineTime()
-            model.time = time
-            realm.add(model)
-        }
+//        let realm = try! Realm()
+//        
+//        
+//        try! realm.write {
+//            let model = MedicineTime()
+//            model.time = time
+//            realm.add(model)
+//        }
     }
 
     
@@ -416,11 +464,63 @@ struct MedicineInfoView: View {
             return .gray.opacity(0.3)
         }
     }
+    
+    private func getStockUnitDisplayText() -> String {
+        if let firstStockUnit = medicineInfo.first?.stockUnit,
+           let unitName = firstStockUnit.unit?.unitName {
+            return unitName
+        } else if let selectedStockUnit = selectedStockUnit {
+            return selectedStockUnit.unitName
+        } else if let selectedUnit = selectedUnit {
+            return selectedUnit.unitName
+        } else if let firstUnit = unitArray.first {
+            return firstUnit.unitName
+        } else {
+            return "-"
+        }
+    }
+    
+    // ヘルパー関数
+    @ViewBuilder
+    private func dosageTextField(for timing: FirstTiming) -> some View {
+        switch timing {
+        case .morning:
+            TextField("", value: $morningDosage, format: .number)
+        case .noon:
+            TextField("", value: $noonDosage, format: .number)
+        case .evening:
+            TextField("", value: $eveningDosage, format: .number)
+        default:
+            EmptyView()
+        }
+    }
+    
+    private func getUnitDisplayText() -> String {
+        if let selectedUnit = selectedUnit,
+           unitArray.contains(where: { $0.id == selectedUnit.id }) {
+            return selectedUnit.unitName
+        } else if let firstUnit = unitArray.first {
+            return firstUnit.unitName
+        } else {
+            return "-"
+        }
+    }
+    
+    private func getDosageUnitDisplayText() -> String {
+        if let selectedUnit = selectedUnit,
+           unitArray.contains(where: { $0.id == selectedUnit.id }) {
+            return selectedUnit.unitName
+        } else if let firstUnit = unitArray.first {
+            return firstUnit.unitName
+        } else {
+            return "-"
+        }
+    }
 }
 
-#Preview {
-    MedicineInfoView()
-}
+//#Preview {
+//    MedicineInfoView(, medicine: <#MedicineInfo#>)
+//}
 
 struct BorderedTextStyle: ViewModifier {
     func body(content: Content) -> some View {
