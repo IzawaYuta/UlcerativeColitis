@@ -164,6 +164,7 @@ struct MedicineInfoView: View {
                                             dosageTextField(for: timing)
                                                 .keyboardType(.decimalPad)
                                             Text(getUnitDisplayText())
+                                                .foregroundColor(isDosageEmpty(for: timing) ? .gray : .black)
                                         }
                                     }
                                 }
@@ -602,11 +603,24 @@ struct MedicineInfoView: View {
             return "-"
         }
     }
+    
+    private func isDosageEmpty(for timing: FirstTiming) -> Bool {
+        switch timing {
+        case .morning:
+            return morningDosageText.isEmpty
+        case .noon:
+            return noonDosageText.isEmpty
+        case .evening:
+            return eveningDosageText.isEmpty
+        default:
+            return true
+        }
+    }
 }
 
-//#Preview {
-//    MedicineInfoView(, medicine: <#MedicineInfo#>)
-//}
+#Preview {
+    MedicineInfoView(medicine: MedicineInfo())
+}
 
 struct BorderedTextStyle: ViewModifier {
     func body(content: Content) -> some View {
