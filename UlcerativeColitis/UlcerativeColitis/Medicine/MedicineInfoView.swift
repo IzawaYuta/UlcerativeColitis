@@ -78,6 +78,7 @@ struct MedicineInfoView: View {
                     .multilineTextAlignment(.trailing)
                     .frame(width: 100)
                     .textFieldStyle(.roundedBorder)
+                    .keyboardType(.decimalPad)
                 
                 Button(action: {
                     showCustomUnitView.toggle()
@@ -161,6 +162,7 @@ struct MedicineInfoView: View {
                                             .frame(width: 100, height: 30)
                                         HStack {
                                             dosageTextField(for: timing)
+                                                .keyboardType(.decimalPad)
                                             Text(getUnitDisplayText())
                                         }
                                     }
@@ -285,6 +287,7 @@ struct MedicineInfoView: View {
                 TextField("在庫数", text: $stockText)
                     .keyboardType(.numberPad)
                     .textFieldStyle(.roundedBorder)
+                    .keyboardType(.decimalPad)
 
                 Button(action: {
                     showStockUnitView.toggle()
