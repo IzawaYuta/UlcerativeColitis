@@ -15,37 +15,78 @@ struct StoolRecordList: View {
     
     @Binding var selectDay: Date
     
+    var showView: () -> Void
+    
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy/MM/dd HH:mm"
+        formatter.dateFormat = "HH:mm"
         return formatter
     }()
     
     var body: some View {
         let day = dayRecord.first { Calendar.current.isDate($0.date, inSameDayAs: selectDay) }
-        
-        if let day = day {
-            List {
-                ForEach(day.stoolRecord, id: \.self) { stool in
-                    VStack {
+        VStack(alignment: .leading, spacing: -25) {
+            if let day = day {
+                List {
+                    ForEach(day.stoolRecord, id: \.self) { stool in
                         HStack {
-                            //                        Text(dateFormatter.string(from: day.date))       // 日付（DayRecord）
-                            Text(dateFormatter.string(from: stool.time))
-                            Spacer()
                             Text("\(stool.amount)")
+                            
+                            Spacer()
+                            
+                            if stool.type.isEmpty {
+                                Text("-")
+                            } else {
+                                Text(stool.type.map { $0.rawValue }.joined(separator: "、"))
+                            }
+                            
+                            Spacer()
+                            
+                            Text(dateFormatter.string(from: stool.time))
                         }
-                        if stool.type.isEmpty {
-                            Text("-")
-                        } else {
-                            Text(stool.type.map { $0.rawValue }.joined(separator: "、"))
-                        }
+                        .padding(.horizontal, 7)
+                    }
+                    .onDelete { indexSet in
+                        deleteStoolRecords(at: indexSet, in: day)
                     }
                 }
+            }
+            Button(action: {
+                showView()
+            }) {
+                Text("閉じる")
+                    .foregroundColor(.black)
+                    .font(.system(size: 15))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 40)
+                    .background(
+                        RoundedRectangle(cornerRadius: 18)
+                            .fill(Color.gray.opacity(0.4))
+                    )
+            }
+            .padding(.horizontal)
+        }
+        .scrollContentBackground(.hidden)
+        .background(Color.gray.opacity(0.1).ignoresSafeArea())
+    }
+    
+    private func deleteStoolRecords(at offsets: IndexSet, in day: DayRecord) {
+        let realm = try! Realm()
+        
+        guard let thawedDay = day.thaw() else { return }
+        
+        try! realm.write {
+            let itemsToDelete = offsets.map { thawedDay.stoolRecord[$0] }
+            realm.delete(itemsToDelete)
+            
+            // 削除後に amount を再設定
+            for (index, stool) in thawedDay.stoolRecord.enumerated() {
+                stool.amount = index + 1
             }
         }
     }
 }
 
 #Preview {
-    StoolRecordList(selectDay: .constant(Date()))
+    StoolRecordList(selectDay: .constant(Date()), showView: {})
 }

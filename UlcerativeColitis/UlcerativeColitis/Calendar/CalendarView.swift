@@ -6,8 +6,13 @@
 //
 
 import SwiftUI
+import RealmSwift
 
 struct CalendarView: View {
+    
+    @ObservedResults(DayRecord.self) var dayRecord
+    @ObservedResults(Schedule.self) var schedule
+    
     @State private var year = Calendar.current.component(.year, from: Date())
     @State private var month = Calendar.current.component(.month, from: Date())
     var day = Calendar.current.component(.day, from: Date())
@@ -23,6 +28,8 @@ struct CalendarView: View {
     @State private var selectedDay: Date = Date() //選択中の日付
     @Binding var selectDay: Date //配布用日付
     @State private var isSelected = false //初期は選択しない
+    
+    @State var show = false
     
     private let model = CalendarModel()
     private let weekdays = ["日", "月", "火", "水", "木", "金", "土"]
@@ -47,7 +54,7 @@ struct CalendarView: View {
                 Button(action: {
                     showDatePicker = true
                 }) {
-                    Text("\(String(year))年\(month)月")
+                    Text("\(String(year))年\(month)月\(Calendar.current.component(.day, from: selectedDay))日")
                         .font(.title2)
                         .foregroundColor(.black)
                         .bold()
@@ -93,6 +100,24 @@ struct CalendarView: View {
                     Image(systemName: "chevron.right")
                         .foregroundColor(.black)
                 }
+                
+                Button(action: {
+                    let today = Date()
+                    let calendar = Calendar.current
+                    year = calendar.component(.year, from: today)
+                    month = calendar.component(.month, from: today)
+                    selectedDay = today
+                    selectDay = today
+                    isSelected = true
+                }) {
+                    Text("今日")
+                        .font(.subheadline)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(8)
+                }
+                
                 Spacer()
             }
             .padding(.horizontal)
@@ -120,19 +145,11 @@ struct CalendarView: View {
                 ForEach(allDays.indices, id: \.self) { index in
                     let text = allDays[index]
                     let dayInt = Int(text) ?? -1
+                    let cellDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt))
+                    let cellDayRecord = dayRecord.first { Calendar.current.isDate($0.date, inSameDayAs: cellDate ?? Date()) }
                     ZStack(alignment: .center) {
                         // 選択中の日付なら青く塗る
-                        if isSelected, let cellDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt)),
-                           Calendar.current.isDate(cellDate, inSameDayAs: selectedDay) {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.orange.opacity(0.3))
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 40)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(Color.orange, lineWidth: 2)
-                                )
-                        } else if (isToday(day: dayInt)) {
+                        if (isToday(day: dayInt)) {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.blue.opacity(0.3))
                                 .frame(maxWidth: .infinity)
@@ -140,6 +157,16 @@ struct CalendarView: View {
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
                                         .stroke(Color.blue, lineWidth: 2)
+                                )
+                        } else if isSelected, let cellDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt)),
+                                  Calendar.current.isDate(cellDate, inSameDayAs: selectedDay) {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.orange.opacity(0.3))
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 40)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.orange, lineWidth: 2)
                                 )
                         } else {
                             RoundedRectangle(cornerRadius: 8)
@@ -152,9 +179,15 @@ struct CalendarView: View {
                             Text(text)
                                 .font(.system(size: 15))
                                 .bold()
-                            Circle()
-                                .fill(Color.red)
-                                .frame(width: 5, height: 5)
+                            if let cellDayRecord = cellDayRecord, !cellDayRecord.schedule.isEmpty {
+                                Circle()
+                                    .fill(Color.red)
+                                    .frame(width: 5, height: 5)
+                            } else {
+                                Circle()
+                                    .fill(Color.clear)
+                                    .frame(width: 5, height: 5)
+                            }
                         }
                     }
                     .onTapGesture {
@@ -172,8 +205,32 @@ struct CalendarView: View {
                 }
             }
             .padding(.horizontal, 8)
+            .gesture(
+                DragGesture()
+                    .onEnded { value in
+                        // 横方向の移動距離
+                        let horizontalAmount = value.translation.width
+                        
+                        if horizontalAmount < -50 {
+                            // 左スワイプ → 次の月へ
+                            changeMonth(1)
+                        } else if horizontalAmount > 50 {
+                            // 右スワイプ → 前の月へ
+                            changeMonth(-1)
+                        }
+                    }
+            )
             
-            Text(dateFormatter.string(from: selectedDay))
+            //            Text(dateFormatter.string(from: selectedDay))
+//            Button {
+//                show.toggle()
+//            } label: {
+//                Image(systemName: "plus")
+//            }
+//            .sheet(isPresented: $show) {
+//                MedicineInfoView(medicine: MedicineInfo())
+//            }
+            
             
             Spacer()
         }
