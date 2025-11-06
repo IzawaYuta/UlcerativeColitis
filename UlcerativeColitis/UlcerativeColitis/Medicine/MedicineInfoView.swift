@@ -74,11 +74,15 @@ struct MedicineInfoView: View {
                     .background(Color.gray.opacity(0.2))
                     .padding(.horizontal, 8)
                 
-                TextField("", text: $dosageText)
+//                TextField("", text: $dosageText)
+//                    .multilineTextAlignment(.trailing)
+//                    .frame(width: 100)
+//                    .textFieldStyle(.roundedBorder)
+//                    .keyboardType(.decimalPad)
+                NoMenuTextField(text: $dosageText, keyboardType: .decimalPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 100)
                     .textFieldStyle(.roundedBorder)
-                    .keyboardType(.decimalPad)
                 
                 Button(action: {
                     showCustomUnitView.toggle()
@@ -162,7 +166,10 @@ struct MedicineInfoView: View {
                                             .frame(width: 100, height: 30)
                                         HStack {
                                             dosageTextField(for: timing)
-                                                .keyboardType(.decimalPad)
+                                                .multilineTextAlignment(.trailing)
+                                                .frame(width: 100)
+                                                .textFieldStyle(.roundedBorder)
+                                            
                                             Text(getUnitDisplayText())
                                                 .foregroundColor(isDosageEmpty(for: timing) ? .gray : .black)
                                         }
@@ -285,11 +292,15 @@ struct MedicineInfoView: View {
 //                    .textFieldStyle(.roundedBorder)
 //                    .multilineTextAlignment(.trailing)
 //                    .frame(width: 100)
-                TextField("在庫数", text: $stockText)
-                    .keyboardType(.numberPad)
+//                TextField("在庫数", text: $stockText)
+//                    .keyboardType(.numberPad)
+//                    .textFieldStyle(.roundedBorder)
+//                    .keyboardType(.decimalPad)
+                NoMenuTextField(text: $stockText, keyboardType: .decimalPad)
+                    .multilineTextAlignment(.trailing)
+                    .frame(width: 100)
                     .textFieldStyle(.roundedBorder)
-                    .keyboardType(.decimalPad)
-
+                
                 Button(action: {
                     showStockUnitView.toggle()
                 }) {
@@ -572,11 +583,11 @@ struct MedicineInfoView: View {
     private func dosageTextField(for timing: FirstTiming) -> some View {
         switch timing {
         case .morning:
-            TextField("", text: $morningDosageText)
+            NoMenuTextField(text: $morningDosageText, keyboardType: .decimalPad)
         case .noon:
-            TextField("", text: $noonDosageText)
+            NoMenuTextField(text: $noonDosageText, keyboardType: .decimalPad)
         case .evening:
-            TextField("", text: $eveningDosageText)
+            NoMenuTextField(text: $eveningDosageText, keyboardType: .decimalPad)
         default:
             EmptyView()
         }
