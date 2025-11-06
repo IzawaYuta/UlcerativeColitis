@@ -45,6 +45,16 @@ struct NoMenuTextField: UIViewRepresentable {
 }
 
 class NoMenuUITextField: UITextField {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.textAlignment = .right // ← 右詰めを追加
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.textAlignment = .right // ← nib経由でも右詰め
+    }
+    
     // コピー、ペースト、選択などすべてのメニューを無効化
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         return false

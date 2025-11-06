@@ -80,7 +80,6 @@ struct MedicineInfoView: View {
 //                    .textFieldStyle(.roundedBorder)
 //                    .keyboardType(.decimalPad)
                 NoMenuTextField(text: $dosageText, keyboardType: .decimalPad)
-                    .multilineTextAlignment(.trailing)
                     .frame(width: 100)
                     .textFieldStyle(.roundedBorder)
                 
@@ -166,7 +165,6 @@ struct MedicineInfoView: View {
                                             .frame(width: 100, height: 30)
                                         HStack {
                                             dosageTextField(for: timing)
-                                                .multilineTextAlignment(.trailing)
                                                 .frame(width: 100)
                                                 .textFieldStyle(.roundedBorder)
                                             
@@ -297,7 +295,6 @@ struct MedicineInfoView: View {
 //                    .textFieldStyle(.roundedBorder)
 //                    .keyboardType(.decimalPad)
                 NoMenuTextField(text: $stockText, keyboardType: .decimalPad)
-                    .multilineTextAlignment(.trailing)
                     .frame(width: 100)
                     .textFieldStyle(.roundedBorder)
                 
@@ -408,6 +405,21 @@ struct MedicineInfoView: View {
                 }
                 
                 realm.add(model)
+                
+                medicineName = ""
+                dosageText = ""
+                selectedUnit = nil
+                selectedFirstTimings = []
+                morningDosageText = ""
+                noonDosageText = ""
+                eveningDosageText = ""
+                selectedSecondTiming = .justBeforeMeals
+                effect = ""
+                stockText = ""
+                selectedStockUnit = nil
+                memo = ""
+                tentativeTime = []
+                
             } else {
                 // 既存データの更新
                 if let thawedMedicine = medicine.thaw() {
