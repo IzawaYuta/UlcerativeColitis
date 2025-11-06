@@ -17,6 +17,8 @@ struct MedicineInfoView: View {
     
     @ObservedRealmObject var medicine: MedicineInfo
     
+    @Environment(\.dismiss) private var dismiss
+    
     @State private var medicineName: String = ""
     @State private var dosage: Int?
     @State private var dosageText: String = ""
@@ -40,6 +42,7 @@ struct MedicineInfoView: View {
     @State private var showCustomUnitView = false
     @State private var showStockUnitView = false //在庫単位選択用シート表示
     @State private var showTimeView = false
+    @State private var showDeleteAlert = false
     
     @State private var selectedUnit: UnitArray?
     @State private var selectedStockUnit: UnitArray? //在庫用単位の選択状態
@@ -331,10 +334,35 @@ struct MedicineInfoView: View {
             }
             .padding(.horizontal)
             
-            Button(action: {
-                saveMedicine()
-            }) {
-                Text("保存")
+            HStack {
+                Button(action: {
+                    saveMedicine()
+                }) {
+                    Text("保存")
+                }
+                
+                Button(action: {
+                    showDeleteAlert.toggle()
+                }) {
+                    Text("削除")
+                }
+                .alert("削除の確認", isPresented: $showDeleteAlert) {
+                    Button("キャンセル", role: .cancel) {}
+                    Button("削除") {
+                        deleteMedicine(by: medicine.id)
+                        dismiss()
+                    }
+                } message: {
+                    Text("「\(medicine.medicineName)」を削除しますか？")
+                }
+
+//                .alert("削除", message: "本当に削除しますか？", isPresented: $showDeleteAlert) {
+//                    Button("キャンセル", role: .cancel) {}
+//                    Button("削除") {
+//                        deleteMedicine(by: medicine.id)
+//                        dismiss()
+//                    }
+//                }
             }
             
             Spacer()
@@ -637,6 +665,20 @@ struct MedicineInfoView: View {
             return eveningDosageText.isEmpty
         default:
             return true
+        }
+    }
+    
+    private func deleteMedicine(by id: String) {
+        let realm = try! Realm()
+        
+        try! realm.write {
+            if let medicineToDelete = realm.object(ofType: MedicineInfo.self, forPrimaryKey: id) {
+                // 関連オブジェクトも削除したい場合はここで削除
+                // realm.delete(medicineToDelete.time)
+                // realm.delete(medicineToDelete.unit)
+                
+                realm.delete(medicineToDelete)
+            }
         }
     }
 }
