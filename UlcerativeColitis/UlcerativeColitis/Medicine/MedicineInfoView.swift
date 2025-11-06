@@ -18,17 +18,22 @@ struct MedicineInfoView: View {
     @ObservedRealmObject var medicine: MedicineInfo
     
     @State private var medicineName: String = ""
-    @State private var dosage: Int = 0
+    @State private var dosage: Int?
+    @State private var dosageText: String = ""
     @State private var selectedFirstTimings: Set<FirstTiming> = []
     @State private var tentativeTime: [Date] = []
     @State private var selectedSecondTiming: SecondTiming = .justBeforeMeals
     @State private var draftSecondTiming: SecondTiming = .justBeforeMeals
     @State private var effect: String = ""
-    @State private var stock: String = ""
+    @State private var stock: Int?
+    @State private var stockText: String = ""
     @State private var memo: String = ""
-    @State private var morningDosage: Int = 0
-    @State private var noonDosage: Int = 0
-    @State private var eveningDosage: Int = 0
+    @State private var morningDosage: Int?
+    @State private var morningDosageText: String = ""
+    @State private var noonDosage: Int?
+    @State private var noonDosageText: String = ""
+    @State private var eveningDosage: Int?
+    @State private var eveningDosageText: String = ""
     @State private var showPicker = false
     @State private var time: Date = Date()
     
@@ -69,7 +74,7 @@ struct MedicineInfoView: View {
                     .background(Color.gray.opacity(0.2))
                     .padding(.horizontal, 8)
                 
-                TextField("", value: $dosage, format: .number)
+                TextField("", text: $dosageText)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 100)
                     .textFieldStyle(.roundedBorder)
@@ -277,7 +282,7 @@ struct MedicineInfoView: View {
 //                    .textFieldStyle(.roundedBorder)
 //                    .multilineTextAlignment(.trailing)
 //                    .frame(width: 100)
-                TextField("在庫数", text: $stock)
+                TextField("在庫数", text: $stockText)
                     .keyboardType(.numberPad)
                     .textFieldStyle(.roundedBorder)
 
@@ -328,12 +333,16 @@ struct MedicineInfoView: View {
             // 既存の medicine オブジェクトから値を反映
             selectedFirstTimings = Set(medicine.firstTiming)
             medicineName = medicine.medicineName
-            dosage = medicine.dosage ?? 0
-            morningDosage = medicine.morningDosage ?? 0
-            noonDosage = medicine.noonDosage ?? 0
-            eveningDosage = medicine.eveningDosage ?? 0
+            dosageText = medicine.dosage.map { String($0) } ?? ""
+//            morningDosage = medicine.morningDosage ?? 0
+//            noonDosage = medicine.noonDosage ?? 0
+//            eveningDosage = medicine.eveningDosage ?? 0
+            morningDosageText = medicine.morningDosage.map { String($0) } ?? ""
+            noonDosageText = medicine.noonDosage.map { String($0) } ?? ""
+            eveningDosageText = medicine.eveningDosage.map { String($0) } ?? ""
             effect = medicine.effect ?? ""
-            stock = String(medicine.stock ?? 0)
+//            stock = String(medicine.stock ?? 0)
+            stockText = medicine.stock.map { String($0) } ?? ""
             memo = medicine.memo ?? ""
             selectedSecondTiming = medicine.secondTiming
             selectedUnit = medicine.unit
@@ -350,7 +359,7 @@ struct MedicineInfoView: View {
                 // 新規作成
                 let model = MedicineInfo()
                 model.medicineName = medicineName
-                model.dosage = dosage
+//                model.dosage = dosage
                 model.morningDosage = morningDosage
                 model.noonDosage = noonDosage
                 model.eveningDosage = eveningDosage
@@ -369,7 +378,11 @@ struct MedicineInfoView: View {
                     model.stockUnit = stockUnit
                 }
                 
-                if let stockInt = Int(stock) {
+                if let dosage = Int(dosageText) {
+                    model.dosage = dosage
+                }
+                
+                if let stockInt = Int(stockText) {
                     model.stock = stockInt
                 }
                 
@@ -384,10 +397,10 @@ struct MedicineInfoView: View {
                 // 既存データの更新
                 if let thawedMedicine = medicine.thaw() {
                     thawedMedicine.medicineName = medicineName
-                    thawedMedicine.dosage = dosage
-                    thawedMedicine.morningDosage = morningDosage
-                    thawedMedicine.noonDosage = noonDosage
-                    thawedMedicine.eveningDosage = eveningDosage
+//                    thawedMedicine.dosage = dosage
+//                    thawedMedicine.morningDosage = morningDosage
+//                    thawedMedicine.noonDosage = noonDosage
+//                    thawedMedicine.eveningDosage = eveningDosage
                     thawedMedicine.effect = effect
                     thawedMedicine.memo = memo
                     thawedMedicine.secondTiming = selectedSecondTiming
@@ -410,10 +423,34 @@ struct MedicineInfoView: View {
                         thawedMedicine.stockUnit = nil
                     }
                     
-                    if let stockInt = Int(stock) {
+                    if let stockInt = Int(stockText) {
                         thawedMedicine.stock = stockInt
                     } else {
                         thawedMedicine.stock = nil
+                    }
+                    
+                    if let dosageInt = Int(dosageText) {
+                        thawedMedicine.dosage = dosageInt
+                    } else {
+                        thawedMedicine.dosage = nil
+                    }
+                    
+                    if let morningDosageInt = Int(morningDosageText) {
+                        thawedMedicine.morningDosage = morningDosageInt
+                    } else {
+                        thawedMedicine.morningDosage = nil
+                    }
+                    
+                    if let noonDosageInt = Int(noonDosageText) {
+                        thawedMedicine.noonDosage = noonDosageInt
+                    } else {
+                        thawedMedicine.noonDosage = nil
+                    }
+                    
+                    if let eveningDosageInt = Int(eveningDosageText) {
+                        thawedMedicine.eveningDosage = eveningDosageInt
+                    } else {
+                        thawedMedicine.eveningDosage = nil
                     }
                     
                     thawedMedicine.time.removeAll()
@@ -531,11 +568,11 @@ struct MedicineInfoView: View {
     private func dosageTextField(for timing: FirstTiming) -> some View {
         switch timing {
         case .morning:
-            TextField("", value: $morningDosage, format: .number)
+            TextField("", text: $morningDosageText)
         case .noon:
-            TextField("", value: $noonDosage, format: .number)
+            TextField("", text: $noonDosageText)
         case .evening:
-            TextField("", value: $eveningDosage, format: .number)
+            TextField("", text: $eveningDosageText)
         default:
             EmptyView()
         }
