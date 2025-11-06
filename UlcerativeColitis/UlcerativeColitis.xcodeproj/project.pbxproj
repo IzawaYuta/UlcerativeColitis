@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A66EF19D2EB225F900E22E9D /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = A66EF19C2EB225F900E22E9D /* SwiftUICharts */; };
+		A694E82E2EBCB212005F472E /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A694E82D2EBCB212005F472E /* IQKeyboardManagerSwift */; };
 		B6F12F6F5D79E403117009BF /* Pods_UlcerativeColitis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22EDCC401932017F7704D3B5 /* Pods_UlcerativeColitis.framework */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 			files = (
 				B6F12F6F5D79E403117009BF /* Pods_UlcerativeColitis.framework in Frameworks */,
 				A66EF19D2EB225F900E22E9D /* SwiftUICharts in Frameworks */,
+				A694E82E2EBCB212005F472E /* IQKeyboardManagerSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +127,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				A66EF19B2EB225F900E22E9D /* XCRemoteSwiftPackageReference "ChartView" */,
+				A694E82C2EBCB212005F472E /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A66EEFB12EA1050E00E22E9D /* Products */;
@@ -430,6 +433,14 @@
 				minimumVersion = 1.5.5;
 			};
 		};
+		A694E82C2EBCB212005F472E /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -437,6 +448,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A66EF19B2EB225F900E22E9D /* XCRemoteSwiftPackageReference "ChartView" */;
 			productName = SwiftUICharts;
+		};
+		A694E82D2EBCB212005F472E /* IQKeyboardManagerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A694E82C2EBCB212005F472E /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
+			productName = IQKeyboardManagerSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

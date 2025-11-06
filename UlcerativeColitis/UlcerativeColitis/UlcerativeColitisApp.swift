@@ -7,12 +7,14 @@
 
 import SwiftUI
 import RealmSwift
+import IQKeyboardManagerSwift
 
 @main
 struct UlcerativeColitisApp: App {
     
     init() {
         addDefaultUnitsIfNeeded()
+        IQKeyboardManager.shared.isEnabled = true
     }
     
     var body: some Scene {
