@@ -13,36 +13,57 @@ struct MedicineListView: View {
     @ObservedResults(MedicineInfo.self) var medicineInfo
     
     var body: some View {
-        VStack {
-            NavigationStack {
-                List {
-                    ForEach(medicineInfo, id: \.id) { medicine in
-                        NavigationLink(destination: MedicineInfoView(medicine: medicine)) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(medicine.medicineName)
-                                    .font(.headline)
-//                                Text(medicine.effect ?? nil)
-//                                    .font(.subheadline)
-//                                    .foregroundColor(.gray)
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    
+                    // 使用中リスト
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("使用中")
+                            .font(.headline)
+                        
+                        if medicineInfo.filter({ $0.isUsing == true }).isEmpty {
+                            Text("なし")
+                                .foregroundColor(.gray)
+                        } else {
+                            List {
+                                ForEach(medicineInfo.filter({ $0.isUsing == true }), id: \.id) { list in
+                                    NavigationLink(destination: MedicineInfoView(medicine: list)) {
+                                        Text(list.medicineName)
+                                    }
+                                }
                             }
+                            .frame(height: CGFloat(medicineInfo.filter({ $0.isUsing == true }).count) * 44) // 高さ調整
+                            .listStyle(.plain)
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    // 不使用リスト
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("不使用")
+                            .font(.headline)
+                        
+                        if medicineInfo.filter({ $0.isUsing == false }).isEmpty {
+                            Text("なし")
+                                .foregroundColor(.gray)
+                        } else {
+                            List {
+                                ForEach(medicineInfo.filter({ $0.isUsing == false }), id: \.id) { list in
+                                    NavigationLink(destination: MedicineInfoView(medicine: list)) {
+                                        Text(list.medicineName)
+                                    }
+                                }
+                            }
+                            .frame(height: CGFloat(medicineInfo.filter({ $0.isUsing == false }).count) * 44)
+                            .listStyle(.plain)
                         }
                     }
                 }
+                .padding()
             }
-
-            //使用中リスト
-//            VStack {
-//                ForEach(medicineInfo.filter({ $0.isUsing == true }), id: \.id) { list in
-//                    Text(list.medicineName)
-//                }
-//            }
-//            
-//            //不使用リスト
-//            VStack {
-//                ForEach(medicineInfo.filter({ $0.isUsing == false }), id: \.id) { list in
-//                    Text(list.medicineName)
-//                }
-//            }
+            .navigationTitle("お薬リスト")
         }
     }
 }
