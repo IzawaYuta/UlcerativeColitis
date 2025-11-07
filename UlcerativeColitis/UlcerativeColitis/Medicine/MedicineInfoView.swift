@@ -301,16 +301,18 @@ struct MedicineInfoView: View {
                     .frame(width: 100)
                     .textFieldStyle(.roundedBorder)
                 
-                Button(action: {
-                    showStockUnitView.toggle()
-                }) {
-                    Text(getStockUnitDisplayText())
-                        .borderedTextStyle()
-                }
-                .sheet(isPresented: $showStockUnitView) {
-                    CustomUnitView(selectedUnit: $selectedStockUnit,
-                                   onTap: { showStockUnitView = false })
-                }
+//                Button(action: {
+//                    showStockUnitView.toggle()
+//                }) {
+//                    Text(getStockUnitDisplayText())
+//                        .borderedTextStyle()
+//                }
+//                .sheet(isPresented: $showStockUnitView) {
+//                    CustomUnitView(selectedUnit: $selectedStockUnit,
+//                                   onTap: { showStockUnitView = false })
+//                }
+                Text(getDosageUnitDisplayText())
+//                    .borderedTextStyle()
             }
             .padding(.horizontal)
             
@@ -386,7 +388,7 @@ struct MedicineInfoView: View {
             memo = medicine.memo ?? ""
             selectedSecondTiming = medicine.secondTiming
             selectedUnit = medicine.unit
-            selectedStockUnit = medicine.stockUnit?.unit
+//            selectedStockUnit = medicine.stockUnit?.unit
             tentativeTime = medicine.time.map { $0.time }
         }
     }
@@ -412,11 +414,11 @@ struct MedicineInfoView: View {
                     model.unit = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
                 }
                 
-                if let selectedStockUnit = selectedStockUnit {
-                    let stockUnit = StockUnit()
-                    stockUnit.unit = realm.create(UnitArray.self, value: selectedStockUnit, update: .modified)
-                    model.stockUnit = stockUnit
-                }
+//                if let selectedStockUnit = selectedStockUnit {
+//                    let stockUnit = StockUnit()
+//                    stockUnit.unit = realm.create(UnitArray.self, value: selectedStockUnit, update: .modified)
+//                    model.stockUnit = stockUnit
+//                }
                 
                 if let dosage = Int(dosageText) {
                     model.dosage = dosage
@@ -444,7 +446,7 @@ struct MedicineInfoView: View {
                 selectedSecondTiming = .justBeforeMeals
                 effect = ""
                 stockText = ""
-                selectedStockUnit = nil
+//                selectedStockUnit = nil
                 memo = ""
                 tentativeTime = []
                 
@@ -469,14 +471,14 @@ struct MedicineInfoView: View {
                         thawedMedicine.unit = nil
                     }
                     
-                    if let selectedStockUnit = selectedStockUnit {
-                        if thawedMedicine.stockUnit == nil {
-                            thawedMedicine.stockUnit = StockUnit()
-                        }
-                        thawedMedicine.stockUnit?.unit = realm.create(UnitArray.self, value: selectedStockUnit, update: .modified)
-                    } else {
-                        thawedMedicine.stockUnit = nil
-                    }
+//                    if let selectedStockUnit = selectedStockUnit {
+//                        if thawedMedicine.stockUnit == nil {
+//                            thawedMedicine.stockUnit = StockUnit()
+//                        }
+//                        thawedMedicine.stockUnit?.unit = realm.create(UnitArray.self, value: selectedStockUnit, update: .modified)
+//                    } else {
+//                        thawedMedicine.stockUnit = nil
+//                    }
                     
                     if let stockInt = Int(stockText) {
                         thawedMedicine.stock = stockInt
