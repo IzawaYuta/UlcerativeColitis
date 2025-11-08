@@ -28,8 +28,10 @@ struct MedicineInfoView: View {
     @State private var draftSecondTiming: SecondTiming = .justBeforeMeals
     @State private var effect: String = ""
     @State private var stock: Int?
+    @State private var toggleEffect: Bool = false
     @State private var stockText: String = ""
     @State private var memo: String = ""
+    @State private var toggleMemo: Bool = false
     @State private var morningDosage: Int?
     @State private var morningDosageText: String = ""
     @State private var noonDosage: Int?
@@ -44,6 +46,8 @@ struct MedicineInfoView: View {
     @State private var showTimeView = false
     @State private var showDeleteAlert = false
     @State private var showIsUsingAlert = false
+    @State private var showEffectDeleteAlert = false
+    @State private var showMemoDeleteAlert = false
     
     @State private var selectedUnit: UnitArray?
     @State private var selectedStockUnit: UnitArray? //在庫用単位の選択状態
@@ -59,19 +63,20 @@ struct MedicineInfoView: View {
             VStack(spacing: 20) {
                 VStack(alignment: .leading) {
                     Text("お薬の名前")
-                        .font(.callout)
+                        .font(.footnote)
                     TextField("", text: $medicineName)
+//                        .frame(height: 37)
                         .textFieldStyle(.roundedBorder)
                 }
                 .padding(.horizontal)
                 
-                Divider()
-                    .background(.black)
-                    .padding(.horizontal)
+//                Divider()
+//                    .background(.black)
+//                    .padding(.horizontal)
                 
                 HStack {
                     Text("1回")
-                        .font(.callout)
+                        .font(.footnote)
                     
                     Divider()
                         .frame(height: 0.7)
@@ -85,7 +90,7 @@ struct MedicineInfoView: View {
                     //                    .textFieldStyle(.roundedBorder)
                     //                    .keyboardType(.decimalPad)
                     NoMenuTextField(text: $dosageText, keyboardType: .decimalPad)
-                        .frame(width: 100)
+                        .frame(width: 100, height: 36)
                         .textFieldStyle(.roundedBorder)
                     
                     Button(action: {
@@ -101,9 +106,9 @@ struct MedicineInfoView: View {
                 }
                 .padding(.horizontal)
                 
-                Divider()
-                    .background(.gray)
-                    .padding(.horizontal)
+//                Divider()
+//                    .background(.gray)
+//                    .padding(.horizontal)
                 
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
@@ -112,8 +117,8 @@ struct MedicineInfoView: View {
                     VStack(spacing: 15) {
                         HStack {
                             Text("服用時間")
-                                .font(.callout)
-                            
+                                .font(.footnote)
+
                             Divider()
                                 .frame(height: 0.7)
                                 .frame(maxWidth: .infinity)
@@ -129,6 +134,7 @@ struct MedicineInfoView: View {
                                 //                                    .foregroundColor(.black)
                                 //                            } else {
                                 Text(selectedSecondTiming.japaneseText)
+                                    .lineLimit(1)
                                     .foregroundColor(.black)
                                 //                            }
                             }
@@ -137,7 +143,7 @@ struct MedicineInfoView: View {
                                 RoundedRectangle(cornerRadius: 5)
                                     .fill(Color.gray.opacity(0.3))
                             )
-                            .padding(.horizontal)
+//                            .padding(.horizontal)
                             .sheet(isPresented: $showPicker) {
                                 TimingPickerView(timing: $draftSecondTiming,
                                                  cancel: { showPicker = false},
@@ -167,14 +173,15 @@ struct MedicineInfoView: View {
                                                     Text(timing.japaneseText)
                                                         .font(.system(size: 17))
                                                 }
-                                                .frame(width: 100, height: 30)
+                                                .frame(width: 60, height: 30)
                                             HStack {
                                                 dosageTextField(for: timing)
-                                                    .frame(width: 100)
+                                                    .frame(width: 60, height: 36)
                                                     .textFieldStyle(.roundedBorder)
                                                 
                                                 Text(getUnitDisplayText())
                                                     .foregroundColor(isDosageEmpty(for: timing) ? .gray : .black)
+                                                    .font(.footnote)
                                             }
                                         }
                                     }
@@ -226,65 +233,125 @@ struct MedicineInfoView: View {
                         //                    }
                         
                         if let firstMedicine = medicineInfo.first, !firstMedicine.time.isEmpty {
-                            ForEach(firstMedicine.time, id: \.id) { timeEntry in
-                                Text(timeEntry.time.formatted(date: .omitted, time: .shortened))
+                            HStack {
+                                ForEach(firstMedicine.time, id: \.id) { timeEntry in
+                                    HStack {
+                                        Text(timeEntry.time.formatted(date: .omitted, time: .shortened))
+                                            .font(.system(size: 14))
+                                        
+                                        Spacer()
+                                        
+                                        Button(action: {
+                                            deleteTime(timeEntry)
+                                        }) {
+                                            Image(systemName: "trash")
+                                                .foregroundColor(.red)
+                                                .font(.system(size: 12))
+                                        }
+                                    }
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.white)
+                                    )
+                                }
                             }
                         } else {
-                            ForEach(tentativeTime, id: \.self) { time in
-                                Text(time.formatted(date: .omitted, time: .shortened))
+                            HStack {
+                                ForEach(Array(tentativeTime.sorted().enumerated()), id: \.offset) { index, time in
+                                    HStack {
+                                        Text("\(index + 1)")
+                                            .foregroundColor(.gray)
+                                            .font(.system(size: 10))
+                                        Text(time.formatted(date: .omitted, time: .shortened))
+                                            .font(.system(size: 14))
+                                        
+                                        Spacer()
+                                        
+                                        Button(action: {
+                                            if let originalIndex = tentativeTime.firstIndex(of: time) {
+                                                tentativeTime.remove(at: originalIndex)
+                                            }
+                                        }) {
+                                            Image(systemName: "trash")
+                                                .foregroundColor(.red)
+                                                .font(.system(size: 12))
+                                        }
+                                    }
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.white)
+                                    )
+                                }
                             }
                         }
                         
-                        Button(action: {
-                            showTimeView.toggle()
-                        }) {
-                            Text("時間を追加")
-                                .foregroundColor(.black.opacity(0.7))
-                                .font(.system(size: 14))
-                                .background(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(Color.gray.opacity(0.2))
-                                        .frame(width: 80, height: 25)
-                                )
+//                        if let firstMedicine = medicineInfo.first {
+//                            let totalCount = firstMedicine.time.count + tentativeTime.count
+//                            if totalCount.count 3 {
+                        if let firstMedicine = medicineInfo.first {
+                            // どちらかが3つ未満ならボタンを表示
+                            if firstMedicine.time.count < 3 && tentativeTime.count < 3 {
+                                Button(action: {
+                                    showTimeView.toggle()
+                                }) {
+                                    Text("時間を追加")
+                                        .foregroundColor(.black.opacity(0.7))
+                                        .font(.caption)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(Color.gray.opacity(0.2))
+                                                .frame(width: 80, height: 25)
+                                        )
+                                }
+                                .sheet(isPresented: $showTimeView) {
+                                    TimeView(time: $time, done: {
+                                        showTimeView = false
+                                        tentativeTime.append(time)
+                                    })
+                                }
+                            }
                         }
-                        .sheet(isPresented: $showTimeView) {
-                            TimeView(time: $time, done: {
-                                showTimeView = false
-                                tentativeTime.append(time)
-                                //                            saveTime()
-                            })
-                        }
+//                        .sheet(isPresented: $showTimeView) {
+//                            TimeView(time: $time, done: {
+//                                showTimeView = false
+//                                tentativeTime.append(time)
+//                            })
+//                        }
                     }
                 }
                 .padding(.horizontal)
                 
-                Divider()
-                    .background(.gray)
-                    .padding(.horizontal)
+//                Divider()
+//                    .background(.gray)
+//                    .padding(.horizontal)
+//                
+//                ZStack(alignment: .topLeading) {
+//                    TextEditor(text: $effect)
+//                        .frame(maxWidth: .infinity)
+//                        .frame(height: 60)
+//                        .padding(2)
+//                        .background(
+//                            RoundedRectangle(cornerRadius: 8)
+//                                .stroke(Color.gray.opacity(0.4))
+//                        )
+//                    Text("効果")
+//                        .foregroundColor(effect.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
+//                        .padding(.vertical, 10)
+//                        .padding(.horizontal, 10)
+//                }
+//                .padding(.horizontal)
                 
-                ZStack(alignment: .topLeading) {
-                    TextEditor(text: $effect)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 60)
-                        .padding(2)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.gray.opacity(0.4))
-                        )
-                    Text("効果")
-                        .foregroundColor(effect.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 10)
-                }
-                .padding(.horizontal)
-                
-                Divider()
-                    .background(.gray)
-                    .padding(.horizontal)
+//                Divider()
+//                    .background(.gray)
+//                    .padding(.horizontal)
                 
                 HStack {
                     Text("在庫")
-                        .font(.callout)
+                        .font(.caption)
                     Divider()
                         .frame(height: 0.7)
                         .frame(maxWidth: .infinity)
@@ -300,7 +367,7 @@ struct MedicineInfoView: View {
                     //                    .textFieldStyle(.roundedBorder)
                     //                    .keyboardType(.decimalPad)
                     NoMenuTextField(text: $stockText, keyboardType: .decimalPad)
-                        .frame(width: 100)
+                        .frame(width: 100, height: 36)
                         .textFieldStyle(.roundedBorder)
                     
                     //                Button(action: {
@@ -315,26 +382,135 @@ struct MedicineInfoView: View {
                     //                }
                     Text(getDosageUnitDisplayText())
                     //                    .borderedTextStyle()
+                        .font(.footnote)
                 }
                 .padding(.horizontal)
                 
-                Divider()
-                    .background(.gray)
-                    .padding(.horizontal)
+//                Divider()
+//                    .background(.gray)
+//                    .padding(.horizontal)
                 
-                ZStack(alignment: .topLeading) {
-                    TextEditor(text: $memo)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 60)
-                        .padding(2)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.gray.opacity(0.4))
-                        )
-                    Text("メモ")
-                        .foregroundColor(memo.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 10)
+//                ZStack(alignment: .topLeading) {
+//                    TextEditor(text: $memo)
+//                        .frame(maxWidth: .infinity)
+//                        .frame(height: 60)
+//                        .padding(2)
+//                        .background(
+//                            RoundedRectangle(cornerRadius: 8)
+//                                .stroke(Color.gray.opacity(0.4))
+//                        )
+//                    Text("メモ")
+//                        .foregroundColor(memo.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
+//                        .padding(.vertical, 10)
+//                        .padding(.horizontal, 10)
+//                }
+//                .padding(.horizontal)
+                
+                if toggleEffect {
+                    HStack {
+                        TextField("効果", text: $effect)
+                            .textFieldStyle(.roundedBorder)
+                        
+                        Button(action: {
+//                            toggleEffect = false
+                            showEffectDeleteAlert.toggle()
+                        }) {
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
+                                .font(.system(size: 14))
+                        }
+//                        CommonAlertModifier(isPresented: $showEffectDeleteAlert,
+//                                            title: "削除の確認",
+//                                            message: "効果の内容も削除されます",
+//                                            done: "削除",
+//                                            confirmAction: {
+//                            toggleEffect = false
+//                            effect = ""
+//                        })
+                        .commonAlert(isPresented: $showEffectDeleteAlert,
+                                     title: "削除の確認",
+                                     message: "効果の内容も削除されます",
+                                     confirmAction: {
+                            toggleEffect = false
+                            effect = ""
+                        })
+                    }
+                    .padding(.horizontal)
+                }
+                
+                if toggleMemo {
+                    HStack {
+                        ZStack(alignment: .topLeading) {
+                            TextEditor(text: $memo)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 60)
+                                .padding(2)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.gray.opacity(0.1))
+                                )
+                            Text("メモ")
+                                .foregroundColor(memo.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 10)
+                        }
+                        
+                        Button(action: {
+                            showMemoDeleteAlert.toggle()
+                        }) {
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
+                                .font(.system(size: 14))
+                        }
+                        .commonAlert(isPresented: $showMemoDeleteAlert,
+                                     title: "削除の確認",
+                                     message: "メモの内容も削除されます",
+                                     confirmAction: {
+                            toggleMemo = false
+                            memo = ""
+                        })
+                    }
+                    .padding(.horizontal)
+                }
+                
+                HStack(spacing: 30) {
+                    if !toggleEffect {
+                        Button(action: {
+                            toggleEffect = true
+                        }) {
+                            HStack(spacing: 1) {
+                                Text("効果")
+                                Image(systemName: "plus")
+                            }
+                            .font(.footnote)
+                            .foregroundColor(.black)
+                            .background(
+                                Capsule()
+                                    .fill(Color.blue.opacity(0.2))
+                                    .frame(width: 60, height: 30)
+                            )
+                        }
+                    }
+                    
+                    if !toggleMemo {
+                        Button(action: {
+                            toggleMemo = true
+                        }) {
+                            HStack(spacing: 1) {
+                                Text("メモ")
+                                Image(systemName: "plus")
+                            }
+                            .font(.footnote)
+                            .foregroundColor(.black)
+                            .background(
+                                Capsule()
+                                    .fill(Color.blue.opacity(0.2))
+                                    .frame(width: 60, height: 30)
+                            )
+                        }
+                    }
+                    
+                    Spacer()
                 }
                 .padding(.horizontal)
                 
@@ -378,7 +554,7 @@ struct MedicineInfoView: View {
                 
                 Spacer()
             }
-            .padding()
+            .padding(.horizontal)
             .background(Color.gray.opacity(0.1))
             .onAppear {
                 // 既存の medicine オブジェクトから値を反映
@@ -399,6 +575,8 @@ struct MedicineInfoView: View {
                 selectedUnit = medicine.unit
                 //            selectedStockUnit = medicine.stockUnit?.unit
                 tentativeTime = medicine.time.map { $0.time }
+                toggleEffect = medicine.toggleEffect
+                toggleMemo = medicine.toggleMemo
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -458,6 +636,8 @@ struct MedicineInfoView: View {
                 model.memo = memo
                 model.secondTiming = selectedSecondTiming
                 model.firstTiming.append(objectsIn: Array(selectedFirstTimings))
+                model.toggleEffect = toggleEffect
+                model.toggleMemo = toggleMemo
                 
                 if let selectedUnit = selectedUnit {
                     model.unit = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
@@ -498,6 +678,8 @@ struct MedicineInfoView: View {
 //                selectedStockUnit = nil
                 memo = ""
                 tentativeTime = []
+                toggleEffect = false
+                toggleMemo = false
                 
             } else {
                 // 既存データの更新
@@ -513,6 +695,8 @@ struct MedicineInfoView: View {
                     
                     thawedMedicine.firstTiming.removeAll()
                     thawedMedicine.firstTiming.append(objectsIn: Array(selectedFirstTimings))
+                    thawedMedicine.toggleEffect = toggleEffect
+                    thawedMedicine.toggleMemo = toggleMemo
                     
                     if let selectedUnit = selectedUnit {
                         thawedMedicine.unit = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
