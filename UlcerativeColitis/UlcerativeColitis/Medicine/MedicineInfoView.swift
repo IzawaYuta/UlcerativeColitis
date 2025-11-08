@@ -7,6 +7,7 @@
 
 import SwiftUI
 import RealmSwift
+import DynamicColor
 
 struct MedicineInfoView: View {
     
@@ -60,108 +61,137 @@ struct MedicineInfoView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                VStack(alignment: .leading) {
-                    Text("お薬の名前")
-                        .font(.footnote)
-                    TextField("", text: $medicineName)
-//                        .frame(height: 37)
-                        .textFieldStyle(.roundedBorder)
-                }
-                .padding(.horizontal)
-                
-//                Divider()
-//                    .background(.black)
-//                    .padding(.horizontal)
-                
-                HStack {
-                    Text("1回")
-                        .font(.footnote)
-                    
-                    Divider()
-                        .frame(height: 0.7)
-                        .frame(maxWidth: .infinity)
-                        .background(Color.gray.opacity(0.2))
-                        .padding(.horizontal, 8)
-                    
-                    //                TextField("", text: $dosageText)
-                    //                    .multilineTextAlignment(.trailing)
-                    //                    .frame(width: 100)
-                    //                    .textFieldStyle(.roundedBorder)
-                    //                    .keyboardType(.decimalPad)
-                    NoMenuTextField(text: $dosageText, keyboardType: .decimalPad)
-                        .frame(width: 100, height: 36)
-                        .textFieldStyle(.roundedBorder)
-                    
-                    Button(action: {
-                        showCustomUnitView.toggle()
-                    }) {
-                        Text(getDosageUnitDisplayText())
-                            .borderedTextStyle()
+            ScrollView() {
+                VStack(spacing: 10) {
+                    VStack(alignment: .leading) {
+                        Text("お薬の名前")
+                            .font(.footnote)
+                        TextField("", text: $medicineName)
+                        //                        .frame(height: 37)
+                            .textFieldStyle(.roundedBorder)
                     }
-                    .sheet(isPresented: $showCustomUnitView) {
-                        CustomUnitView(selectedUnit: $selectedUnit,
-                                       onTap: { showCustomUnitView = false })
-                    }
-                }
-                .padding(.horizontal)
-                
-//                Divider()
-//                    .background(.gray)
-//                    .padding(.horizontal)
-                
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.clear.opacity(0.3))
-                        .frame(height: 150)
-                    VStack(spacing: 15) {
-                        HStack {
-                            Text("服用時間")
-                                .font(.footnote)
-
-                            Divider()
-                                .frame(height: 0.7)
-                                .frame(maxWidth: .infinity)
-                                .background(Color.gray.opacity(0.2))
-                                .padding(.horizontal, 8)
-                            
-                            Button(action: {
-                                draftSecondTiming = selectedSecondTiming
-                                showPicker.toggle()
-                            }) {
-                                //                            if let firstMedicine = medicineInfo.first {
-                                //                                Text(firstMedicine.secondTiming.japaneseText)
-                                //                                    .foregroundColor(.black)
-                                //                            } else {
-                                Text(selectedSecondTiming.japaneseText)
-                                    .lineLimit(1)
-                                    .foregroundColor(.black)
-                                //                            }
-                            }
-                            .padding(.horizontal)
-                            .background(
-                                RoundedRectangle(cornerRadius: 5)
-                                    .fill(Color.gray.opacity(0.3))
-                            )
-//                            .padding(.horizontal)
-                            .sheet(isPresented: $showPicker) {
-                                TimingPickerView(timing: $draftSecondTiming,
-                                                 cancel: { showPicker = false},
-                                                 done: { showPicker = false
-                                    selectedSecondTiming = draftSecondTiming
-                                    //                                saveSecondTiming()
-                                }
-                                )
-                                .presentationDetents([.height(250)])
-                                .interactiveDismissDisabled(true)
-                                .presentationCornerRadius(30)
-                            }
+                    .padding(.horizontal)
+                    
+//                    Divider()
+//                        .background(.black)
+//                        .padding(.horizontal, 1)
+                    
+                    HStack {
+                        Text("1回")
+                            .font(.footnote)
+                        
+                        Divider()
+                            .frame(height: 0.7)
+                            .frame(maxWidth: .infinity)
+                            .background(Color.gray.opacity(0.2))
+                            .padding(.horizontal, 8)
+                        
+                        //                TextField("", text: $dosageText)
+                        //                    .multilineTextAlignment(.trailing)
+                        //                    .frame(width: 100)
+                        //                    .textFieldStyle(.roundedBorder)
+                        //                    .keyboardType(.decimalPad)
+                        NoMenuTextField(text: $dosageText, keyboardType: .decimalPad)
+                            .frame(width: 100, height: 36)
+                            .textFieldStyle(.roundedBorder)
+                        
+                        Button(action: {
+                            showCustomUnitView.toggle()
+                        }) {
+                            Text(getDosageUnitDisplayText())
+                                .borderedTextStyle()
                         }
-                        HStack {
-                            VStack(alignment: .center) {
-                                VStack {
-                                    ForEach([FirstTiming.morning, .noon, .evening], id: \.self) { timing in
-                                        HStack {
+                        .sheet(isPresented: $showCustomUnitView) {
+                            CustomUnitView(selectedUnit: $selectedUnit,
+                                           onTap: { showCustomUnitView = false })
+                        }
+                    }
+                    .padding(.horizontal)
+                    
+//                    Divider()
+//                        .background(.black)
+//                        .padding(.horizontal, 1)
+                    
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.clear.opacity(0.3))
+                            .frame(height: 150)
+                        VStack(spacing: 15) {
+                            HStack {
+                                Text("服用時間")
+                                    .font(.footnote)
+                                
+                                Divider()
+                                    .frame(height: 0.7)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.gray.opacity(0.2))
+                                    .padding(.horizontal, 8)
+                                
+                                Button(action: {
+                                    draftSecondTiming = selectedSecondTiming
+                                    showPicker.toggle()
+                                }) {
+                                    //                            if let firstMedicine = medicineInfo.first {
+                                    //                                Text(firstMedicine.secondTiming.japaneseText)
+                                    //                                    .foregroundColor(.black)
+                                    //                            } else {
+                                    Text(selectedSecondTiming.japaneseText)
+                                        .lineLimit(1)
+                                        .foregroundColor(.black)
+                                    //                            }
+                                }
+                                .padding(.horizontal)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .fill(Color.gray.opacity(0.3))
+                                )
+                                //                            .padding(.horizontal)
+                                .sheet(isPresented: $showPicker) {
+                                    TimingPickerView(timing: $draftSecondTiming,
+                                                     cancel: { showPicker = false},
+                                                     done: { showPicker = false
+                                        selectedSecondTiming = draftSecondTiming
+                                        //                                saveSecondTiming()
+                                    }
+                                    )
+                                    .presentationDetents([.height(250)])
+                                    .interactiveDismissDisabled(true)
+                                    .presentationCornerRadius(30)
+                                }
+                            }
+                            HStack {
+                                VStack(alignment: .center) {
+                                    VStack {
+                                        ForEach([FirstTiming.morning, .noon, .evening], id: \.self) { timing in
+                                            HStack {
+                                                CustomButton(
+                                                    color: selectedFirstTimings.contains(timing) ? getColor(for: timing) : .white,
+                                                    selected: selectedFirstTimings,
+                                                    timing: timing,
+                                                    action: {
+                                                        toggle(timing)
+                                                        saveTiming()
+                                                    }) {
+                                                        Text(timing.japaneseText)
+                                                            .font(.system(size: 17))
+                                                    }
+                                                    .frame(width: 60, height: 30)
+                                                HStack {
+                                                    dosageTextField(for: timing)
+                                                        .frame(width: 100, height: 36)
+                                                        .textFieldStyle(.roundedBorder)
+                                                    
+                                                    Text(getUnitDisplayText())
+                                                        .foregroundColor(isDosageEmpty(for: timing) ? .gray : .black)
+                                                        .font(.footnote)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .padding(.vertical, 5)
+                                    
+                                    HStack {
+                                        ForEach([FirstTiming.wakeUp, .bedtime, .temporaryClothes], id: \.self) { timing in
                                             CustomButton(
                                                 color: selectedFirstTimings.contains(timing) ? getColor(for: timing) : .white,
                                                 selected: selectedFirstTimings,
@@ -173,381 +203,356 @@ struct MedicineInfoView: View {
                                                     Text(timing.japaneseText)
                                                         .font(.system(size: 17))
                                                 }
-                                                .frame(width: 60, height: 30)
-                                            HStack {
-                                                dosageTextField(for: timing)
-                                                    .frame(width: 100, height: 36)
-                                                    .textFieldStyle(.roundedBorder)
-                                                
-                                                Text(getUnitDisplayText())
-                                                    .foregroundColor(isDosageEmpty(for: timing) ? .gray : .black)
-                                                    .font(.footnote)
-                                            }
+                                                .frame(width: 100, height: 30)
                                         }
                                     }
+                                    //                                .padding(.vertical, 5)
+                                    
                                 }
-                                .padding(.vertical, 5)
-                                
+                            }
+                            
+                            //                    ForEach(times, id: \.id) { timeEntry in
+                            //                        HStack {
+                            //                            Text(timeEntry.time.formatted(date: .omitted, time: .shortened))
+                            //                                .font(.system(size: 15))
+                            //                            
+                            //                            Spacer()
+                            //                            
+                            //                            Button(action: {
+                            //                                deleteTime(timeEntry)
+                            //                            }) {
+                            //                                Image(systemName: "trash")
+                            //                                    .foregroundColor(.red)
+                            //                                    .font(.system(size: 14))
+                            //                            }
+                            //                        }
+                            //                        .padding(.horizontal, 12)
+                            //                        .padding(.vertical, 8)
+                            //                        .background(
+                            //                            RoundedRectangle(cornerRadius: 8)
+                            //                                .fill(Color.white)
+                            //                        )
+                            //                    }
+                            
+                            if let firstMedicine = medicineInfo.first, !firstMedicine.time.isEmpty {
                                 HStack {
-                                    ForEach([FirstTiming.wakeUp, .bedtime, .temporaryClothes], id: \.self) { timing in
-                                        CustomButton(
-                                            color: selectedFirstTimings.contains(timing) ? getColor(for: timing) : .white,
-                                            selected: selectedFirstTimings,
-                                            timing: timing,
-                                            action: {
-                                                toggle(timing)
-                                                saveTiming()
+                                    ForEach(firstMedicine.time, id: \.id) { timeEntry in
+                                        HStack {
+                                            Text(timeEntry.time.formatted(date: .omitted, time: .shortened))
+                                                .font(.system(size: 14))
+                                            
+                                            Spacer()
+                                            
+                                            Button(action: {
+                                                deleteTime(timeEntry)
                                             }) {
-                                                Text(timing.japaneseText)
-                                                    .font(.system(size: 17))
+                                                Image(systemName: "trash")
+                                                    .foregroundColor(.red)
+                                                    .font(.system(size: 12))
                                             }
-                                            .frame(width: 100, height: 30)
-                                    }
-                                }
-                                .padding(.vertical, 5)
-                                
-                            }
-                        }
-                        
-                        //                    ForEach(times, id: \.id) { timeEntry in
-                        //                        HStack {
-                        //                            Text(timeEntry.time.formatted(date: .omitted, time: .shortened))
-                        //                                .font(.system(size: 15))
-                        //                            
-                        //                            Spacer()
-                        //                            
-                        //                            Button(action: {
-                        //                                deleteTime(timeEntry)
-                        //                            }) {
-                        //                                Image(systemName: "trash")
-                        //                                    .foregroundColor(.red)
-                        //                                    .font(.system(size: 14))
-                        //                            }
-                        //                        }
-                        //                        .padding(.horizontal, 12)
-                        //                        .padding(.vertical, 8)
-                        //                        .background(
-                        //                            RoundedRectangle(cornerRadius: 8)
-                        //                                .fill(Color.white)
-                        //                        )
-                        //                    }
-                        
-                        if let firstMedicine = medicineInfo.first, !firstMedicine.time.isEmpty {
-                            HStack {
-                                ForEach(firstMedicine.time, id: \.id) { timeEntry in
-                                    HStack {
-                                        Text(timeEntry.time.formatted(date: .omitted, time: .shortened))
-                                            .font(.system(size: 14))
-                                        
-                                        Spacer()
-                                        
-                                        Button(action: {
-                                            deleteTime(timeEntry)
-                                        }) {
-                                            Image(systemName: "trash")
-                                                .foregroundColor(.red)
-                                                .font(.system(size: 12))
                                         }
-                                    }
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.white)
-                                    )
-                                }
-                            }
-                        } else {
-                            HStack {
-                                ForEach(Array(tentativeTime.sorted().enumerated()), id: \.offset) { index, time in
-                                    HStack {
-                                        Text("\(index + 1)")
-                                            .foregroundColor(.gray)
-                                            .font(.system(size: 10))
-                                        Text(time.formatted(date: .omitted, time: .shortened))
-                                            .font(.system(size: 14))
-                                        
-                                        Spacer()
-                                        
-                                        Button(action: {
-                                            if let originalIndex = tentativeTime.firstIndex(of: time) {
-                                                tentativeTime.remove(at: originalIndex)
-                                            }
-                                        }) {
-                                            Image(systemName: "trash")
-                                                .foregroundColor(.red)
-                                                .font(.system(size: 12))
-                                        }
-                                    }
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.white)
-                                    )
-                                }
-                            }
-                        }
-                        
-//                        if let firstMedicine = medicineInfo.first {
-//                            let totalCount = firstMedicine.time.count + tentativeTime.count
-//                            if totalCount.count 3 {
-                        if let firstMedicine = medicineInfo.first {
-                            // どちらかが3つ未満ならボタンを表示
-                            if firstMedicine.time.count < 3 && tentativeTime.count < 3 {
-                                Button(action: {
-                                    showTimeView.toggle()
-                                }) {
-                                    Text("時間を追加")
-                                        .foregroundColor(.black.opacity(0.7))
-                                        .font(.caption)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 8)
                                         .background(
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .fill(Color.gray.opacity(0.2))
-                                                .frame(width: 80, height: 25)
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(Color.white)
                                         )
+                                    }
                                 }
-                                .sheet(isPresented: $showTimeView) {
-                                    TimeView(time: $time, done: {
-                                        showTimeView = false
-                                        tentativeTime.append(time)
-                                    })
+                            } else {
+                                HStack {
+                                    ForEach(Array(tentativeTime.sorted().enumerated()), id: \.offset) { index, time in
+                                        HStack {
+                                            Text("\(index + 1)")
+                                                .foregroundColor(.gray)
+                                                .font(.system(size: 10))
+                                            Text(time.formatted(date: .omitted, time: .shortened))
+                                                .font(.system(size: 14))
+                                            
+                                            Spacer()
+                                            
+                                            Button(action: {
+                                                if let originalIndex = tentativeTime.firstIndex(of: time) {
+                                                    tentativeTime.remove(at: originalIndex)
+                                                }
+                                            }) {
+                                                Image(systemName: "trash")
+                                                    .foregroundColor(.red)
+                                                    .font(.system(size: 12))
+                                            }
+                                        }
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 8)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(Color.white)
+                                        )
+                                    }
                                 }
                             }
+                            
+                            //                        if let firstMedicine = medicineInfo.first {
+                            //                            let totalCount = firstMedicine.time.count + tentativeTime.count
+                            //                            if totalCount.count 3 {
+                            if let firstMedicine = medicineInfo.first {
+                                // どちらかが3つ未満ならボタンを表示
+                                if firstMedicine.time.count < 3 && tentativeTime.count < 3 {
+                                    Button(action: {
+                                        showTimeView.toggle()
+                                    }) {
+                                        Text("時間を追加")
+                                            .foregroundColor(.black.opacity(0.7))
+                                            .font(.caption)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(Color.gray.opacity(0.2))
+                                                    .frame(width: 80, height: 25)
+                                            )
+                                    }
+                                    .padding(.top, -2)
+                                    .sheet(isPresented: $showTimeView) {
+                                        TimeView(time: $time, done: {
+                                            showTimeView = false
+                                            tentativeTime.append(time)
+                                        })
+                                    }
+                                }
+                            }
+                            //                        .sheet(isPresented: $showTimeView) {
+                            //                            TimeView(time: $time, done: {
+                            //                                showTimeView = false
+                            //                                tentativeTime.append(time)
+                            //                            })
+                            //                        }
                         }
-//                        .sheet(isPresented: $showTimeView) {
-//                            TimeView(time: $time, done: {
-//                                showTimeView = false
-//                                tentativeTime.append(time)
-//                            })
-//                        }
                     }
-                }
-                .padding(.horizontal)
-                
-//                Divider()
-//                    .background(.gray)
-//                    .padding(.horizontal)
-//                
-//                ZStack(alignment: .topLeading) {
-//                    TextEditor(text: $effect)
-//                        .frame(maxWidth: .infinity)
-//                        .frame(height: 60)
-//                        .padding(2)
-//                        .background(
-//                            RoundedRectangle(cornerRadius: 8)
-//                                .stroke(Color.gray.opacity(0.4))
-//                        )
-//                    Text("効果")
-//                        .foregroundColor(effect.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
-//                        .padding(.vertical, 10)
-//                        .padding(.horizontal, 10)
-//                }
-//                .padding(.horizontal)
-                
-//                Divider()
-//                    .background(.gray)
-//                    .padding(.horizontal)
-                
-                HStack {
-                    Text("在庫")
-                        .font(.caption)
+                    .padding(.horizontal)
+                    
+                    //                Divider()
+                    //                    .background(.gray)
+                    //                    .padding(.horizontal)
+                    //                
+                    //                ZStack(alignment: .topLeading) {
+                    //                    TextEditor(text: $effect)
+                    //                        .frame(maxWidth: .infinity)
+                    //                        .frame(height: 60)
+                    //                        .padding(2)
+                    //                        .background(
+                    //                            RoundedRectangle(cornerRadius: 8)
+                    //                                .stroke(Color.gray.opacity(0.4))
+                    //                        )
+                    //                    Text("効果")
+                    //                        .foregroundColor(effect.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
+                    //                        .padding(.vertical, 10)
+                    //                        .padding(.horizontal, 10)
+                    //                }
+                    //                .padding(.horizontal)
+                    
                     Divider()
-                        .frame(height: 0.7)
-                        .frame(maxWidth: .infinity)
-                        .background(Color.gray.opacity(0.2))
-                        .padding(.horizontal, 8)
+                        .background(.black)
+                        .padding(.horizontal, 1)
                     
-                    //                TextField("", text: String($stock))
-                    //                    .textFieldStyle(.roundedBorder)
-                    //                    .multilineTextAlignment(.trailing)
-                    //                    .frame(width: 100)
-                    //                TextField("在庫数", text: $stockText)
-                    //                    .keyboardType(.numberPad)
-                    //                    .textFieldStyle(.roundedBorder)
-                    //                    .keyboardType(.decimalPad)
-                    NoMenuTextField(text: $stockText, keyboardType: .decimalPad)
-                        .frame(width: 100, height: 36)
-                        .textFieldStyle(.roundedBorder)
-                    
-                    //                Button(action: {
-                    //                    showStockUnitView.toggle()
-                    //                }) {
-                    //                    Text(getStockUnitDisplayText())
-                    //                        .borderedTextStyle()
-                    //                }
-                    //                .sheet(isPresented: $showStockUnitView) {
-                    //                    CustomUnitView(selectedUnit: $selectedStockUnit,
-                    //                                   onTap: { showStockUnitView = false })
-                    //                }
-                    Text(getDosageUnitDisplayText())
-                    //                    .borderedTextStyle()
-                        .font(.footnote)
-                }
-                .padding(.horizontal)
-                
-//                Divider()
-//                    .background(.gray)
-//                    .padding(.horizontal)
-                
-//                ZStack(alignment: .topLeading) {
-//                    TextEditor(text: $memo)
-//                        .frame(maxWidth: .infinity)
-//                        .frame(height: 60)
-//                        .padding(2)
-//                        .background(
-//                            RoundedRectangle(cornerRadius: 8)
-//                                .stroke(Color.gray.opacity(0.4))
-//                        )
-//                    Text("メモ")
-//                        .foregroundColor(memo.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
-//                        .padding(.vertical, 10)
-//                        .padding(.horizontal, 10)
-//                }
-//                .padding(.horizontal)
-                
-                if toggleEffect {
                     HStack {
-                        TextField("効果", text: $effect)
+                        Text("在庫")
+                            .font(.caption)
+                        Divider()
+                            .frame(height: 0.7)
+                            .frame(maxWidth: .infinity)
+                            .background(Color.gray.opacity(0.2))
+                            .padding(.horizontal, 8)
+                        
+                        //                TextField("", text: String($stock))
+                        //                    .textFieldStyle(.roundedBorder)
+                        //                    .multilineTextAlignment(.trailing)
+                        //                    .frame(width: 100)
+                        //                TextField("在庫数", text: $stockText)
+                        //                    .keyboardType(.numberPad)
+                        //                    .textFieldStyle(.roundedBorder)
+                        //                    .keyboardType(.decimalPad)
+                        NoMenuTextField(text: $stockText, keyboardType: .decimalPad)
+                            .frame(width: 100, height: 36)
                             .textFieldStyle(.roundedBorder)
                         
-                        Button(action: {
-//                            toggleEffect = false
-                            showEffectDeleteAlert.toggle()
-                        }) {
-                            Image(systemName: "trash")
-                                .foregroundColor(.red)
-                                .font(.system(size: 14))
-                        }
-//                        CommonAlertModifier(isPresented: $showEffectDeleteAlert,
-//                                            title: "削除の確認",
-//                                            message: "効果の内容も削除されます",
-//                                            done: "削除",
-//                                            confirmAction: {
-//                            toggleEffect = false
-//                            effect = ""
-//                        })
-                        .commonAlert(isPresented: $showEffectDeleteAlert,
-                                     title: "削除の確認",
-                                     message: "効果の内容も削除されます",
-                                     confirmAction: {
-                            toggleEffect = false
-                            effect = ""
-                        })
+                        //                Button(action: {
+                        //                    showStockUnitView.toggle()
+                        //                }) {
+                        //                    Text(getStockUnitDisplayText())
+                        //                        .borderedTextStyle()
+                        //                }
+                        //                .sheet(isPresented: $showStockUnitView) {
+                        //                    CustomUnitView(selectedUnit: $selectedStockUnit,
+                        //                                   onTap: { showStockUnitView = false })
+                        //                }
+                        Text(getDosageUnitDisplayText())
+                        //                    .borderedTextStyle()
+                            .font(.footnote)
                     }
                     .padding(.horizontal)
-                }
-                
-                if toggleMemo {
-                    HStack {
-                        ZStack(alignment: .topLeading) {
-                            TextEditor(text: $memo)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 60)
-                                .padding(2)
+                    
+                    Divider()
+                        .background(.black)
+                        .padding(.horizontal, 1)
+                    
+                    //                ZStack(alignment: .topLeading) {
+                    //                    TextEditor(text: $memo)
+                    //                        .frame(maxWidth: .infinity)
+                    //                        .frame(height: 60)
+                    //                        .padding(2)
+                    //                        .background(
+                    //                            RoundedRectangle(cornerRadius: 8)
+                    //                                .stroke(Color.gray.opacity(0.4))
+                    //                        )
+                    //                    Text("メモ")
+                    //                        .foregroundColor(memo.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
+                    //                        .padding(.vertical, 10)
+                    //                        .padding(.horizontal, 10)
+                    //                }
+                    //                .padding(.horizontal)
+                    
+                    if toggleEffect {
+                        HStack {
+                            TextField("効果", text: $effect)
+                                .textFieldStyle(.roundedBorder)
+                            
+                            Button(action: {
+                                //                            toggleEffect = false
+                                showEffectDeleteAlert.toggle()
+                            }) {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                                    .font(.system(size: 14))
+                            }
+                            //                        CommonAlertModifier(isPresented: $showEffectDeleteAlert,
+                            //                                            title: "削除の確認",
+                            //                                            message: "効果の内容も削除されます",
+                            //                                            done: "削除",
+                            //                                            confirmAction: {
+                            //                            toggleEffect = false
+                            //                            effect = ""
+                            //                        })
+                            .commonAlert(isPresented: $showEffectDeleteAlert,
+                                         title: "削除の確認",
+                                         message: "効果の内容も削除されます",
+                                         confirmAction: {
+                                toggleEffect = false
+                                effect = ""
+                            })
+                        }
+                        .padding(.horizontal)
+                    }
+                    
+                    if toggleMemo {
+                        HStack {
+                            ZStack(alignment: .topLeading) {
+                                TextEditor(text: $memo)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 60)
+                                    .padding(2)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.gray.opacity(0.1))
+                                    )
+                                Text("メモ")
+                                    .foregroundColor(memo.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
+                                    .padding(.vertical, 10)
+                                    .padding(.horizontal, 10)
+                            }
+                            
+                            Button(action: {
+                                showMemoDeleteAlert.toggle()
+                            }) {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                                    .font(.system(size: 14))
+                            }
+                            .commonAlert(isPresented: $showMemoDeleteAlert,
+                                         title: "削除の確認",
+                                         message: "メモの内容も削除されます",
+                                         confirmAction: {
+                                toggleMemo = false
+                                memo = ""
+                            })
+                        }
+                        .padding(.horizontal)
+                    }
+                    
+                    HStack(spacing: 30) {
+                        if !toggleEffect {
+                            Button(action: {
+                                toggleEffect = true
+                            }) {
+                                HStack(spacing: 1) {
+                                    Text("効果")
+                                    Image(systemName: "plus")
+                                }
+                                .font(.footnote)
+                                .foregroundColor(.black)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(Color.gray.opacity(0.1))
+                                    Capsule()
+                                        .fill(Color.blue.opacity(0.2))
+                                        .frame(width: 60, height: 30)
                                 )
-                            Text("メモ")
-                                .foregroundColor(memo.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
-                                .padding(.vertical, 10)
-                                .padding(.horizontal, 10)
+                            }
                         }
                         
-                        Button(action: {
-                            showMemoDeleteAlert.toggle()
-                        }) {
-                            Image(systemName: "trash")
-                                .foregroundColor(.red)
-                                .font(.system(size: 14))
-                        }
-                        .commonAlert(isPresented: $showMemoDeleteAlert,
-                                     title: "削除の確認",
-                                     message: "メモの内容も削除されます",
-                                     confirmAction: {
-                            toggleMemo = false
-                            memo = ""
-                        })
-                    }
-                    .padding(.horizontal)
-                }
-                
-                HStack(spacing: 30) {
-                    if !toggleEffect {
-                        Button(action: {
-                            toggleEffect = true
-                        }) {
-                            HStack(spacing: 1) {
-                                Text("効果")
-                                Image(systemName: "plus")
+                        if !toggleMemo {
+                            Button(action: {
+                                toggleMemo = true
+                            }) {
+                                HStack(spacing: 1) {
+                                    Text("メモ")
+                                    Image(systemName: "plus")
+                                }
+                                .font(.footnote)
+                                .foregroundColor(.black)
+                                .background(
+                                    Capsule()
+                                        .fill(Color.blue.opacity(0.2))
+                                        .frame(width: 60, height: 30)
+                                )
                             }
-                            .font(.footnote)
-                            .foregroundColor(.black)
-                            .background(
-                                Capsule()
-                                    .fill(Color.blue.opacity(0.2))
-                                    .frame(width: 60, height: 30)
-                            )
                         }
+                        
+                        Spacer()
                     }
-                    
-                    if !toggleMemo {
-                        Button(action: {
-                            toggleMemo = true
-                        }) {
-                            HStack(spacing: 1) {
-                                Text("メモ")
-                                Image(systemName: "plus")
-                            }
-                            .font(.footnote)
-                            .foregroundColor(.black)
-                            .background(
-                                Capsule()
-                                    .fill(Color.blue.opacity(0.2))
-                                    .frame(width: 60, height: 30)
-                            )
-                        }
-                    }
+                    .padding(5)
                     
                     Spacer()
-                }
-                .padding(.horizontal)
-                
-                Button(action: {
-                    saveMedicine()
-                }) {
-                    Text("保存")
-                        .foregroundColor(.black)
-                        .background(
-                            RoundedRectangle(cornerRadius: 18)
-                                .fill(Color.blue.opacity(0.7))
-                                .frame(width: 100, height: 30)
-                        )
-                }
-                .padding()
-                
-//                    if isNewMedicine {
-//                        Button(action: {
-//                        }) {
-//                            Text("キャンセル")
-//                        }
-//                    } else {
-//                        Button(action: {
-//                            showDeleteAlert.toggle()
-//                        }) {
-//                            Text("削除")
-//                        }
-//                        .alert("削除の確認", isPresented: $showDeleteAlert) {
-//                            Button("キャンセル", role: .cancel) {}
-//                            Button("削除") {
-//                                deleteMedicine(by: medicine.id)
-//                                dismiss()
-//                            }
-//                        } message: {
-//                            Text("「\(medicine.medicineName)」を削除しますか？")
-//                        }
-//                    }
+                    
+                    Button(action: {
+                        saveMedicine()
+                    }) {
+                        Text("保存")
+                            .foregroundColor(.white)
+                            .background(
+                                RoundedRectangle(cornerRadius: 18)
+                                    .fill(Color.blue.opacity(0.75))
+                                    .frame(width: 100, height: 30)
+                            )
+                    }
+                    .padding()
+                    
+                    //                    if isNewMedicine {
+                    //                        Button(action: {
+                    //                        }) {
+                    //                            Text("キャンセル")
+                    //                        }
+                    //                    } else {
+                    //                        Button(action: {
+                    //                            showDeleteAlert.toggle()
+                    //                        }) {
+                    //                            Text("削除")
+                    //                        }
+                    //                        .alert("削除の確認", isPresented: $showDeleteAlert) {
+                    //                            Button("キャンセル", role: .cancel) {}
+                    //                            Button("削除") {
+                    //                                deleteMedicine(by: medicine.id)
+                    //                                dismiss()
+                    //                            }
+                    //                        } message: {
+                    //                            Text("「\(medicine.medicineName)」を削除しますか？")
+                    //                        }
+                    //                    }
                     
                     //                .alert("削除", message: "本当に削除しますか？", isPresented: $showDeleteAlert) {
                     //                    Button("キャンセル", role: .cancel) {}
@@ -556,72 +561,73 @@ struct MedicineInfoView: View {
                     //                        dismiss()
                     //                    }
                     //                }
-                
-                Spacer()
-            }
-            .padding(.horizontal)
-            .background(Color.gray.opacity(0.1))
-            .onAppear {
-                // 既存の medicine オブジェクトから値を反映
-                selectedFirstTimings = Set(medicine.firstTiming)
-                medicineName = medicine.medicineName
-                dosageText = medicine.dosage.map { String($0) } ?? ""
-                //            morningDosage = medicine.morningDosage ?? 0
-                //            noonDosage = medicine.noonDosage ?? 0
-                //            eveningDosage = medicine.eveningDosage ?? 0
-                morningDosageText = medicine.morningDosage.map { String($0) } ?? ""
-                noonDosageText = medicine.noonDosage.map { String($0) } ?? ""
-                eveningDosageText = medicine.eveningDosage.map { String($0) } ?? ""
-                effect = medicine.effect ?? ""
-                //            stock = String(medicine.stock ?? 0)
-                stockText = medicine.stock.map { String($0) } ?? ""
-                memo = medicine.memo ?? ""
-                selectedSecondTiming = medicine.secondTiming
-                selectedUnit = medicine.unit
-                //            selectedStockUnit = medicine.stockUnit?.unit
-                tentativeTime = medicine.time.map { $0.time }
-                toggleEffect = medicine.toggleEffect
-                toggleMemo = medicine.toggleMemo
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Button(action: {
-                            showDeleteAlert.toggle()
-                        }) {
-                            Text("削除")
+                    
+                    //                Spacer()
+                }
+                .padding(.horizontal)
+                .onAppear {
+                    // 既存の medicine オブジェクトから値を反映
+                    selectedFirstTimings = Set(medicine.firstTiming)
+                    medicineName = medicine.medicineName
+                    dosageText = medicine.dosage.map { String($0) } ?? ""
+                    //            morningDosage = medicine.morningDosage ?? 0
+                    //            noonDosage = medicine.noonDosage ?? 0
+                    //            eveningDosage = medicine.eveningDosage ?? 0
+                    morningDosageText = medicine.morningDosage.map { String($0) } ?? ""
+                    noonDosageText = medicine.noonDosage.map { String($0) } ?? ""
+                    eveningDosageText = medicine.eveningDosage.map { String($0) } ?? ""
+                    effect = medicine.effect ?? ""
+                    //            stock = String(medicine.stock ?? 0)
+                    stockText = medicine.stock.map { String($0) } ?? ""
+                    memo = medicine.memo ?? ""
+                    selectedSecondTiming = medicine.secondTiming
+                    selectedUnit = medicine.unit
+                    //            selectedStockUnit = medicine.stockUnit?.unit
+                    tentativeTime = medicine.time.map { $0.time }
+                    toggleEffect = medicine.toggleEffect
+                    toggleMemo = medicine.toggleMemo
+                }
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Menu {
+                            Button(action: {
+                                showDeleteAlert.toggle()
+                            }) {
+                                Text("削除")
+                            }
+                            
+                            Button(action: {
+                                showIsUsingAlert.toggle()
+                            }) {
+                                Text("不使用にする")
+                            }
+                            
+                            
+                        } label: {
+                            Image(systemName: "ellipsis")
                         }
-                        
-                        Button(action: {
-                            showIsUsingAlert.toggle()
-                        }) {
-                            Text("不使用にする")
+                        .alert("削除の確認", isPresented: $showDeleteAlert) {
+                            Button("キャンセル", role: .cancel) {}
+                            Button("削除") {
+                                deleteMedicine(by: medicine.id)
+                                dismiss()
+                            }
+                        } message: {
+                            Text("「\(medicine.medicineName)」を削除しますか？")
                         }
-
-                        
-                    } label: {
-                        Image(systemName: "ellipsis")
-                    }
-                    .alert("削除の確認", isPresented: $showDeleteAlert) {
-                        Button("キャンセル", role: .cancel) {}
-                        Button("削除") {
-                            deleteMedicine(by: medicine.id)
-                            dismiss()
+                        .alert("不使用", isPresented: $showIsUsingAlert) {
+                            Button("キャンセル", role: .cancel) {}
+                            Button("不使用") {
+                                isUsingChange()
+                            }
+                        } message: {
+                            Text("「\(medicine.medicineName)」を不使用にしますか？")
+                            Text("削除はされず、不使用リストに移動します。")
                         }
-                    } message: {
-                        Text("「\(medicine.medicineName)」を削除しますか？")
-                    }
-                    .alert("不使用", isPresented: $showIsUsingAlert) {
-                        Button("キャンセル", role: .cancel) {}
-                        Button("不使用") {
-                            isUsingChange()
-                        }
-                    } message: {
-                        Text("「\(medicine.medicineName)」を不使用にしますか？")
-                        Text("削除はされず、不使用リストに移動します。")
                     }
                 }
             }
+            .background(Color.gray.opacity(0.1).ignoresSafeArea())
         }
     }
     

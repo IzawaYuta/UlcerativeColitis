@@ -8,10 +8,22 @@
 import SwiftUI
 
 struct MainTabView: View {
+    
     @State private var selectedTab: Int = 0
     
+    init() {
+        // UITabBarの背景を変更
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.systemGray6
+        
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
+    
+    
     var body: some View {
-        TabView(selection: $selectedTab) {   // ← $ が必要
+        TabView(selection: $selectedTab) {
             ContentView()
                 .tag(0)
                 .tabItem {
