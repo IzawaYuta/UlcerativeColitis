@@ -271,6 +271,8 @@ struct MedicineInfoView: View {
                                             showTimeView = false
                                             tentativeTime.append(time)
                                         })
+                                        .presentationDetents([.height(350)])
+                                        .presentationCornerRadius(30)
                                     }
                                 }
                             }
@@ -363,23 +365,23 @@ struct MedicineInfoView: View {
                     }
                     
                     HStack/*(spacing: 30)*/ {
-//                        if !toggleEffect {
-//                            Button(action: {
-//                                toggleEffect = true
-//                            }) {
-//                                HStack(spacing: 1) {
-//                                    Text("効果")
-//                                    Image(systemName: "plus")
-//                                }
-//                                .font(.footnote)
-//                                .foregroundColor(.black)
-//                                .background(
-//                                    Capsule()
-//                                        .fill(Color.blue.opacity(0.2))
-//                                        .frame(width: 60, height: 30)
-//                                )
-//                            }
-//                        }
+                        //                        if !toggleEffect {
+                        //                            Button(action: {
+                        //                                toggleEffect = true
+                        //                            }) {
+                        //                                HStack(spacing: 1) {
+                        //                                    Text("効果")
+                        //                                    Image(systemName: "plus")
+                        //                                }
+                        //                                .font(.footnote)
+                        //                                .foregroundColor(.black)
+                        //                                .background(
+                        //                                    Capsule()
+                        //                                        .fill(Color.blue.opacity(0.2))
+                        //                                        .frame(width: 60, height: 30)
+                        //                                )
+                        //                            }
+                        //                        }
                         
                         if !toggleMemo {
                             Button(action: {
@@ -429,13 +431,13 @@ struct MedicineInfoView: View {
                     morningDosageText = medicine.morningDosage.map { String($0) } ?? ""
                     noonDosageText = medicine.noonDosage.map { String($0) } ?? ""
                     eveningDosageText = medicine.eveningDosage.map { String($0) } ?? ""
-//                    effect = medicine.effect ?? ""
+                    //                    effect = medicine.effect ?? ""
                     stockText = medicine.stock.map { String($0) } ?? ""
                     memo = medicine.memo ?? ""
                     selectedSecondTiming = medicine.secondTiming
                     selectedUnit = medicine.unit
                     tentativeTime = medicine.time.map { $0.time }
-//                    toggleEffect = medicine.toggleEffect
+                    //                    toggleEffect = medicine.toggleEffect
                     toggleMemo = medicine.toggleMemo
                 }
                 .toolbar {
@@ -509,11 +511,11 @@ struct MedicineInfoView: View {
                 model.morningDosage = morningDosage
                 model.noonDosage = noonDosage
                 model.eveningDosage = eveningDosage
-//                model.effect = effect
+                //                model.effect = effect
                 model.memo = memo
                 model.secondTiming = selectedSecondTiming
                 model.firstTiming.append(objectsIn: Array(selectedFirstTimings))
-//                model.toggleEffect = toggleEffect
+                //                model.toggleEffect = toggleEffect
                 model.toggleMemo = toggleMemo
                 
                 if let selectedUnit = selectedUnit {
@@ -548,20 +550,20 @@ struct MedicineInfoView: View {
                 stockText = ""
                 memo = ""
                 tentativeTime = []
-//                toggleEffect = false
+                //                toggleEffect = false
                 toggleMemo = false
                 
             } else {
                 // 既存データの更新
                 if let thawedMedicine = medicine.thaw() {
                     thawedMedicine.medicineName = medicineName
-//                    thawedMedicine.effect = effect
+                    //                    thawedMedicine.effect = effect
                     thawedMedicine.memo = memo
                     thawedMedicine.secondTiming = selectedSecondTiming
                     
                     thawedMedicine.firstTiming.removeAll()
                     thawedMedicine.firstTiming.append(objectsIn: Array(selectedFirstTimings))
-//                    thawedMedicine.toggleEffect = toggleEffect
+                    //                    thawedMedicine.toggleEffect = toggleEffect
                     thawedMedicine.toggleMemo = toggleMemo
                     
                     if let selectedUnit = selectedUnit {
