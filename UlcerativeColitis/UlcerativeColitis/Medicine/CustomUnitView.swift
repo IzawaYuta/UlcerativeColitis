@@ -12,7 +12,6 @@ struct CustomUnitView: View {
     
     @ObservedResults(UnitArray.self) var unitArray
     
-//    @State private var units: [UnitArray] = ["錠"]
     @State private var showAddAlert = false
     @State private var showDeleteAlert = false
     @State private var newUnitTextField = ""
@@ -28,7 +27,8 @@ struct CustomUnitView: View {
             ForEach(unitArray, id: \.id) { unit in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.cyan.opacity(0.2))
+                        .fill(Color.white.opacity(1.0))
+                        .stroke(Color.black.opacity(0.5), lineWidth: 1.2)
                         .frame(height: 50)
                     HStack {
                         Text(unit.unitName)
@@ -39,7 +39,7 @@ struct CustomUnitView: View {
                             showDeleteAlert.toggle()
                         }) {
                             Image(systemName: "trash")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.red.opacity(0.5))
                                 .font(.system(size: 13))
                         }
                         .alert("", isPresented: $showDeleteAlert) {
@@ -74,7 +74,7 @@ struct CustomUnitView: View {
             }
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.gray.opacity(0.2))
+                    .fill(Color.gray.opacity(0.5))
                     .frame(width: 200, height: 40)
             )
             .alert("単位", isPresented: $showAddAlert) {
@@ -92,6 +92,8 @@ struct CustomUnitView: View {
             .padding(.vertical)
             Spacer()
         }
+        .padding(.vertical)
+        .background(Color.gray.opacity(0.1))
         .onAppear {
             print(UnitArray())
         }

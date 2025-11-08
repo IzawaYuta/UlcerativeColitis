@@ -95,6 +95,8 @@ struct MedicineInfoView: View {
                         .sheet(isPresented: $showCustomUnitView) {
                             CustomUnitView(selectedUnit: $selectedUnit,
                                            onTap: { showCustomUnitView = false })
+                            .presentationDetents([.large])
+                            .presentationCornerRadius(30)
                         }
                     }
                     .padding(.horizontal)
