@@ -446,10 +446,18 @@ struct MedicineInfoView: View {
                                 Text("削除")
                             }
                             
-                            Button(action: {
-                                showIsUsingAlert.toggle()
-                            }) {
-                                Text("不使用にする")
+                            if medicine.isUsing {
+                                Button(action: {
+                                    showIsUsingAlert.toggle()
+                                }) {
+                                    Text("不使用にする")
+                                }
+                            } else {
+                                Button(action: {
+                                    showIsUsingAlert.toggle()
+                                }) {
+                                    Text("使用中にする")
+                                }
                             }
                             
                             
@@ -458,7 +466,7 @@ struct MedicineInfoView: View {
                         }
                         .alert("削除の確認", isPresented: $showDeleteAlert) {
                             Button("キャンセル", role: .cancel) {}
-                            Button("削除") {
+                            Button("削除", role: .destructive) {
                                 deleteMedicine(by: medicine.id)
                                 dismiss()
                             }
@@ -467,8 +475,16 @@ struct MedicineInfoView: View {
                         }
                         .alert("不使用", isPresented: $showIsUsingAlert) {
                             Button("キャンセル", role: .cancel) {}
-                            Button("不使用") {
-                                isUsingChange()
+                            if medicine.isUsing {
+                                Button("不使用") {
+                                    isUsingChange()
+                                    dismiss()
+                                }
+                            } else {
+                                Button("使用") {
+                                    isUsingChange()
+                                    dismiss()
+                                }
                             }
                         } message: {
                             Text("「\(medicine.medicineName)」を不使用にしますか？")
@@ -653,7 +669,7 @@ struct MedicineInfoView: View {
         let realm = try! Realm()
         try! realm.write {
             if let thawedMedicine = medicine.thaw() {
-                thawedMedicine.isUsing = false
+                thawedMedicine.isUsing.toggle()
             }
         }
     }
@@ -745,9 +761,14 @@ struct MedicineInfoView: View {
         
         try! realm.write {
             if let medicineToDelete = realm.object(ofType: MedicineInfo.self, forPrimaryKey: id) {
-                // 関連オブジェクトも削除したい場合はここで削除
-                // realm.delete(medicineToDelete.time)
-                // realm.delete(medicineToDelete.unit)
+                
+                // 関連する unit を削除（存在する場合）
+                if let unit = medicineToDelete.unit {
+                    realm.delete(unit)
+                }
+                
+                // 関連する time（List）をすべて削除
+                realm.delete(medicineToDelete.time)
                 
                 realm.delete(medicineToDelete)
             }
