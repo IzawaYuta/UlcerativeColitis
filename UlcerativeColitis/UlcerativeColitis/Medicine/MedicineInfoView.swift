@@ -176,7 +176,7 @@ struct MedicineInfoView: View {
                                                 .frame(width: 60, height: 30)
                                             HStack {
                                                 dosageTextField(for: timing)
-                                                    .frame(width: 60, height: 36)
+                                                    .frame(width: 100, height: 36)
                                                     .textFieldStyle(.roundedBorder)
                                                 
                                                 Text(getUnitDisplayText())
@@ -514,13 +514,19 @@ struct MedicineInfoView: View {
                 }
                 .padding(.horizontal)
                 
-                HStack {
-                    Button(action: {
-                        saveMedicine()
-                    }) {
-                        Text("保存")
-                    }
-                    
+                Button(action: {
+                    saveMedicine()
+                }) {
+                    Text("保存")
+                        .foregroundColor(.black)
+                        .background(
+                            RoundedRectangle(cornerRadius: 18)
+                                .fill(Color.blue.opacity(0.7))
+                                .frame(width: 100, height: 30)
+                        )
+                }
+                .padding()
+                
 //                    if isNewMedicine {
 //                        Button(action: {
 //                        }) {
@@ -550,7 +556,6 @@ struct MedicineInfoView: View {
                     //                        dismiss()
                     //                    }
                     //                }
-                }
                 
                 Spacer()
             }
