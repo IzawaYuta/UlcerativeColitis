@@ -1,5 +1,5 @@
 {
-  "originHash" : "5667a75676195c4aaf5ade7d7b60832008d64daf8db8bd7e485a79a285f24cf3",
+  "originHash" : "83f9a0b7145af5d9e7bb02ba7151661ca2c4fb81b5f634bafe3873f101f523e8",
   "pins" : [
     {
       "identity" : "chartview",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "9115a992c91fa19cbb4f2241084240d38654a1fc",
         "version" : "1.5.5"
+      }
+    },
+    {
+      "identity" : "dynamiccolor",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/yannickl/DynamicColor",
+      "state" : {
+        "revision" : "d9beca13ca85baa50ee29832d0db5129fba69630",
+        "version" : "5.0.1"
       }
     },
     {
