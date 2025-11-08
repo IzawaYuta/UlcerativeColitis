@@ -13,7 +13,6 @@ struct MedicineInfoView: View {
     
     @ObservedResults(MedicineInfo.self) var medicineInfo
     @ObservedResults(UnitArray.self) var unitArray
-//    @ObservedResults(MedicineInfo.self) var medicineInfo
     @ObservedResults(MedicineTime.self) var times
     
     @ObservedRealmObject var medicine: MedicineInfo
@@ -54,8 +53,6 @@ struct MedicineInfoView: View {
     @State private var selectedStockUnit: UnitArray? //在庫用単位の選択状態
     
     var isNewMedicine: Bool {
-        // IDが空文字列なら新規（実際にはUUIDが自動生成されるので別の判定が必要）
-        // または、medicine.medicineNameが空なら新規と判定
         medicine.realm == nil  // Realmに保存されていなければ新規
     }
     
@@ -67,14 +64,13 @@ struct MedicineInfoView: View {
                         Text("お薬の名前")
                             .font(.footnote)
                         TextField("", text: $medicineName)
-                        //                        .frame(height: 37)
                             .textFieldStyle(.roundedBorder)
                     }
                     .padding(.horizontal)
                     
-//                    Divider()
-//                        .background(.black)
-//                        .padding(.horizontal, 1)
+                    Divider()
+                        .background(.black)
+                        .padding(.horizontal, 1)
                     
                     HStack {
                         Text("1回")
@@ -86,11 +82,6 @@ struct MedicineInfoView: View {
                             .background(Color.gray.opacity(0.2))
                             .padding(.horizontal, 8)
                         
-                        //                TextField("", text: $dosageText)
-                        //                    .multilineTextAlignment(.trailing)
-                        //                    .frame(width: 100)
-                        //                    .textFieldStyle(.roundedBorder)
-                        //                    .keyboardType(.decimalPad)
                         NoMenuTextField(text: $dosageText, keyboardType: .decimalPad)
                             .frame(width: 100, height: 36)
                             .textFieldStyle(.roundedBorder)
@@ -108,9 +99,9 @@ struct MedicineInfoView: View {
                     }
                     .padding(.horizontal)
                     
-//                    Divider()
-//                        .background(.black)
-//                        .padding(.horizontal, 1)
+                    Divider()
+                        .background(.black)
+                        .padding(.horizontal, 1)
                     
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
@@ -131,27 +122,20 @@ struct MedicineInfoView: View {
                                     draftSecondTiming = selectedSecondTiming
                                     showPicker.toggle()
                                 }) {
-                                    //                            if let firstMedicine = medicineInfo.first {
-                                    //                                Text(firstMedicine.secondTiming.japaneseText)
-                                    //                                    .foregroundColor(.black)
-                                    //                            } else {
                                     Text(selectedSecondTiming.japaneseText)
                                         .lineLimit(1)
                                         .foregroundColor(.black)
-                                    //                            }
                                 }
                                 .padding(.horizontal)
                                 .background(
                                     RoundedRectangle(cornerRadius: 5)
                                         .fill(Color.gray.opacity(0.3))
                                 )
-                                //                            .padding(.horizontal)
                                 .sheet(isPresented: $showPicker) {
                                     TimingPickerView(timing: $draftSecondTiming,
                                                      cancel: { showPicker = false},
                                                      done: { showPicker = false
                                         selectedSecondTiming = draftSecondTiming
-                                        //                                saveSecondTiming()
                                     }
                                     )
                                     .presentationDetents([.height(250)])
@@ -206,33 +190,9 @@ struct MedicineInfoView: View {
                                                 .frame(width: 100, height: 30)
                                         }
                                     }
-                                    //                                .padding(.vertical, 5)
                                     
                                 }
                             }
-                            
-                            //                    ForEach(times, id: \.id) { timeEntry in
-                            //                        HStack {
-                            //                            Text(timeEntry.time.formatted(date: .omitted, time: .shortened))
-                            //                                .font(.system(size: 15))
-                            //                            
-                            //                            Spacer()
-                            //                            
-                            //                            Button(action: {
-                            //                                deleteTime(timeEntry)
-                            //                            }) {
-                            //                                Image(systemName: "trash")
-                            //                                    .foregroundColor(.red)
-                            //                                    .font(.system(size: 14))
-                            //                            }
-                            //                        }
-                            //                        .padding(.horizontal, 12)
-                            //                        .padding(.vertical, 8)
-                            //                        .background(
-                            //                            RoundedRectangle(cornerRadius: 8)
-                            //                                .fill(Color.white)
-                            //                        )
-                            //                    }
                             
                             if let firstMedicine = medicineInfo.first, !firstMedicine.time.isEmpty {
                                 HStack {
@@ -247,7 +207,7 @@ struct MedicineInfoView: View {
                                                 deleteTime(timeEntry)
                                             }) {
                                                 Image(systemName: "trash")
-                                                    .foregroundColor(.red)
+                                                    .foregroundColor(.red.opacity(0.5))
                                                     .font(.system(size: 12))
                                             }
                                         }
@@ -277,7 +237,7 @@ struct MedicineInfoView: View {
                                                 }
                                             }) {
                                                 Image(systemName: "trash")
-                                                    .foregroundColor(.red)
+                                                    .foregroundColor(.red.opacity(0.5))
                                                     .font(.system(size: 12))
                                             }
                                         }
@@ -291,11 +251,7 @@ struct MedicineInfoView: View {
                                 }
                             }
                             
-                            //                        if let firstMedicine = medicineInfo.first {
-                            //                            let totalCount = firstMedicine.time.count + tentativeTime.count
-                            //                            if totalCount.count 3 {
                             if let firstMedicine = medicineInfo.first {
-                                // どちらかが3つ未満ならボタンを表示
                                 if firstMedicine.time.count < 3 && tentativeTime.count < 3 {
                                     Button(action: {
                                         showTimeView.toggle()
@@ -318,35 +274,9 @@ struct MedicineInfoView: View {
                                     }
                                 }
                             }
-                            //                        .sheet(isPresented: $showTimeView) {
-                            //                            TimeView(time: $time, done: {
-                            //                                showTimeView = false
-                            //                                tentativeTime.append(time)
-                            //                            })
-                            //                        }
                         }
                     }
                     .padding(.horizontal)
-                    
-                    //                Divider()
-                    //                    .background(.gray)
-                    //                    .padding(.horizontal)
-                    //                
-                    //                ZStack(alignment: .topLeading) {
-                    //                    TextEditor(text: $effect)
-                    //                        .frame(maxWidth: .infinity)
-                    //                        .frame(height: 60)
-                    //                        .padding(2)
-                    //                        .background(
-                    //                            RoundedRectangle(cornerRadius: 8)
-                    //                                .stroke(Color.gray.opacity(0.4))
-                    //                        )
-                    //                    Text("効果")
-                    //                        .foregroundColor(effect.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
-                    //                        .padding(.vertical, 10)
-                    //                        .padding(.horizontal, 10)
-                    //                }
-                    //                .padding(.horizontal)
                     
                     Divider()
                         .background(.black)
@@ -361,30 +291,11 @@ struct MedicineInfoView: View {
                             .background(Color.gray.opacity(0.2))
                             .padding(.horizontal, 8)
                         
-                        //                TextField("", text: String($stock))
-                        //                    .textFieldStyle(.roundedBorder)
-                        //                    .multilineTextAlignment(.trailing)
-                        //                    .frame(width: 100)
-                        //                TextField("在庫数", text: $stockText)
-                        //                    .keyboardType(.numberPad)
-                        //                    .textFieldStyle(.roundedBorder)
-                        //                    .keyboardType(.decimalPad)
                         NoMenuTextField(text: $stockText, keyboardType: .decimalPad)
                             .frame(width: 100, height: 36)
                             .textFieldStyle(.roundedBorder)
                         
-                        //                Button(action: {
-                        //                    showStockUnitView.toggle()
-                        //                }) {
-                        //                    Text(getStockUnitDisplayText())
-                        //                        .borderedTextStyle()
-                        //                }
-                        //                .sheet(isPresented: $showStockUnitView) {
-                        //                    CustomUnitView(selectedUnit: $selectedStockUnit,
-                        //                                   onTap: { showStockUnitView = false })
-                        //                }
                         Text(getDosageUnitDisplayText())
-                        //                    .borderedTextStyle()
                             .font(.footnote)
                     }
                     .padding(.horizontal)
@@ -393,43 +304,18 @@ struct MedicineInfoView: View {
                         .background(.black)
                         .padding(.horizontal, 1)
                     
-                    //                ZStack(alignment: .topLeading) {
-                    //                    TextEditor(text: $memo)
-                    //                        .frame(maxWidth: .infinity)
-                    //                        .frame(height: 60)
-                    //                        .padding(2)
-                    //                        .background(
-                    //                            RoundedRectangle(cornerRadius: 8)
-                    //                                .stroke(Color.gray.opacity(0.4))
-                    //                        )
-                    //                    Text("メモ")
-                    //                        .foregroundColor(memo.isEmpty ? Color.gray.opacity(0.5) : Color.clear)
-                    //                        .padding(.vertical, 10)
-                    //                        .padding(.horizontal, 10)
-                    //                }
-                    //                .padding(.horizontal)
-                    
                     if toggleEffect {
                         HStack {
                             TextField("効果", text: $effect)
                                 .textFieldStyle(.roundedBorder)
                             
                             Button(action: {
-                                //                            toggleEffect = false
                                 showEffectDeleteAlert.toggle()
                             }) {
                                 Image(systemName: "trash")
-                                    .foregroundColor(.red)
+                                    .foregroundColor(.red.opacity(0.5))
                                     .font(.system(size: 14))
                             }
-                            //                        CommonAlertModifier(isPresented: $showEffectDeleteAlert,
-                            //                                            title: "削除の確認",
-                            //                                            message: "効果の内容も削除されます",
-                            //                                            done: "削除",
-                            //                                            confirmAction: {
-                            //                            toggleEffect = false
-                            //                            effect = ""
-                            //                        })
                             .commonAlert(isPresented: $showEffectDeleteAlert,
                                          title: "削除の確認",
                                          message: "効果の内容も削除されます",
@@ -462,7 +348,7 @@ struct MedicineInfoView: View {
                                 showMemoDeleteAlert.toggle()
                             }) {
                                 Image(systemName: "trash")
-                                    .foregroundColor(.red)
+                                    .foregroundColor(.red.opacity(0.5))
                                     .font(.system(size: 14))
                             }
                             .commonAlert(isPresented: $showMemoDeleteAlert,
@@ -532,37 +418,6 @@ struct MedicineInfoView: View {
                     }
                     .padding()
                     
-                    //                    if isNewMedicine {
-                    //                        Button(action: {
-                    //                        }) {
-                    //                            Text("キャンセル")
-                    //                        }
-                    //                    } else {
-                    //                        Button(action: {
-                    //                            showDeleteAlert.toggle()
-                    //                        }) {
-                    //                            Text("削除")
-                    //                        }
-                    //                        .alert("削除の確認", isPresented: $showDeleteAlert) {
-                    //                            Button("キャンセル", role: .cancel) {}
-                    //                            Button("削除") {
-                    //                                deleteMedicine(by: medicine.id)
-                    //                                dismiss()
-                    //                            }
-                    //                        } message: {
-                    //                            Text("「\(medicine.medicineName)」を削除しますか？")
-                    //                        }
-                    //                    }
-                    
-                    //                .alert("削除", message: "本当に削除しますか？", isPresented: $showDeleteAlert) {
-                    //                    Button("キャンセル", role: .cancel) {}
-                    //                    Button("削除") {
-                    //                        deleteMedicine(by: medicine.id)
-                    //                        dismiss()
-                    //                    }
-                    //                }
-                    
-                    //                Spacer()
                 }
                 .padding(.horizontal)
                 .onAppear {
@@ -570,19 +425,14 @@ struct MedicineInfoView: View {
                     selectedFirstTimings = Set(medicine.firstTiming)
                     medicineName = medicine.medicineName
                     dosageText = medicine.dosage.map { String($0) } ?? ""
-                    //            morningDosage = medicine.morningDosage ?? 0
-                    //            noonDosage = medicine.noonDosage ?? 0
-                    //            eveningDosage = medicine.eveningDosage ?? 0
                     morningDosageText = medicine.morningDosage.map { String($0) } ?? ""
                     noonDosageText = medicine.noonDosage.map { String($0) } ?? ""
                     eveningDosageText = medicine.eveningDosage.map { String($0) } ?? ""
                     effect = medicine.effect ?? ""
-                    //            stock = String(medicine.stock ?? 0)
                     stockText = medicine.stock.map { String($0) } ?? ""
                     memo = medicine.memo ?? ""
                     selectedSecondTiming = medicine.secondTiming
                     selectedUnit = medicine.unit
-                    //            selectedStockUnit = medicine.stockUnit?.unit
                     tentativeTime = medicine.time.map { $0.time }
                     toggleEffect = medicine.toggleEffect
                     toggleMemo = medicine.toggleMemo
@@ -639,7 +489,6 @@ struct MedicineInfoView: View {
                 // 新規作成
                 let model = MedicineInfo()
                 model.medicineName = medicineName
-//                model.dosage = dosage
                 model.morningDosage = morningDosage
                 model.noonDosage = noonDosage
                 model.eveningDosage = eveningDosage
@@ -653,12 +502,6 @@ struct MedicineInfoView: View {
                 if let selectedUnit = selectedUnit {
                     model.unit = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
                 }
-                
-//                if let selectedStockUnit = selectedStockUnit {
-//                    let stockUnit = StockUnit()
-//                    stockUnit.unit = realm.create(UnitArray.self, value: selectedStockUnit, update: .modified)
-//                    model.stockUnit = stockUnit
-//                }
                 
                 if let dosage = Int(dosageText) {
                     model.dosage = dosage
@@ -686,7 +529,6 @@ struct MedicineInfoView: View {
                 selectedSecondTiming = .justBeforeMeals
                 effect = ""
                 stockText = ""
-//                selectedStockUnit = nil
                 memo = ""
                 tentativeTime = []
                 toggleEffect = false
@@ -696,10 +538,6 @@ struct MedicineInfoView: View {
                 // 既存データの更新
                 if let thawedMedicine = medicine.thaw() {
                     thawedMedicine.medicineName = medicineName
-//                    thawedMedicine.dosage = dosage
-//                    thawedMedicine.morningDosage = morningDosage
-//                    thawedMedicine.noonDosage = noonDosage
-//                    thawedMedicine.eveningDosage = eveningDosage
                     thawedMedicine.effect = effect
                     thawedMedicine.memo = memo
                     thawedMedicine.secondTiming = selectedSecondTiming
@@ -714,15 +552,6 @@ struct MedicineInfoView: View {
                     } else {
                         thawedMedicine.unit = nil
                     }
-                    
-//                    if let selectedStockUnit = selectedStockUnit {
-//                        if thawedMedicine.stockUnit == nil {
-//                            thawedMedicine.stockUnit = StockUnit()
-//                        }
-//                        thawedMedicine.stockUnit?.unit = realm.create(UnitArray.self, value: selectedStockUnit, update: .modified)
-//                    } else {
-//                        thawedMedicine.stockUnit = nil
-//                    }
                     
                     if let stockInt = Int(stockText) {
                         thawedMedicine.stock = stockInt
@@ -809,18 +638,6 @@ struct MedicineInfoView: View {
             }
         }
     }
-    
-    private func saveTime() {
-//        let realm = try! Realm()
-//        
-//        
-//        try! realm.write {
-//            let model = MedicineTime()
-//            model.time = time
-//            realm.add(model)
-//        }
-    }
-
     
     private func deleteTime(_ timeEntry: MedicineTime) {
         let realm = try! Realm()
