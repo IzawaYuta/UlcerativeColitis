@@ -55,7 +55,7 @@ struct CalendarView: View {
                     showDatePicker = true
                 }) {
                     Text("\(String(year))年\(month)月\(Calendar.current.component(.day, from: selectedDay))日")
-                        .font(.title2)
+                        .font(.title3)
                         .foregroundColor(.black)
                         .bold()
                         .padding(.horizontal, 5)
@@ -93,6 +93,7 @@ struct CalendarView: View {
                     .padding(.vertical)
                     .padding(.horizontal)
                     .presentationDetents([.height(200)])
+                    .presentationCornerRadius(30)
                     .interactiveDismissDisabled(true)
                 }
                 
@@ -128,9 +129,11 @@ struct CalendarView: View {
                     Text(day)
                         .frame(maxWidth: .infinity)
                         .foregroundColor(day == "日" ? .red : (day == "土" ? .blue : .primary))
+                        .font(.callout)
+                        .bold()
                 }
             }
-            .padding(.vertical, 4)
+            .padding(.vertical, 1)
             .padding(.horizontal, 8)
             
             // 日付グリッド
@@ -151,7 +154,7 @@ struct CalendarView: View {
                         // 選択中の日付なら青く塗る
                         if (isToday(day: dayInt)) {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.blue.opacity(0.3))
+                                .fill(Color.blue.opacity(0.15))
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 40)
                                 .overlay(
@@ -161,7 +164,7 @@ struct CalendarView: View {
                         } else if isSelected, let cellDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt)),
                                   Calendar.current.isDate(cellDate, inSameDayAs: selectedDay) {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.orange.opacity(0.3))
+                                .fill(Color.orange.opacity(0.15))
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 40)
                                 .overlay(
@@ -175,18 +178,16 @@ struct CalendarView: View {
                                 .frame(height: 40)
                         }
                         
-                        VStack(spacing: 5) {
+                        VStack(spacing: 2) {
                             Text(text)
-                                .font(.system(size: 15))
+                                .font(.system(size: 13))
                                 .bold()
                             if let cellDayRecord = cellDayRecord, !cellDayRecord.schedule.isEmpty {
-                                Circle()
-                                    .fill(Color.red)
-                                    .frame(width: 5, height: 5)
+                                Text("通院")
+                                    .font(.caption)
                             } else {
-                                Circle()
-                                    .fill(Color.clear)
-                                    .frame(width: 5, height: 5)
+                                Text("")
+                                    .font(.caption)
                             }
                         }
                     }
