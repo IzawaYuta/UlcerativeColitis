@@ -30,14 +30,8 @@ struct MainTabView: View {
                     Label("ホーム", systemImage: "house")
                 }
             
-            MedicineInfoView(medicine: MedicineInfo())
-                .tag(1)
-                .tabItem {
-                    Label("お薬情報", systemImage: "pills")
-                }
-            
             MedicineListView()
-                .tag(2)
+                .tag(1)
                 .tabItem {
                     Label("お薬情報", systemImage: "pills")
                 }

@@ -12,6 +12,8 @@ struct MedicineListView: View {
     
     @ObservedResults(MedicineInfo.self) var medicineInfo
     
+    @State private var showMedicineInfoView = false
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -64,6 +66,37 @@ struct MedicineListView: View {
                 .padding()
             }
             .navigationTitle("お薬リスト")
+            .toolbarTitleDisplayMode(.inlineLarge)
+            .toolbarBackground(Color.gray.opacity(0.1), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+//                    Button(action: {
+//                        showMedicineInfoView.toggle()
+//                    }) {
+//                        Image(systemName: "plus")
+//                            .foregroundColor(.black.opacity(0.8))
+//                            .background(
+//                                Circle()
+//                                    .fill(Color.blue.opacity(0.3))
+//                                    .frame(width: 35, height: 35)
+//                            )
+//                    }
+//                    .padding(.horizontal, 5)
+//                    .padding(.top)
+                    NavigationLink(destination: MedicineInfoView(medicine: MedicineInfo())) {
+                        Image(systemName: "plus")
+                            .foregroundColor(.black.opacity(0.8))
+                            .background(
+                                Circle()
+                                    .fill(Color.gray.opacity(0.3))
+                                    .frame(width: 35, height: 35)
+                            )
+                            .padding(.horizontal, 5)
+//                            .padding(.top)
+                    }
+                }
+            }
         }
     }
 }
