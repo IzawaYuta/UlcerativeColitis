@@ -23,79 +23,86 @@ struct CustomUnitView: View {
     var onTap: () -> Void
     
     var body: some View {
-        VStack {
-            ForEach(unitArray, id: \.id) { unit in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.white.opacity(1.0))
-                        .stroke(Color.black.opacity(0.5), lineWidth: 1.2)
-                        .frame(height: 50)
-                    HStack {
-                        Text(unit.unitName)
-                            .font(.system(size: 20))
-                        Spacer()
-                        Button(action: {
-                            unitToDelete = unit
-                            showDeleteAlert.toggle()
-                        }) {
-                            Image(systemName: "trash")
-                                .foregroundColor(.red.opacity(0.5))
-                                .font(.system(size: 13))
-                        }
-                        .alert("", isPresented: $showDeleteAlert) {
-                            Button("キャンセル", role: .cancel) {}
-                            Button("削除", role: .destructive) {
-                                if let unit = unitToDelete {
-                                    deleteUnit(unit)
+        ZStack {
+            Color.gray.opacity(0.1)
+                .ignoresSafeArea()
+            VStack {
+                if unitArray.isEmpty {
+                    Text("単位を追加してください")
+                } else {
+                    ForEach(unitArray, id: \.id) { unit in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.white.opacity(1.0))
+                                .stroke(Color.black.opacity(0.5), lineWidth: 1.2)
+                                .frame(height: 50)
+                            HStack {
+                                Text(unit.unitName)
+                                    .font(.system(size: 20))
+                                Spacer()
+                                Button(action: {
+                                    unitToDelete = unit
+                                    showDeleteAlert.toggle()
+                                }) {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.red.opacity(0.5))
+                                        .font(.system(size: 13))
+                                }
+                                .alert("", isPresented: $showDeleteAlert) {
+                                    Button("キャンセル", role: .cancel) {}
+                                    Button("削除", role: .destructive) {
+                                        if let unit = unitToDelete {
+                                            deleteUnit(unit)
+                                        }
+                                    }
+                                } message: {
+                                    if let unit = unitToDelete {
+                                        Text("「\(unit.unitName)」を削除しますか？")
+                                    } else {
+                                        Text("この単位を削除しますか？")
+                                    }
                                 }
                             }
-                        } message: {
-                            if let unit = unitToDelete {
-                                Text("「\(unit.unitName)」を削除しますか？")
-                            } else {
-                                Text("この単位を削除しますか？")
-                            }
+                            .padding()
+                        }
+                        .padding(.horizontal)
+                        .onTapGesture {
+                            selectedUnit = unit
+                            onTap()
                         }
                     }
-                    .padding()
                 }
-                .padding(.horizontal)
-                .onTapGesture {
-                    selectedUnit = unit
-                    onTap()
-                }
-            }
-            
-            Button(action: {
-                showAddAlert.toggle()
-            }) {
-                Text("カスタム")
-                    .foregroundColor(.black)
-            }
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.gray.opacity(0.5))
-                    .frame(width: 200, height: 40)
-            )
-            .alert("単位", isPresented: $showAddAlert) {
-                TextField("個、mg", text: $newUnitTextField)
-                Button("キャンセル", role: .cancel) {
-                    newUnitTextField = ""
-                }
+                
                 Button(action: {
-                    addUnit()
+                    showAddAlert.toggle()
                 }) {
-                    Text("保存")
+                    Text("カスタム")
+                        .foregroundColor(.black)
                 }
-                .disabled(newUnitTextField.isEmpty)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.gray.opacity(0.5))
+                        .frame(width: 200, height: 40)
+                )
+                .alert("単位を追加", isPresented: $showAddAlert) {
+                    TextField("個、mg", text: $newUnitTextField)
+                    Button("キャンセル", role: .cancel) {
+                        newUnitTextField = ""
+                    }
+                    Button(action: {
+                        addUnit()
+                    }) {
+                        Text("保存")
+                    }
+                    .disabled(newUnitTextField.isEmpty)
+                }
+                .padding(.vertical)
+                Spacer()
             }
             .padding(.vertical)
-            Spacer()
-        }
-        .padding(.vertical)
-        .background(Color.gray.opacity(0.1))
-        .onAppear {
-            print(UnitArray())
+            .onAppear {
+                print(UnitArray())
+            }
         }
     }
     

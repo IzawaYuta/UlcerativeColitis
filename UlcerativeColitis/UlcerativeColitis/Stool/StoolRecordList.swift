@@ -37,7 +37,7 @@ struct StoolRecordList: View {
                             if stool.type.isEmpty {
                                 Text("-")
                             } else {
-                                Text(stool.type.map { $0.rawValue }.joined(separator: "、"))
+                                Text(stool.type.map { $0.japaneseText }.joined(separator: "、"))
                             }
                             
                             Spacer()
