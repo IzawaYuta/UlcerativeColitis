@@ -10,9 +10,28 @@ import RealmSwift
 
 enum StoolType: String, PersistableEnum {
     case normal //普通便
+    case hard //硬便
     case soft //軟便
     case diarrhea //下痢
+    case constipation //便秘
     case blood //血便
+    
+    var japaneseText: String {
+        switch self {
+        case .normal:
+            return "普通"
+        case .hard:
+            return "硬便"
+        case .soft:
+            return "軟便"
+        case .diarrhea:
+            return "下痢"
+        case .constipation:
+            return "便秘"
+        case .blood:
+            return "血便"
+        }
+    }
 }
 
 enum FirstTiming: String, PersistableEnum {

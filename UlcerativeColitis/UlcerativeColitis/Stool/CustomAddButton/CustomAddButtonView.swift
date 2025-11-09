@@ -36,16 +36,16 @@ struct CustomAddButtonView<Content: View>: View {
                     .shadow(radius: shadowRadius)
                     .overlay(
                         Capsule()
-                            .stroke(isPresented ? Color.black.opacity(0.7) : Color.clear, lineWidth: 1.5)
+                            .stroke(isPresented ? Color.black.opacity(0.7) : Color.clear, lineWidth: 2.0)
                     )
                 content()
-                    .foregroundColor(isPresented ? .black : .gray.opacity(0.5))
+                    .foregroundColor(isPresented ? .black : .gray)
 //                    .padding(.vertical)
 //                    .padding(.horizontal)
             }
         }
         .buttonStyle(.plain)
-        .scaleEffect(isPresented ? 1.0 : 0.8)
+        .scaleEffect(isPresented ? 1.1 : 0.8)
         .animation(.default, value: isPresented)
     }
 }

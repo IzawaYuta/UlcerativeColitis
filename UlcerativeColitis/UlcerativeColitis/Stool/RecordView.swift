@@ -75,7 +75,8 @@ struct RecordView: View {
                                                showView: {
                                     showAddStoolRecord = false
                                 })
-                                    .presentationDetents([.height(170)])
+                                    .presentationDetents([.height(250)])
+                                    .presentationCornerRadius(30)
                             }
                         }
                         .frame(width: 50, height: 50)
@@ -107,6 +108,7 @@ struct RecordView: View {
                                 })
                                     .presentationDetents([.height(400), .large])
                                     .presentationDragIndicator(.visible)
+                                    .presentationCornerRadius(30)
                             }
                         }
                         .frame(width: 50, height: 50)

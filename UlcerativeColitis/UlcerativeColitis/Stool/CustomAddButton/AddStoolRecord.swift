@@ -16,8 +16,10 @@ struct AddStoolRecord: View {
     @State private var count: Int = 0
     @State private var selectedType: [StoolType] = []
     @State private var selectedNormal = false
+    @State private var selectedHard = false
     @State private var selectedSoft = false
     @State private var selectedDiarrhea = false
+    @State private var selectedConstipation = false
     @State private var selectedBlood = false
     
     @Binding var selectDay: Date
@@ -25,55 +27,84 @@ struct AddStoolRecord: View {
     var showView: () -> Void
     
     var body: some View {
-        VStack(spacing: 15) {
-            HStack {
-                CustomAddButtonView(isPresented: selectedNormal, action: {
-                    selectedNormal.toggle()
-                    if selectedNormal {
-                        selectedType.append(.normal)
-                    } else {
-                        selectedType.removeAll { $0 == .normal }
+        VStack(spacing: 30) {
+            VStack(spacing: 15) {
+                HStack(spacing: 17) {
+                    CustomAddButtonView(isPresented: selectedNormal, action: {
+                        selectedNormal.toggle()
+                        if selectedNormal {
+                            selectedType.append(.normal)
+                        } else {
+                            selectedType.removeAll { $0 == .normal }
+                        }
+                    }) {
+                        Text("普通")
                     }
-                }) {
-                    Text("普通")
+                    .frame(width: 70, height: 50)
+                    
+                    CustomAddButtonView(isPresented: selectedHard, action: {
+                        selectedHard.toggle()
+                        if selectedBlood {
+                            selectedType.append(.hard)
+                        } else {
+                            selectedType.removeAll { $0 == .hard }
+                        }
+                    }) {
+                        Text("硬便")
+                    }
+                    .frame(width: 70, height: 50)
+                    
+                    CustomAddButtonView(isPresented: selectedSoft, action: {
+                        selectedSoft.toggle()
+                        if selectedSoft {
+                            selectedType.append(.soft)
+                        } else {
+                            selectedType.removeAll { $0 == .soft }
+                        }
+                    }) {
+                        Text("軟便")
+                    }
+                    .frame(width: 70, height: 50)
                 }
-                .frame(width: 70, height: 50)
                 
-                CustomAddButtonView(isPresented: selectedSoft, action: {
-                    selectedSoft.toggle()
-                    if selectedSoft {
-                        selectedType.append(.soft)
-                    } else {
-                        selectedType.removeAll { $0 == .soft }
+                HStack(spacing: 17) {
+                    CustomAddButtonView(isPresented: selectedDiarrhea, action: {
+                        selectedDiarrhea.toggle()
+                        if selectedDiarrhea {
+                            selectedType.append(.diarrhea)
+                        } else {
+                            selectedType.removeAll { $0 == .diarrhea }
+                        }
+                    }) {
+                        Text("下痢")
                     }
-                }) {
-                    Text("軟便")
+                    .frame(width: 70, height: 50)
+                    
+                    CustomAddButtonView(isPresented: selectedConstipation, action: {
+                        selectedConstipation.toggle()
+                        if selectedBlood {
+                            selectedType.append(.constipation)
+                        } else {
+                            selectedType.removeAll { $0 == .constipation }
+                        }
+                    }) {
+                        Text("便秘")
+                    }
+                    .frame(width: 70, height: 50)
+                    
+                    CustomAddButtonView(isPresented: selectedBlood, action: {
+                        selectedBlood.toggle()
+                        if selectedBlood {
+                            selectedType.append(.blood)
+                        } else {
+                            selectedType.removeAll { $0 == .blood }
+                        }
+                    }) {
+                        Text("血便")
+                    }
+                    .frame(width: 70, height: 50)
                 }
-                .frame(width: 70, height: 50)
                 
-                CustomAddButtonView(isPresented: selectedDiarrhea, action: {
-                    selectedDiarrhea.toggle()
-                    if selectedDiarrhea {
-                        selectedType.append(.diarrhea)
-                    } else {
-                        selectedType.removeAll { $0 == .diarrhea }
-                    }
-                }) {
-                    Text("下痢")
-                }
-                .frame(width: 70, height: 50)
-                
-                CustomAddButtonView(isPresented: selectedBlood, action: {
-                    selectedBlood.toggle()
-                    if selectedBlood {
-                        selectedType.append(.blood)
-                    } else {
-                        selectedType.removeAll { $0 == .blood }
-                    }
-                }) {
-                    Text("血便")
-                }
-                .frame(width: 70, height: 50)
             }
             Button(action: {
                 count += 1
@@ -83,14 +114,13 @@ struct AddStoolRecord: View {
                 ZStack {
                     RoundedRectangle(cornerRadius: 18)
                         .fill(Color.gray.opacity(0.5))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
+                        .frame(width: 200, height: 50)
                     Image(systemName: "plus")
                         .foregroundColor(.black)
                 }
             }
             .buttonStyle(.plain)
-            .padding(.horizontal, 50)
+            .padding(.horizontal)
         }
     }
     
