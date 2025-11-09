@@ -253,8 +253,7 @@ struct MedicineInfoView: View {
                                 }
                             }
                             
-                            if let firstMedicine = medicineInfo.first {
-                                if firstMedicine.time.count < 3 && tentativeTime.count < 3 {
+                            if (medicineInfo.first?.time.count ?? 0) < 3 && tentativeTime.count < 3 {
                                     Button(action: {
                                         showTimeView.toggle()
                                     }) {
@@ -276,7 +275,7 @@ struct MedicineInfoView: View {
                                         .presentationDetents([.height(350)])
                                         .presentationCornerRadius(30)
                                     }
-                                }
+//                                }
                             }
                         }
                     }
@@ -412,6 +411,7 @@ struct MedicineInfoView: View {
                     
                     Button(action: {
                         saveMedicine()
+                        dismiss()
                     }) {
                         Text("保存")
                             .foregroundColor(.white)
