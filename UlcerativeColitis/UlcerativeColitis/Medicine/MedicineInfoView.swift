@@ -445,26 +445,27 @@ struct MedicineInfoView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
-                            Button(action: {
-                                showDeleteAlert.toggle()
-                            }) {
-                                Text("削除")
-                            }
-                            
-                            if medicine.isUsing {
+                            if !isNewMedicine {
                                 Button(action: {
-                                    showIsUsingAlert.toggle()
+                                    showDeleteAlert.toggle()
                                 }) {
-                                    Text("不使用にする")
+                                    Text("削除")
                                 }
-                            } else {
-                                Button(action: {
-                                    showIsUsingAlert.toggle()
-                                }) {
-                                    Text("使用中にする")
+                                
+                                if medicine.isUsing {
+                                    Button(action: {
+                                        showIsUsingAlert.toggle()
+                                    }) {
+                                        Text("不使用にする")
+                                    }
+                                } else {
+                                    Button(action: {
+                                        showIsUsingAlert.toggle()
+                                    }) {
+                                        Text("使用中にする")
+                                    }
                                 }
                             }
-                            
                             
                         } label: {
                             Image(systemName: "ellipsis")
