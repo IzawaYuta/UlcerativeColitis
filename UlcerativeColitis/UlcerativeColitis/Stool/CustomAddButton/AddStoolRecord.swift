@@ -44,7 +44,7 @@ struct AddStoolRecord: View {
                     
                     CustomAddButtonView(isPresented: selectedHard, action: {
                         selectedHard.toggle()
-                        if selectedBlood {
+                        if selectedHard {
                             selectedType.append(.hard)
                         } else {
                             selectedType.removeAll { $0 == .hard }
@@ -82,7 +82,7 @@ struct AddStoolRecord: View {
                     
                     CustomAddButtonView(isPresented: selectedConstipation, action: {
                         selectedConstipation.toggle()
-                        if selectedBlood {
+                        if selectedConstipation {
                             selectedType.append(.constipation)
                         } else {
                             selectedType.removeAll { $0 == .constipation }
@@ -186,7 +186,6 @@ struct AddStoolRecord: View {
             let dayRecord = realm.objects(DayRecord.self).filter("date == %@", startOfDay).first
             
             let stool = StoolRecord()
-            stool.id = UUID().uuidString
             stool.time = combinedDate
             stool.type.append(objectsIn: selectedType)
             
