@@ -46,7 +46,7 @@ struct CustomAddButtonView<Content: View>: View {
         }
         .buttonStyle(.plain)
         .scaleEffect(isPresented ? 1.1 : 0.8)
-        .animation(.default, value: isPresented)
+        .animation(.none, value: isPresented)
     }
 }
 

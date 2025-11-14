@@ -15,12 +15,13 @@ struct AddStoolRecord: View {
     
     @State private var count: Int = 0
     @State private var selectedType: [StoolType] = []
-    @State private var selectedNormal = false
-    @State private var selectedHard = false
-    @State private var selectedSoft = false
-    @State private var selectedDiarrhea = false
-    @State private var selectedConstipation = false
-    @State private var selectedBlood = false
+    @AppStorage("selectedNormal") var selectedNormal = false
+    @AppStorage("selectedHard") var selectedHard = false
+    @AppStorage("selectedSoft") var selectedSoft = false
+    @AppStorage("selectedDiarrhea") var selectedDiarrhea = false
+    @AppStorage("selectedConstipation") var selectedConstipation = false
+    @AppStorage("selectedBlood") var selectedBlood = false
+    @AppStorage("toggleFixed") var toggleFixed = false
     
     @Binding var selectDay: Date
     
@@ -29,6 +30,15 @@ struct AddStoolRecord: View {
     var body: some View {
         VStack(spacing: 30) {
             VStack(spacing: 15) {
+                Button(action: {
+                    toggleFixed.toggle()
+                }) {
+                    HStack {
+                        Text("選択を固定")
+                        Image(systemName: toggleFixed ? "checkmark.circle" : "circle")
+                    }
+                }
+                .buttonStyle(.bordered)
                 HStack(spacing: 17) {
                     CustomAddButtonView(isPresented: selectedNormal, action: {
                         selectedNormal.toggle()
@@ -110,6 +120,7 @@ struct AddStoolRecord: View {
                 count += 1
                 addStoolRecord(selectDay: selectDay)
                 showView()
+                
             }) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 18)
@@ -121,6 +132,11 @@ struct AddStoolRecord: View {
             }
             .buttonStyle(.plain)
             .padding(.horizontal)
+        }
+        .onAppear {
+//            withAnimation(.none) {
+                restoreStates()
+//            }
         }
     }
     
@@ -203,6 +219,24 @@ struct AddStoolRecord: View {
         }
     }
     
+    private func restoreStates() {
+        if toggleFixed {
+            if selectedNormal { selectedType.append(.normal) }
+            if selectedHard { selectedType.append(.hard) }
+            if selectedSoft { selectedType.append(.soft) }
+            if selectedDiarrhea { selectedType.append(.diarrhea) }
+            if selectedConstipation { selectedType.append(.constipation) }
+            if selectedBlood { selectedType.append(.blood) }
+        } else {
+            selectedNormal = false
+            selectedHard = false
+            selectedSoft = false
+            selectedDiarrhea = false
+            selectedConstipation = false
+            selectedBlood = false
+            selectedType.removeAll()
+        }
+    }
 }
 
 #Preview {
