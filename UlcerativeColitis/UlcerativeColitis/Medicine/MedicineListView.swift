@@ -29,7 +29,6 @@ struct MedicineListView: View {
                             Text("なし")
                                 .foregroundColor(.gray)
                         } else {
-//                            List {
                             ForEach(medicineInfo.filter({ $0.isUsing == true }), id: \.id) { list in
                                 NavigationLink(destination: MedicineInfoView(medicine: list)) {
                                     CustomList {
@@ -59,9 +58,6 @@ struct MedicineListView: View {
                                     }
                                 }
                             }
-//                            }
-//                            .frame(height: CGFloat(medicineInfo.filter({ $0.isUsing == true }).count) * 44) // 高さ調整
-//                            .listStyle(.plain)
                         }
                     }
                     
@@ -78,7 +74,7 @@ struct MedicineListView: View {
                             Text("なし")
                                 .foregroundColor(.gray)
                         } else {
-//                            List {
+                            //                            List {
                             ForEach(medicineInfo.filter({ $0.isUsing == false }), id: \.id) { list in
                                 
                                 NavigationLink(destination: MedicineInfoView(medicine: list)) {
@@ -96,9 +92,6 @@ struct MedicineListView: View {
                                     }
                                 }
                             }
-//                            }
-//                            .frame(height: CGFloat(medicineInfo.filter({ $0.isUsing == false }).count) * 44)
-//                            .listStyle(.plain)
                         }
                     }
                 }
@@ -110,19 +103,6 @@ struct MedicineListView: View {
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-//                    Button(action: {
-//                        showMedicineInfoView.toggle()
-//                    }) {
-//                        Image(systemName: "plus")
-//                            .foregroundColor(.black.opacity(0.8))
-//                            .background(
-//                                Circle()
-//                                    .fill(Color.blue.opacity(0.3))
-//                                    .frame(width: 35, height: 35)
-//                            )
-//                    }
-//                    .padding(.horizontal, 5)
-//                    .padding(.top)
                     NavigationLink(destination: MedicineInfoView(medicine: MedicineInfo())) {
                         Image(systemName: "plus")
                             .foregroundColor(.black.opacity(0.8))
@@ -132,7 +112,7 @@ struct MedicineListView: View {
                                     .frame(width: 35, height: 35)
                             )
                             .padding(.horizontal, 5)
-//                            .padding(.top)
+                        //                            .padding(.top)
                     }
                 }
             }
