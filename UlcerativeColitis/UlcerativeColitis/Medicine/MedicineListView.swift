@@ -23,18 +23,14 @@ struct MedicineListView: View {
                     Text("使用中")
                         .foregroundColor(selectedTab == 0 ? .primary : .gray)
                         .onTapGesture {
-                            withAnimation(.spring(response: 0.3)) {
-                                selectedTab = 0
-                            }
+                            selectedTab = 0
                         }
                         .frame(width: 80)
                     
                     Text("不使用")
                         .foregroundColor(selectedTab == 1 ? .primary : .gray)
                         .onTapGesture {
-                            withAnimation(.spring(response: 0.3)) {
-                                selectedTab = 1
-                            }
+                            selectedTab = 1
                         }
                         .frame(width: 80)
                 }
@@ -46,11 +42,12 @@ struct MedicineListView: View {
                         .shadow(color: .blue, radius: 0.1, x: 0.2, y: 0.2)
                         .frame(width: 80, height: 2)
                         .offset(x: selectedTab == 0 ? 0 : 130, y: 10)
+                        .animation(.spring(response: 0.3), value: selectedTab)
                 }
                 .padding()
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(spacing: 20) {
                         
                         // 使用中リスト
                         if selectedTab == 0 {
@@ -181,6 +178,5 @@ struct CustomList<Content: View>: View {
                 .shadow(color: .gray, radius: 1.7, x: 1.5, y: 1.5)
             content()
         }
-        .padding(.horizontal)
     }
 }
