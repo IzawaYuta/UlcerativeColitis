@@ -511,9 +511,9 @@ struct MedicineInfoView: View {
                 // 新規作成
                 let model = MedicineInfo()
                 model.medicineName = medicineName
-                model.morningDosage = morningDosage
-                model.noonDosage = noonDosage
-                model.eveningDosage = eveningDosage
+//                model.morningDosage = morningDosage
+//                model.noonDosage = noonDosage
+//                model.eveningDosage = eveningDosage
                 //                model.effect = effect
                 model.memo = memo
                 model.secondTiming = selectedSecondTiming
@@ -523,6 +523,18 @@ struct MedicineInfoView: View {
                 
                 if let selectedUnit = selectedUnit {
                     model.unit = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
+                }
+                
+                if let morningDosage = Int(morningDosageText) {
+                    model.morningDosage = morningDosage
+                }
+                
+                if let noonDosage = Int(noonDosageText) {
+                    model.noonDosage = noonDosage
+                }
+                
+                if let eveningDosage = Int(eveningDosageText) {
+                    model.eveningDosage = eveningDosage
                 }
                 
                 if let dosage = Int(dosageText) {
