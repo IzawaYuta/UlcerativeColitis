@@ -14,105 +14,133 @@ struct MedicineListView: View {
     @ObservedResults(UnitArray.self) var unitArray
     
     @State private var showMedicineInfoView = false
+    @State private var selectedTab = 0
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 30) {
-                    
-                    // 使用中リスト
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("使用中")
-                            .font(.headline)
-                        
-                        if medicineInfo.filter({ $0.isUsing == true }).isEmpty {
-                            Text("なし")
-                                .foregroundColor(.gray)
-                        } else {
-                            ForEach(medicineInfo.filter({ $0.isUsing == true }), id: \.id) { list in
-                                NavigationLink(destination: MedicineInfoView(medicine: list)) {
-                                    CustomList {
-                                        HStack {
-                                            VStack(alignment: .leading) {
-                                                Text(list.medicineName)
-                                                    .font(.title3)
-                                                    .foregroundColor(.black)
-                                                
-                                                if let displayText = getStockDisplayText(stock: list.stock, unit: list.unit) {
-                                                    HStack {
-                                                        Text("残り:")
-                                                            .font(.caption)
-                                                            .foregroundColor(.gray)
-                                                        Text(displayText)
-                                                            .font(.caption)
-                                                            .foregroundColor(.gray)
-                                                    }
-                                                }
-                                            }
-                                            
-                                            Spacer()
-                                            Image(systemName: "chevron.forward")
-                                                .foregroundColor(.black)
-                                        }
-                                        .padding(.horizontal)
-                                    }
-                                }
+            VStack {
+                HStack(spacing: 50) {
+                    Text("使用中")
+                        .foregroundColor(selectedTab == 0 ? .primary : .gray)
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.3)) {
+                                selectedTab = 0
                             }
                         }
-                    }
+                        .frame(width: 80)
                     
-                    Divider()
-                        .background(Color.black)
-                        .padding(.horizontal, 1)
-                    
-                    // 不使用リスト
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("不使用")
-                            .font(.headline)
-                        
-                        if medicineInfo.filter({ $0.isUsing == false }).isEmpty {
-                            Text("なし")
-                                .foregroundColor(.gray)
-                        } else {
-                            //                            List {
-                            ForEach(medicineInfo.filter({ $0.isUsing == false }), id: \.id) { list in
-                                
-                                NavigationLink(destination: MedicineInfoView(medicine: list)) {
-                                    CustomList {
-                                        HStack {
-                                            Text(list.medicineName)
-                                                .foregroundColor(.gray)
-                                            
-                                            Spacer()
-                                            
-                                            Image(systemName: "chevron.forward")
-                                                .foregroundColor(.gray)
-                                        }
-                                        .padding(.horizontal)
-                                    }
-                                }
+                    Text("不使用")
+                        .foregroundColor(selectedTab == 1 ? .primary : .gray)
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.3)) {
+                                selectedTab = 1
                             }
                         }
-                    }
+                        .frame(width: 80)
+                }
+                .overlay(alignment: .bottomLeading) {
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.blue)
+                        .shadow(color: .blue, radius: 1)
+                        .shadow(color: .blue, radius: 0.5, x: 0.5, y: 0.5)
+                        .shadow(color: .blue, radius: 0.1, x: 0.2, y: 0.2)
+                        .frame(width: 80, height: 2)
+                        .offset(x: selectedTab == 0 ? 0 : 130, y: 10)
                 }
                 .padding()
-            }
-            .navigationTitle("お薬リスト")
-            .toolbarTitleDisplayMode(.inlineLarge)
-            .toolbarBackground(Color.gray.opacity(0.1), for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink(destination: MedicineInfoView(medicine: MedicineInfo())) {
-                        Image(systemName: "plus")
-                            .foregroundColor(.black.opacity(0.8))
-                            .background(
-                                Circle()
-                                    .fill(Color.gray.opacity(0.3))
-                                    .frame(width: 35, height: 35)
-                            )
-                            .padding(.horizontal, 5)
-                        //                            .padding(.top)
+                
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        
+                        // 使用中リスト
+                        if selectedTab == 0 {
+                            if medicineInfo.filter({ $0.isUsing == true }).isEmpty {
+                                Text("使用中のお薬はありません")
+                                    .foregroundColor(.gray)
+                            } else {
+                                ForEach(medicineInfo.filter({ $0.isUsing == true }), id: \.id) { list in
+                                    NavigationLink(destination: MedicineInfoView(medicine: list)) {
+                                        CustomList {
+                                            HStack {
+                                                VStack(alignment: .leading) {
+                                                    Text(list.medicineName)
+                                                        .font(.title3)
+                                                        .foregroundColor(.black)
+                                                    
+                                                    if let displayText = getStockDisplayText(stock: list.stock, unit: list.unit) {
+                                                        HStack {
+                                                            Text("残り:")
+                                                                .font(.caption)
+                                                                .foregroundColor(.gray)
+                                                            Text(displayText)
+                                                                .font(.caption)
+                                                                .foregroundColor(.gray)
+                                                        }
+                                                    }
+                                                }
+                                                
+                                                Spacer()
+                                                Image(systemName: "chevron.forward")
+                                                    .foregroundColor(.black)
+                                            }
+                                            .padding(.horizontal)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if selectedTab == 1 {
+                            // 不使用リスト
+                            if medicineInfo.filter({ $0.isUsing == false }).isEmpty {
+                                Text("不使用のお薬はありません")
+                                    .foregroundColor(.gray)
+                            } else {
+                                ForEach(medicineInfo.filter({ $0.isUsing == false }), id: \.id) { list in
+                                    
+                                    NavigationLink(destination: MedicineInfoView(medicine: list)) {
+                                        CustomList {
+                                            HStack {
+                                                Text(list.medicineName)
+                                                    .foregroundColor(.gray)
+                                                
+                                                Spacer()
+                                                
+                                                Image(systemName: "chevron.forward")
+                                                    .foregroundColor(.gray)
+                                            }
+                                            .padding(.horizontal)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .padding()
+                }
+                //            .navigationTitle("お薬リスト")
+                //            .toolbarTitleDisplayMode(.inlineLarge)
+                .toolbarBackground(Color.gray.opacity(0.05), for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Text("お薬リスト")
+                            .font(.title)
+                            .fontWeight(.medium)
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NavigationLink(destination: MedicineInfoView(medicine: MedicineInfo())) {
+                            Image(systemName: "plus")
+                                .resizable()
+                                .foregroundColor(.blue)
+                                .font(.system(size: 13))
+                                .background(
+                                    Circle()
+                                        .fill(Color.blue.opacity(0.15))
+                                        .frame(width: 30, height: 30)
+                                )
+                                .padding(.horizontal, 5)
+                        }
                     }
                 }
             }
@@ -150,7 +178,7 @@ struct CustomList<Content: View>: View {
             RoundedRectangle(cornerRadius: 15)
                 .fill(Color.white)
                 .frame(height: 50)
-                .shadow(color: .gray, radius: 2.5, x: 1.5, y: 1.5)
+                .shadow(color: .gray, radius: 1.7, x: 1.5, y: 1.5)
             content()
         }
         .padding(.horizontal)
