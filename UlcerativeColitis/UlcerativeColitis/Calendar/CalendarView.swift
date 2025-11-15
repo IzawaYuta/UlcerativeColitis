@@ -156,7 +156,7 @@ struct CalendarView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.blue.opacity(0.15))
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 40)
+                                .frame(height: 30)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
                                         .stroke(Color.blue, lineWidth: 2)
@@ -166,7 +166,7 @@ struct CalendarView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.orange.opacity(0.15))
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 40)
+                                .frame(height: 30)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
                                         .stroke(Color.orange, lineWidth: 2)
@@ -175,7 +175,7 @@ struct CalendarView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.gray.opacity(0.2))
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 40)
+                                .frame(height: 30)
                         }
                         
                         VStack(spacing: 2) {
@@ -183,11 +183,13 @@ struct CalendarView: View {
                                 .font(.system(size: 13))
                                 .bold()
                             if let cellDayRecord = cellDayRecord, !cellDayRecord.schedule.isEmpty {
-                                Text("通院")
-                                    .font(.caption)
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.red)
+                                    .frame(width: 10, height: 2.5)
                             } else {
-                                Text("")
-                                    .font(.caption)
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.clear)
+                                    .frame(width: 10, height: 2.5)
                             }
                         }
                     }
@@ -222,16 +224,10 @@ struct CalendarView: View {
                     }
             )
             
-            //            Text(dateFormatter.string(from: selectedDay))
-//            Button {
-//                show.toggle()
-//            } label: {
-//                Image(systemName: "plus")
-//            }
-//            .sheet(isPresented: $show) {
-//                MedicineInfoView(medicine: MedicineInfo())
-//            }
-            
+            HStack {
+                RecordView(selectedYear: selectedYear, selectedMonth: selectedMonth, selectedDate: selectedDate, selectDay: $selectDay)
+                ScheduleView(selectDay: $selectDay)
+            }
             
             Spacer()
         }
