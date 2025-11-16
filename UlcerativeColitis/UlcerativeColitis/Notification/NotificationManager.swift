@@ -14,8 +14,10 @@ final class NotificationManager {
     // 権限リクエスト
     func requestPermission() {
         UNUserNotificationCenter.current()
-            .requestAuthorization(options: [.alert, .sound, .badge]) { (granted, _) in
-                print("Permission granted: \(granted)")
+            .requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+                if let error = error {
+                    print("Permission error: \(error.localizedDescription)")
+                }
             }
     }
     

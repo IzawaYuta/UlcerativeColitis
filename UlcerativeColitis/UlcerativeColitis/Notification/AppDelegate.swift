@@ -12,10 +12,10 @@ import UIKit
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        // リクエストのメソッド呼び出し
-        NotificationManager.instance.requestPermission()
         
         UNUserNotificationCenter.current().delegate = self
+        // リクエストのメソッド呼び出し
+        NotificationManager.instance.requestPermission()
         
         return true
     }
@@ -26,6 +26,16 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         // フォアグラウンドでも banner + sound を表示する
-        completionHandler([.banner, .sound])
+        completionHandler([.banner, .sound, .badge])
+    }
+    
+    // 通知タップ時の処理
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        print("Notification tapped: \(response.notification.request.identifier)")
+        completionHandler()
     }
 }
