@@ -445,32 +445,35 @@ struct MedicineInfoView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
-                            if !isNewMedicine {
-                                Button(action: {
+                            Button(role: .destructive) {
+                                if !isNewMedicine {
                                     showDeleteAlert.toggle()
-                                }) {
-                                    Text("削除")
                                 }
-                                
-                                if medicine.isUsing {
-                                    Button(action: {
-                                        showIsUsingAlert.toggle()
-                                    }) {
-                                        Text("不使用にする")
-                                    }
-                                } else {
-                                    Button(action: {
-                                        showIsUsingAlert.toggle()
-                                    }) {
-                                        Text("使用中にする")
-                                    }
-                                }
+                            } label: {
+                                Text("削除")
                             }
                             
+                            if medicine.isUsing {
+                                Button(action: {
+                                    if !isNewMedicine {
+                                        showIsUsingAlert.toggle()
+                                    }
+                                }) {
+                                    Text("不使用にする")
+                                }
+                            } else {
+                                Button(action: {
+                                    if !isNewMedicine {
+                                        showIsUsingAlert.toggle()
+                                    }
+                                }) {
+                                    Text("使用中にする")
+                                }
+                            }
                         } label: {
                             Image(systemName: "ellipsis")
                         }
-                        .alert("削除の確認", isPresented: $showDeleteAlert) {
+                        .alert("確認", isPresented: $showDeleteAlert) {
                             Button("キャンセル", role: .cancel) {}
                             Button("削除", role: .destructive) {
                                 deleteMedicine(by: medicine.id)
@@ -479,7 +482,7 @@ struct MedicineInfoView: View {
                         } message: {
                             Text("「\(medicine.medicineName)」を削除しますか？")
                         }
-                        .alert("不使用", isPresented: $showIsUsingAlert) {
+                        .alert("確認", isPresented: $showIsUsingAlert) {
                             Button("キャンセル", role: .cancel) {}
                             if medicine.isUsing {
                                 Button("不使用") {
