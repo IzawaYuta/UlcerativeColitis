@@ -41,7 +41,7 @@ struct CustomButton<Content: View>: View {
                     .shadow(radius: shadowRadius)
                     .overlay(
                         Capsule()
-                            .stroke(isSelected ? Color.black.opacity(0.7) : Color.clear, lineWidth: 1.5)
+                            .stroke(isSelected ? Color.black : Color.clear, lineWidth: 1.0)
                     )
                 content()
                     .foregroundColor(isSelected ? .black : .gray.opacity(0.5))

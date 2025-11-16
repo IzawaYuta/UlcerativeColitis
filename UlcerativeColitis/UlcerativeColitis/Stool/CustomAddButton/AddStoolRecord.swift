@@ -15,82 +15,128 @@ struct AddStoolRecord: View {
     
     @State private var count: Int = 0
     @State private var selectedType: [StoolType] = []
-    @State private var selectedNormal = false
-    @State private var selectedSoft = false
-    @State private var selectedDiarrhea = false
-    @State private var selectedBlood = false
+    @AppStorage("selectedNormal") var selectedNormal = false
+    @AppStorage("selectedHard") var selectedHard = false
+    @AppStorage("selectedSoft") var selectedSoft = false
+    @AppStorage("selectedDiarrhea") var selectedDiarrhea = false
+    @AppStorage("selectedConstipation") var selectedConstipation = false
+    @AppStorage("selectedBlood") var selectedBlood = false
+    @AppStorage("toggleFixed") var toggleFixed = false
     
     @Binding var selectDay: Date
     
     var showView: () -> Void
     
     var body: some View {
-        VStack(spacing: 15) {
-            HStack {
-                CustomAddButtonView(isPresented: selectedNormal, action: {
-                    selectedNormal.toggle()
-                    if selectedNormal {
-                        selectedType.append(.normal)
-                    } else {
-                        selectedType.removeAll { $0 == .normal }
-                    }
+        VStack(spacing: 30) {
+            VStack(spacing: 15) {
+                Button(action: {
+                    toggleFixed.toggle()
                 }) {
-                    Text("普通")
+                    HStack {
+                        Text("選択を固定")
+                        Image(systemName: toggleFixed ? "checkmark.circle" : "circle")
+                    }
                 }
-                .frame(width: 70, height: 50)
+                .buttonStyle(.bordered)
+                HStack(spacing: 17) {
+                    CustomAddButtonView(isPresented: selectedNormal, action: {
+                        selectedNormal.toggle()
+                        if selectedNormal {
+                            selectedType.append(.normal)
+                        } else {
+                            selectedType.removeAll { $0 == .normal }
+                        }
+                    }) {
+                        Text("普通")
+                    }
+                    .frame(width: 70, height: 50)
+                    
+                    CustomAddButtonView(isPresented: selectedHard, action: {
+                        selectedHard.toggle()
+                        if selectedHard {
+                            selectedType.append(.hard)
+                        } else {
+                            selectedType.removeAll { $0 == .hard }
+                        }
+                    }) {
+                        Text("硬便")
+                    }
+                    .frame(width: 70, height: 50)
+                    
+                    CustomAddButtonView(isPresented: selectedSoft, action: {
+                        selectedSoft.toggle()
+                        if selectedSoft {
+                            selectedType.append(.soft)
+                        } else {
+                            selectedType.removeAll { $0 == .soft }
+                        }
+                    }) {
+                        Text("軟便")
+                    }
+                    .frame(width: 70, height: 50)
+                }
                 
-                CustomAddButtonView(isPresented: selectedSoft, action: {
-                    selectedSoft.toggle()
-                    if selectedSoft {
-                        selectedType.append(.soft)
-                    } else {
-                        selectedType.removeAll { $0 == .soft }
+                HStack(spacing: 17) {
+                    CustomAddButtonView(isPresented: selectedDiarrhea, action: {
+                        selectedDiarrhea.toggle()
+                        if selectedDiarrhea {
+                            selectedType.append(.diarrhea)
+                        } else {
+                            selectedType.removeAll { $0 == .diarrhea }
+                        }
+                    }) {
+                        Text("下痢")
                     }
-                }) {
-                    Text("軟便")
+                    .frame(width: 70, height: 50)
+                    
+                    CustomAddButtonView(isPresented: selectedConstipation, action: {
+                        selectedConstipation.toggle()
+                        if selectedConstipation {
+                            selectedType.append(.constipation)
+                        } else {
+                            selectedType.removeAll { $0 == .constipation }
+                        }
+                    }) {
+                        Text("便秘")
+                    }
+                    .frame(width: 70, height: 50)
+                    
+                    CustomAddButtonView(isPresented: selectedBlood, action: {
+                        selectedBlood.toggle()
+                        if selectedBlood {
+                            selectedType.append(.blood)
+                        } else {
+                            selectedType.removeAll { $0 == .blood }
+                        }
+                    }) {
+                        Text("血便")
+                    }
+                    .frame(width: 70, height: 50)
                 }
-                .frame(width: 70, height: 50)
                 
-                CustomAddButtonView(isPresented: selectedDiarrhea, action: {
-                    selectedDiarrhea.toggle()
-                    if selectedDiarrhea {
-                        selectedType.append(.diarrhea)
-                    } else {
-                        selectedType.removeAll { $0 == .diarrhea }
-                    }
-                }) {
-                    Text("下痢")
-                }
-                .frame(width: 70, height: 50)
-                
-                CustomAddButtonView(isPresented: selectedBlood, action: {
-                    selectedBlood.toggle()
-                    if selectedBlood {
-                        selectedType.append(.blood)
-                    } else {
-                        selectedType.removeAll { $0 == .blood }
-                    }
-                }) {
-                    Text("血便")
-                }
-                .frame(width: 70, height: 50)
             }
             Button(action: {
                 count += 1
                 addStoolRecord(selectDay: selectDay)
                 showView()
+                
             }) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 18)
                         .fill(Color.gray.opacity(0.5))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
+                        .frame(width: 200, height: 50)
                     Image(systemName: "plus")
                         .foregroundColor(.black)
                 }
             }
             .buttonStyle(.plain)
-            .padding(.horizontal, 50)
+            .padding(.horizontal)
+        }
+        .onAppear {
+//            withAnimation(.none) {
+                restoreStates()
+//            }
         }
     }
     
@@ -156,7 +202,6 @@ struct AddStoolRecord: View {
             let dayRecord = realm.objects(DayRecord.self).filter("date == %@", startOfDay).first
             
             let stool = StoolRecord()
-            stool.id = UUID().uuidString
             stool.time = combinedDate
             stool.type.append(objectsIn: selectedType)
             
@@ -174,6 +219,24 @@ struct AddStoolRecord: View {
         }
     }
     
+    private func restoreStates() {
+        if toggleFixed {
+            if selectedNormal { selectedType.append(.normal) }
+            if selectedHard { selectedType.append(.hard) }
+            if selectedSoft { selectedType.append(.soft) }
+            if selectedDiarrhea { selectedType.append(.diarrhea) }
+            if selectedConstipation { selectedType.append(.constipation) }
+            if selectedBlood { selectedType.append(.blood) }
+        } else {
+            selectedNormal = false
+            selectedHard = false
+            selectedSoft = false
+            selectedDiarrhea = false
+            selectedConstipation = false
+            selectedBlood = false
+            selectedType.removeAll()
+        }
+    }
 }
 
 #Preview {

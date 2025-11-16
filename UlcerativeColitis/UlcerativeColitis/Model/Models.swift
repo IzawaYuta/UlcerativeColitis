@@ -10,9 +10,28 @@ import RealmSwift
 
 enum StoolType: String, PersistableEnum {
     case normal //普通便
+    case hard //硬便
     case soft //軟便
     case diarrhea //下痢
+    case constipation //便秘
     case blood //血便
+    
+    var japaneseText: String {
+        switch self {
+        case .normal:
+            return "普通"
+        case .hard:
+            return "硬便"
+        case .soft:
+            return "軟便"
+        case .diarrhea:
+            return "下痢"
+        case .constipation:
+            return "便秘"
+        case .blood:
+            return "血便"
+        }
+    }
 }
 
 enum FirstTiming: String, PersistableEnum {
@@ -94,11 +113,13 @@ class MedicineInfo: Object, Identifiable {
     @Persisted var secondTiming: SecondTiming //服用タイミング
     @Persisted var time = List<MedicineTime>() //服用時間
     @Persisted var effect: String? //効果
+    @Persisted var toggleEffect: Bool
     @Persisted var stock: Int? //在庫
 //    @Persisted var stockUnit = List<StockUnit>() //在庫よう単位
     @Persisted var stockUnit: StockUnit? //在庫用単位
     @Persisted var isUsing: Bool = true //使用or不使用
     @Persisted var memo: String? //メモ
+    @Persisted var toggleMemo: Bool
 }
 
 class MedicineTime: Object, Identifiable {
