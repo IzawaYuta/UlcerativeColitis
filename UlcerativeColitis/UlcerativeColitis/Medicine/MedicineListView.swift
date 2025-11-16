@@ -115,6 +115,7 @@ struct MedicineListView: View {
                     }
                     .padding()
                 }
+                .scrollBounceBehavior(.basedOnSize)
                 //            .navigationTitle("お薬リスト")
                 //            .toolbarTitleDisplayMode(.inlineLarge)
                 .toolbarBackground(Color.gray.opacity(0.05), for: .navigationBar)
