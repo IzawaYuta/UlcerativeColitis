@@ -55,7 +55,7 @@ struct CalendarView: View {
                     showDatePicker = true
                 }) {
                     Text("\(String(year))年\(month)月\(Calendar.current.component(.day, from: selectedDay))日")
-                        .font(.title2)
+                        .font(.title3)
                         .foregroundColor(.black)
                         .bold()
                         .padding(.horizontal, 5)
@@ -93,6 +93,7 @@ struct CalendarView: View {
                     .padding(.vertical)
                     .padding(.horizontal)
                     .presentationDetents([.height(200)])
+                    .presentationCornerRadius(30)
                     .interactiveDismissDisabled(true)
                 }
                 
@@ -128,9 +129,11 @@ struct CalendarView: View {
                     Text(day)
                         .frame(maxWidth: .infinity)
                         .foregroundColor(day == "日" ? .red : (day == "土" ? .blue : .primary))
+                        .font(.callout)
+                        .bold()
                 }
             }
-            .padding(.vertical, 4)
+            .padding(.vertical, 1)
             .padding(.horizontal, 8)
             
             // 日付グリッド
@@ -151,9 +154,9 @@ struct CalendarView: View {
                         // 選択中の日付なら青く塗る
                         if (isToday(day: dayInt)) {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.blue.opacity(0.3))
+                                .fill(Color.blue.opacity(0.15))
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 40)
+                                .frame(height: 30)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
                                         .stroke(Color.blue, lineWidth: 2)
@@ -161,9 +164,9 @@ struct CalendarView: View {
                         } else if isSelected, let cellDate = Calendar.current.date(from: DateComponents(year: year, month: month, day: dayInt)),
                                   Calendar.current.isDate(cellDate, inSameDayAs: selectedDay) {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.orange.opacity(0.3))
+                                .fill(Color.orange.opacity(0.15))
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 40)
+                                .frame(height: 30)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
                                         .stroke(Color.orange, lineWidth: 2)
@@ -172,21 +175,21 @@ struct CalendarView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.gray.opacity(0.2))
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 40)
+                                .frame(height: 30)
                         }
                         
-                        VStack(spacing: 5) {
+                        VStack(spacing: 2) {
                             Text(text)
-                                .font(.system(size: 15))
+                                .font(.system(size: 13))
                                 .bold()
                             if let cellDayRecord = cellDayRecord, !cellDayRecord.schedule.isEmpty {
-                                Circle()
+                                RoundedRectangle(cornerRadius: 10)
                                     .fill(Color.red)
-                                    .frame(width: 5, height: 5)
+                                    .frame(width: 10, height: 2.5)
                             } else {
-                                Circle()
+                                RoundedRectangle(cornerRadius: 10)
                                     .fill(Color.clear)
-                                    .frame(width: 5, height: 5)
+                                    .frame(width: 10, height: 2.5)
                             }
                         }
                     }
@@ -220,17 +223,14 @@ struct CalendarView: View {
                         }
                     }
             )
-            
-            //            Text(dateFormatter.string(from: selectedDay))
-//            Button {
-//                show.toggle()
-//            } label: {
-//                Image(systemName: "plus")
-//            }
-//            .sheet(isPresented: $show) {
-//                MedicineInfoView(medicine: MedicineInfo())
-//            }
-            
+            Button(action: { NotificationManager.instance.sendNotification() }) {
+                Text("Send Notification!!")
+            }
+
+            HStack {
+                RecordView(selectedYear: selectedYear, selectedMonth: selectedMonth, selectedDate: selectedDate, selectDay: $selectDay)
+                ScheduleView(selectDay: $selectDay)
+            }
             
             Spacer()
         }

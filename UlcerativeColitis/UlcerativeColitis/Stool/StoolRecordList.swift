@@ -25,63 +25,177 @@ struct StoolRecordList: View {
     
     var body: some View {
         let day = dayRecord.first { Calendar.current.isDate($0.date, inSameDayAs: selectDay) }
-        VStack(alignment: .leading, spacing: -25) {
-            if let day = day {
-                List {
-                    ForEach(day.stoolRecord, id: \.self) { stool in
-                        HStack {
-                            Text("\(stool.amount)")
-                            
-                            Spacer()
-                            
-                            if stool.type.isEmpty {
-                                Text("-")
-                            } else {
-                                Text(stool.type.map { $0.rawValue }.joined(separator: "、"))
-                            }
-                            
-                            Spacer()
-                            
-                            Text(dateFormatter.string(from: stool.time))
-                        }
-                        .padding(.horizontal, 7)
+        ZStack {
+            Color.gray.opacity(0.1)
+                .ignoresSafeArea()
+            VStack {
+                VStack {
+                    CustomHStackView {
+                        Text("today")
+                    } intView: {
+                        Text("\(day?.stoolRecord.count ?? 0)")
                     }
-                    .onDelete { indexSet in
-                        deleteStoolRecords(at: indexSet, in: day)
+                    VStack {
+                        HStack {
+                            CustomHStackView {
+                                Text("普通")
+                            } intView: {
+                                Text("\(day?.stoolRecord.filter { $0.type.contains(.normal) }.count ?? 0)")
+                            }
+                            CustomHStackView {
+                                Text("硬便")
+                            } intView: {
+                                Text("\(day?.stoolRecord.filter { $0.type.contains(.hard) }.count ?? 0)")
+                            }
+                            CustomHStackView {
+                                Text("軟便")
+                            } intView: {
+                                Text("\(day?.stoolRecord.filter { $0.type.contains(.soft) }.count ?? 0)")
+                            }
+                        }
+                        HStack {
+                            CustomHStackView {
+                                Text("下痢")
+                            } intView: {
+                                Text("\(day?.stoolRecord.filter { $0.type.contains(.diarrhea) }.count ?? 0)")
+                            }
+                            CustomHStackView {
+                                Text("便秘")
+                            } intView: {
+                                Text("\(day?.stoolRecord.filter { $0.type.contains(.constipation) }.count ?? 0)")
+                            }
+                            CustomHStackView {
+                                Text("血便")
+                            } intView: {
+                                Text("\(day?.stoolRecord.filter { $0.type.contains(.blood) }.count ?? 0)")
+                            }
+                        }
+                        .padding(.horizontal)
                     }
                 }
+                .padding(.horizontal)
+                if let day = day {
+                    if !day.stoolRecord.isEmpty {
+                        ScrollView {
+                            ForEach(day.stoolRecord, id: \.self) { stool in
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.white)
+                                        .shadow(color: .gray, radius: 2, x: 2, y: 2)
+                                    
+                                    HStack(spacing: 16) {
+                                        // 回数（左側・強調）
+                                        VStack(alignment: .leading, spacing: 3) {
+                                            Text("\(stool.amount)")
+                                                .font(.system(size: 20, weight: .bold))
+                                                .foregroundColor(.blue)
+                                            //                                            Text("時刻")
+                                            //                                                .font(.caption)
+                                            //                                                .foregroundColor(.secondary)
+                                            Text(dateFormatter.string(from: stool.time))
+                                                .font(.system(size: 10))
+                                                .foregroundColor(.primary)
+                                            //                                            Text("回目")
+                                            //                                                .font(.caption2)
+                                            //                                                .foregroundColor(.secondary)
+                                        }
+                                        .frame(width: 30)
+                                        
+                                        Divider()
+                                            .frame(height: 40)
+                                        
+                                        // 種類（中央）
+                                        //                                        VStack(alignment: .leading, spacing: 4) {
+                                        //                                            Text("種類")
+                                        //                                                .font(.caption)
+                                        //                                                .foregroundColor(.secondary)
+                                        if stool.type.isEmpty {
+                                            Text("-")
+                                                .font(.body)
+                                                .foregroundColor(.gray)
+                                        } else {
+                                            Text(stool.type.map { $0.japaneseText }.joined(separator: " · "))
+                                                .font(.system(size: 15))
+                                            //                                                    .fontWeight(.medium)
+                                                .foregroundColor(.primary)
+                                        }
+                                        //                                        }
+                                        
+                                                                                Spacer()
+                                        
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 12)
+                                }
+                                .frame(height: 50)
+                                .padding(.horizontal)
+//                                .padding(.top)
+//                                .padding(.vertical)
+                                .padding(.vertical, 10)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        deleteSingleStoolRecord(stool, in: day)
+                                    } label: {
+                                        Label("削除", systemImage: "trash")
+                                    }
+                                }
+                            }
+//                            .onDelete { indexSet in
+//                                deleteStoolRecords(at: indexSet, in: day)
+//                            }
+                        }
+                        .padding(.top)
+//                        .padding()
+                    } else {
+                        Text("記録はありません")
+                            .foregroundColor(.secondary)
+                            .padding(.top, 20)
+                            .padding()
+//                        Spacer()
+
+                    }
+                } else {
+                    Text("記録はありません")
+                        .foregroundColor(.secondary)
+                        .padding(.top, 20)
+                        .padding()
+//                    Spacer()
+                }
+                Spacer()
+                Button(action: {
+                    showView()
+                }) {
+                    Text("閉じる")
+                        .foregroundColor(.white)
+                        .font(.system(size: 15))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 40)
+                        .background(
+                            RoundedRectangle(cornerRadius: 18)
+                                .fill(Color.gray)
+                        )
+                }
+                .padding(.horizontal)
+                .buttonStyle(.plain)
             }
-            Button(action: {
-                showView()
-            }) {
-                Text("閉じる")
-                    .foregroundColor(.black)
-                    .font(.system(size: 15))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 40)
-                    .background(
-                        RoundedRectangle(cornerRadius: 18)
-                            .fill(Color.gray.opacity(0.4))
-                    )
-            }
-            .padding(.horizontal)
+            .scrollContentBackground(.hidden)
         }
-        .scrollContentBackground(.hidden)
-        .background(Color.gray.opacity(0.1).ignoresSafeArea())
     }
     
-    private func deleteStoolRecords(at offsets: IndexSet, in day: DayRecord) {
+    private func deleteSingleStoolRecord(_ stool: StoolRecord, in day: DayRecord) {
         let realm = try! Realm()
         
-        guard let thawedDay = day.thaw() else { return }
+        guard let thawedDay = day.thaw(),
+              let index = thawedDay.stoolRecord.firstIndex(of: stool) else { return }
         
         try! realm.write {
-            let itemsToDelete = offsets.map { thawedDay.stoolRecord[$0] }
-            realm.delete(itemsToDelete)
+            // 対象削除
+            let itemToDelete = thawedDay.stoolRecord[index]
+            realm.delete(itemToDelete)
             
-            // 削除後に amount を再設定
-            for (index, stool) in thawedDay.stoolRecord.enumerated() {
-                stool.amount = index + 1
+            // amountをリセット
+            for (i, stool) in thawedDay.stoolRecord.enumerated() {
+                stool.amount = i + 1
             }
         }
     }
