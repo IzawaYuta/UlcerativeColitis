@@ -159,7 +159,6 @@ struct MedicineInfoView: View {
                                                     timing: timing,
                                                     action: {
                                                         toggle(timing)
-                                                        saveTiming()
                                                     }) {
                                                         Text(timing.japaneseText)
                                                             .font(.system(size: 17))
@@ -187,7 +186,6 @@ struct MedicineInfoView: View {
                                                 timing: timing,
                                                 action: {
                                                     toggle(timing)
-                                                    saveTiming()
                                                 }) {
                                                     Text(timing.japaneseText)
                                                         .font(.system(size: 17))
@@ -522,6 +520,7 @@ struct MedicineInfoView: View {
         }
     }
     
+    //お薬保存メソッド
     private func saveMedicine() {
         let realm = try! Realm()
         var savedMedicineId: String = medicine.id  // デフォルトは既存のID
@@ -642,6 +641,8 @@ struct MedicineInfoView: View {
             }
         }
         
+        saveTiming()
+        
         // 使用中の場合のみ通知を設定
         let realm2 = try! Realm()
         if let savedMedicine = realm2.object(ofType: MedicineInfo.self, forPrimaryKey: savedMedicineId),
@@ -656,6 +657,7 @@ struct MedicineInfoView: View {
         }
     }
     
+    //FirstTiming切り替えメソッド
     private func toggle(_ timing: FirstTiming) {
         if selectedFirstTimings.contains(timing) {
             selectedFirstTimings.remove(timing)
@@ -664,6 +666,7 @@ struct MedicineInfoView: View {
         }
     }
     
+    //FirstTiming保存メソッド
     private func saveTiming() {
         let realm = try! Realm()
         
@@ -685,6 +688,7 @@ struct MedicineInfoView: View {
         }
     }
     
+    //SecondTiming保存メソッド
     private func saveSecondTiming() {
         let realm = try! Realm()
         
@@ -701,6 +705,7 @@ struct MedicineInfoView: View {
         }
     }
     
+    //服用時間削除メソッド
     private func deleteTime(_ timeEntry: MedicineTime) {
         let realm = try! Realm()
         
@@ -711,6 +716,7 @@ struct MedicineInfoView: View {
         }
     }
     
+    //使用不使用切り替え
     private func isUsingChange() {
         let realm = try! Realm()
         try! realm.write {
@@ -735,6 +741,7 @@ struct MedicineInfoView: View {
         NotificationManager.instance.checkPendingNotifications()
     }
     
+    //Timingのカラー
     func getColor(for timing: FirstTiming) -> Color {
         switch timing {
         case .morning:
