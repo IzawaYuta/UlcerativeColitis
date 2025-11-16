@@ -223,7 +223,10 @@ struct CalendarView: View {
                         }
                     }
             )
-            
+            Button(action: { NotificationManager.instance.sendNotification() }) {
+                Text("Send Notification!!")
+            }
+
             HStack {
                 RecordView(selectedYear: selectedYear, selectedMonth: selectedMonth, selectedDate: selectedDate, selectDay: $selectDay)
                 ScheduleView(selectDay: $selectDay)

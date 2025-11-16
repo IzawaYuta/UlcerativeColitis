@@ -12,6 +12,8 @@ import IQKeyboardManagerSwift
 @main
 struct UlcerativeColitisApp: App {
     
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     init() {
         addDefaultUnitsIfNeeded()
         IQKeyboardManager.shared.isEnabled = true
