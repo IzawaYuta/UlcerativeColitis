@@ -49,6 +49,9 @@ struct MedicineInfoView: View {
     @State private var showEffectDeleteAlert = false
     @State private var showMemoDeleteAlert = false
     
+//    @State private var medicineTitle: String = "薬の時間です"
+//    @State private var medicineBody: String = "服用してください"
+    
     @State private var selectedUnit: UnitArray?
     @State private var selectedStockUnit: UnitArray? //在庫用単位の選択状態
     
@@ -196,32 +199,63 @@ struct MedicineInfoView: View {
                                 }
                             }
                             
-                            if let firstMedicine = medicineInfo.first, !firstMedicine.time.isEmpty {
-                                HStack {
-                                    ForEach(firstMedicine.time, id: \.id) { timeEntry in
-                                        HStack {
-                                            Text(timeEntry.time.formatted(date: .omitted, time: .shortened))
-                                                .font(.system(size: 14))
-                                            
-                                            Spacer()
-                                            
-                                            Button(action: {
-                                                deleteTime(timeEntry)
-                                            }) {
-                                                Image(systemName: "trash")
-                                                    .foregroundColor(.red.opacity(0.5))
-                                                    .font(.system(size: 12))
-                                            }
-                                        }
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 8)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .fill(Color.white)
-                                        )
-                                    }
-                                }
-                            } else {
+//                            if let firstMedicine = medicineInfo.first, !firstMedicine.time.isEmpty {
+//                                HStack {
+//                                    ForEach(firstMedicine.time, id: \.id) { timeEntry in
+//                                        HStack {
+//                                            Text(timeEntry.time.formatted(date: .omitted, time: .shortened))
+//                                                .font(.system(size: 14))
+//                                            
+//                                            Spacer()
+//                                            
+//                                            Button(action: {
+//                                                deleteTime(timeEntry)
+//                                            }) {
+//                                                Image(systemName: "trash")
+//                                                    .foregroundColor(.red.opacity(0.5))
+//                                                    .font(.system(size: 12))
+//                                            }
+//                                        }
+//                                        .padding(.horizontal, 12)
+//                                        .padding(.vertical, 8)
+//                                        .background(
+//                                            RoundedRectangle(cornerRadius: 8)
+//                                                .fill(Color.white)
+//                                        )
+//                                    }
+//                                }
+//                            } else {
+//                                HStack {
+//                                    ForEach(Array(tentativeTime.sorted().enumerated()), id: \.offset) { index, time in
+//                                        HStack {
+//                                            Text("\(index + 1)")
+//                                                .foregroundColor(.gray)
+//                                                .font(.system(size: 10))
+//                                            Text(time.formatted(date: .omitted, time: .shortened))
+//                                                .font(.system(size: 14))
+//                                            
+//                                            Spacer()
+//                                            
+//                                            Button(action: {
+//                                                if let originalIndex = tentativeTime.firstIndex(of: time) {
+//                                                    tentativeTime.remove(at: originalIndex)
+//                                                }
+//                                            }) {
+//                                                Image(systemName: "trash")
+//                                                    .foregroundColor(.red.opacity(0.5))
+//                                                    .font(.system(size: 12))
+//                                            }
+//                                        }
+//                                        .padding(.horizontal, 12)
+//                                        .padding(.vertical, 8)
+//                                        .background(
+//                                            RoundedRectangle(cornerRadius: 8)
+//                                                .fill(Color.white)
+//                                        )
+//                                    }
+//                                }
+//                            }
+//                            if !isNewMedicine {
                                 HStack {
                                     ForEach(Array(tentativeTime.sorted().enumerated()), id: \.offset) { index, time in
                                         HStack {
@@ -251,7 +285,9 @@ struct MedicineInfoView: View {
                                         )
                                     }
                                 }
-                            }
+//                            } else {
+//                                
+//                            }
                             
                             if (medicineInfo.first?.time.count ?? 0) < 3 && tentativeTime.count < 3 {
                                     Button(action: {
@@ -275,7 +311,6 @@ struct MedicineInfoView: View {
                                         .presentationDetents([.height(350)])
                                         .presentationCornerRadius(30)
                                     }
-//                                }
                             }
                         }
                     }
@@ -365,25 +400,7 @@ struct MedicineInfoView: View {
                         .padding(.horizontal)
                     }
                     
-                    HStack/*(spacing: 30)*/ {
-                        //                        if !toggleEffect {
-                        //                            Button(action: {
-                        //                                toggleEffect = true
-                        //                            }) {
-                        //                                HStack(spacing: 1) {
-                        //                                    Text("効果")
-                        //                                    Image(systemName: "plus")
-                        //                                }
-                        //                                .font(.footnote)
-                        //                                .foregroundColor(.black)
-                        //                                .background(
-                        //                                    Capsule()
-                        //                                        .fill(Color.blue.opacity(0.2))
-                        //                                        .frame(width: 60, height: 30)
-                        //                                )
-                        //                            }
-                        //                        }
-                        
+                    HStack {
                         if !toggleMemo {
                             Button(action: {
                                 toggleMemo = true
@@ -412,6 +429,7 @@ struct MedicineInfoView: View {
                     Button(action: {
                         saveMedicine()
                         dismiss()
+                        NotificationManager.instance.checkPendingNotifications()
                     }) {
                         Text("保存")
                             .foregroundColor(.white)
@@ -433,13 +451,11 @@ struct MedicineInfoView: View {
                     morningDosageText = medicine.morningDosage.map { String($0) } ?? ""
                     noonDosageText = medicine.noonDosage.map { String($0) } ?? ""
                     eveningDosageText = medicine.eveningDosage.map { String($0) } ?? ""
-                    //                    effect = medicine.effect ?? ""
                     stockText = medicine.stock.map { String($0) } ?? ""
                     memo = medicine.memo ?? ""
                     selectedSecondTiming = medicine.secondTiming
                     selectedUnit = medicine.unit
                     tentativeTime = medicine.time.map { $0.time }
-                    //                    toggleEffect = medicine.toggleEffect
                     toggleMemo = medicine.toggleMemo
                 }
                 .toolbar {
@@ -508,20 +524,16 @@ struct MedicineInfoView: View {
     
     private func saveMedicine() {
         let realm = try! Realm()
+        var savedMedicineId: String = medicine.id  // デフォルトは既存のID
         
         try! realm.write {
             if isNewMedicine {
                 // 新規作成
                 let model = MedicineInfo()
                 model.medicineName = medicineName
-//                model.morningDosage = morningDosage
-//                model.noonDosage = noonDosage
-//                model.eveningDosage = eveningDosage
-                //                model.effect = effect
                 model.memo = memo
                 model.secondTiming = selectedSecondTiming
                 model.firstTiming.append(objectsIn: Array(selectedFirstTimings))
-                //                model.toggleEffect = toggleEffect
                 model.toggleMemo = toggleMemo
                 
                 if let selectedUnit = selectedUnit {
@@ -555,7 +567,8 @@ struct MedicineInfoView: View {
                 }
                 
                 realm.add(model)
-                
+                savedMedicineId = model.id  // ← 新しいIDを保存
+                print(model)
                 medicineName = ""
                 dosageText = ""
                 selectedUnit = nil
@@ -567,21 +580,18 @@ struct MedicineInfoView: View {
                 effect = ""
                 stockText = ""
                 memo = ""
-                tentativeTime = []
-                //                toggleEffect = false
+//                tentativeTime = []
                 toggleMemo = false
                 
             } else {
                 // 既存データの更新
                 if let thawedMedicine = medicine.thaw() {
                     thawedMedicine.medicineName = medicineName
-                    //                    thawedMedicine.effect = effect
                     thawedMedicine.memo = memo
                     thawedMedicine.secondTiming = selectedSecondTiming
                     
                     thawedMedicine.firstTiming.removeAll()
                     thawedMedicine.firstTiming.append(objectsIn: Array(selectedFirstTimings))
-                    //                    thawedMedicine.toggleEffect = toggleEffect
                     thawedMedicine.toggleMemo = toggleMemo
                     
                     if let selectedUnit = selectedUnit {
@@ -626,8 +636,23 @@ struct MedicineInfoView: View {
                         tModel.time = t
                         thawedMedicine.time.append(tModel)
                     }
+                    savedMedicineId = thawedMedicine.id
+                    print(thawedMedicine)
                 }
             }
+        }
+        
+        // 使用中の場合のみ通知を設定
+        let realm2 = try! Realm()
+        if let savedMedicine = realm2.object(ofType: MedicineInfo.self, forPrimaryKey: savedMedicineId),
+           savedMedicine.isUsing {
+            scheduleNotification(medicineId: savedMedicineId)
+        } else {
+            print("不使用中のため、通知は設定されません")
+        }
+        
+        if isNewMedicine {
+            tentativeTime = []
         }
     }
     
@@ -691,8 +716,23 @@ struct MedicineInfoView: View {
         try! realm.write {
             if let thawedMedicine = medicine.thaw() {
                 thawedMedicine.isUsing.toggle()
+                
+                // 不使用になったら通知をオフ
+                if !thawedMedicine.isUsing {
+                    print("「\(thawedMedicine.medicineName)」を不使用にしました")
+                    cancelMedicineNotifications(medicineId: thawedMedicine.id)
+                    print("通知をオフにしました")
+                }
+                // 使用中に戻したら通知を再設定
+                else {
+                    print("「\(thawedMedicine.medicineName)」を使用中にしました")
+                    scheduleNotification(medicineId: thawedMedicine.id)
+                }
             }
         }
+        
+        // 変更後の通知確認
+        NotificationManager.instance.checkPendingNotifications()
     }
     
     func getColor(for timing: FirstTiming) -> Color {
@@ -780,8 +820,15 @@ struct MedicineInfoView: View {
     private func deleteMedicine(by id: String) {
         let realm = try! Realm()
         
+        // 削除前の通知確認
+        print("=== 削除前の通知確認 ===")
+        NotificationManager.instance.checkPendingNotifications()
+        
         try! realm.write {
             if let medicineToDelete = realm.object(ofType: MedicineInfo.self, forPrimaryKey: id) {
+                
+                print("削除する薬: \(medicineToDelete.medicineName) (ID: \(id))")
+                print("削除する通知の数: \(medicineToDelete.time.count)件")
                 
                 // 関連する unit を削除（存在する場合）
                 if let unit = medicineToDelete.unit {
@@ -794,7 +841,99 @@ struct MedicineInfoView: View {
                 realm.delete(medicineToDelete)
             }
         }
+        // 通知を削除
+        cancelMedicineNotifications(medicineId: id)
+        print("薬ID: \(id) の通知を削除しました")
+        
+        print("=== 削除後の通知確認 ===")
+        NotificationManager.instance.checkPendingNotifications()
     }
+    
+//    private func scheduleNotification() {
+//        // 1回だけ通知する場合
+////        NotificationManager.instance.scheduleNotification(
+////            title: medicineTitle,
+////            body: medicineBody,
+////            date: time,
+////            identifier: "medicine_reminder"
+////        )
+//        
+//        // または、毎日同じ時間に通知する場合
+//        let calendar = Calendar.current
+//        let hour = calendar.component(.hour, from: time)
+//        let minute = calendar.component(.minute, from: time)
+//        let title: String = "お薬の時間です"
+//        let nMedicineName = medicine.medicineName
+//        
+//        if isNewMedicine {
+//            NotificationManager.instance.scheduleRepeatingNotification(
+//                title: title,
+//                body: nMedicineName,
+//                hour: hour,
+//                minute: minute,
+//                identifier: "medicine_reminder_daily"
+//            )
+//        } else {
+//            NotificationManager.instance.scheduleRepeatingNotification(
+//                title: title,
+//                body: medicineName,
+//                hour: hour,
+//                minute: minute,
+//                identifier: "medicine_reminder_daily"
+//            )
+//        }
+//    }
+    
+    private func scheduleNotification(medicineId: String) {
+        // この薬の既存の通知をすべてキャンセル
+        cancelMedicineNotifications(medicineId: medicineId)
+
+        // 保存された時間を取得
+        let timesToSchedule: [Date]
+        if !isNewMedicine && !medicine.time.isEmpty {
+            // 既存の薬の場合、Realmから取得
+            timesToSchedule = medicine.time.map { $0.time }
+        } else if !tentativeTime.isEmpty {
+            // 新規の場合、tentativeTimeから取得
+            timesToSchedule = tentativeTime
+        } else {
+            // 時間が設定されていない場合は通知しない
+            print("通知する時間が設定されていません")
+            return
+        }
+        
+        // 各時間に対して通知を設定
+        for (index, notificationTime) in timesToSchedule.enumerated() {
+            let calendar = Calendar.current
+            let hour = calendar.component(.hour, from: notificationTime)
+            let minute = calendar.component(.minute, from: notificationTime)
+            
+            // 時間帯に応じたメッセージ（オプション）
+//            let timingText = getTimingText(for: index)
+            
+            NotificationManager.instance.scheduleRepeatingNotification(
+//                title: timingText.isEmpty ? "薬の時間です" : "\(timingText)の薬の時間です",
+                title: "お薬",
+                body: "\(medicineName) \(selectedSecondTiming.japaneseText)",
+                hour: hour,
+                minute: minute,
+                identifier: "medicine_\(medicineId)_\(index)"
+            )
+        }
+        
+        print("\(medicineName)の通知を\(timesToSchedule.count)件設定しました")
+    }
+    
+    // 特定の薬の通知をすべてキャンセル
+    private func cancelMedicineNotifications(medicineId: String) {
+        // 最大10件の通知をキャンセル（必要に応じて増やす）
+        for index in 0..<10 {
+            NotificationManager.instance.cancelNotification(
+                identifier: "medicine_\(medicineId)_\(index)"
+            )
+        }
+    }
+
 }
 
 #Preview {
