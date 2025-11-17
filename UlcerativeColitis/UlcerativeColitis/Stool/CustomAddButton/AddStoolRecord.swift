@@ -29,90 +29,234 @@ struct AddStoolRecord: View {
     
     var body: some View {
         VStack(spacing: 30) {
-            VStack(spacing: 15) {
-                Button(action: {
-                    toggleFixed.toggle()
-                }) {
-                    HStack {
-                        Text("選択を固定")
-                        Image(systemName: toggleFixed ? "checkmark.circle" : "circle")
-                    }
+            Button(action: {
+                toggleFixed.toggle()
+            }) {
+                HStack {
+                    Text("選択を固定")
+                    Image(systemName: toggleFixed ? "checkmark.circle" : "circle")
                 }
-                .buttonStyle(.bordered)
-                HStack(spacing: 17) {
-                    CustomAddButtonView(isPresented: selectedNormal, action: {
+            }
+            .buttonStyle(.bordered)
+            HStack(spacing: 15) {
+                VStack(spacing: 17) {
+                    let rgbGreen = Color(red: 180/255, green: 255/255, blue: 166/255)
+//                    CustomAddButtonView(color: rgbGreen, isPresented: selectedNormal, action: {
+//                        selectedNormal.toggle()
+//                        if selectedNormal {
+//                            selectedType.append(.normal)
+//                        } else {
+//                            selectedType.removeAll { $0 == .normal }
+//                        }
+//                    }) {
+//                        VStack(spacing: 13) {
+//                            Image(systemName: "checkmark")
+//                                .font(.system(size: 30))
+//                            Text("普通")
+//                                .font(.system(size: 20))
+//                        }
+//                    }
+//                    .frame(width: 150, height: 100)
+                    CustomAddButtonView(color: rgbGreen, isPresented: $selectedNormal) {
+                        VStack(spacing: 13) {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 30))
+                            Text("普通")
+                                .font(.system(size: 20))
+                        }
+                    }
+                    .frame(width: 150, height: 100)
+                    .onTapGesture {
                         selectedNormal.toggle()
                         if selectedNormal {
                             selectedType.append(.normal)
                         } else {
                             selectedType.removeAll { $0 == .normal }
                         }
-                    }) {
-                        Text("普通")
                     }
-                    .frame(width: 70, height: 50)
                     
-                    CustomAddButtonView(isPresented: selectedHard, action: {
+//                    CustomAddButtonView(color: .orange, isPresented: selectedHard, action: {
+//                        selectedHard.toggle()
+//                        if selectedHard {
+//                            selectedType.append(.hard)
+//                        } else {
+//                            selectedType.removeAll { $0 == .hard }
+//                        }
+//                    }) {
+//                        VStack(spacing: 13) {
+//                            Image(systemName: "triangle.fill")
+//                                .font(.system(size: 30))
+//                            Text("硬便")
+//                                .font(.system(size: 20))
+//                        }
+//                    }
+//                    .frame(width: 150, height: 100)
+                    
+                    CustomAddButtonView(color: .brown, isPresented: $selectedHard) {
+                        VStack(spacing: 13) {
+                            Image(systemName: "triangle.fill")
+                                .font(.system(size: 30))
+                            Text("硬便")
+                                .font(.system(size: 20))
+                        }
+                    }
+                    .frame(width: 150, height: 100)
+                    .onTapGesture {
                         selectedHard.toggle()
                         if selectedHard {
                             selectedType.append(.hard)
                         } else {
                             selectedType.removeAll { $0 == .hard }
                         }
-                    }) {
-                        Text("硬便")
+
                     }
-                    .frame(width: 70, height: 50)
                     
-                    CustomAddButtonView(isPresented: selectedSoft, action: {
+
+//                    CustomAddButtonView(color: .yellow, isPresented: selectedSoft, action: {
+//                        selectedSoft.toggle()
+//                        if selectedSoft {
+//                            selectedType.append(.soft)
+//                        } else {
+//                            selectedType.removeAll { $0 == .soft }
+//                        }
+//                    }) {
+//                        VStack(spacing: 13) {
+//                            Image(systemName: "alternatingcurrent")
+//                                .font(.system(size: 30))
+//                            Text("軟便")
+//                                .font(.system(size: 20))
+//                        }
+//                    }
+//                    .frame(width: 150, height: 100)
+                    
+                    CustomAddButtonView(color: .yellow, isPresented: $selectedSoft) {
+                        VStack(spacing: 13) {
+                            Image(systemName: "alternatingcurrent")
+                                .font(.system(size: 30))
+                            Text("軟便")
+                                .font(.system(size: 20))
+                        }
+                    }
+                    .frame(width: 150, height: 100)
+                    .onTapGesture {
                         selectedSoft.toggle()
                         if selectedSoft {
                             selectedType.append(.soft)
                         } else {
                             selectedType.removeAll { $0 == .soft }
                         }
-                    }) {
-                        Text("軟便")
+
                     }
-                    .frame(width: 70, height: 50)
                 }
                 
-                HStack(spacing: 17) {
-                    CustomAddButtonView(isPresented: selectedDiarrhea, action: {
+                VStack(spacing: 17) {
+//                    CustomAddButtonView(color: .brown, isPresented: selectedDiarrhea, action: {
+//                        selectedDiarrhea.toggle()
+//                        if selectedDiarrhea {
+//                            selectedType.append(.diarrhea)
+//                        } else {
+//                            selectedType.removeAll { $0 == .diarrhea }
+//                        }
+//                    }) {
+//                        VStack(spacing: 13) {
+//                            Image(systemName: "tornado")
+//                                .font(.system(size: 30))
+//                            Text("下痢")
+//                                .font(.system(size: 20))
+//                        }
+//                    }
+//                    .frame(width: 150, height: 100)
+                    
+                    CustomAddButtonView(color: .orange, isPresented: $selectedDiarrhea) {
+                        VStack(spacing: 13) {
+                            Image(systemName: "tornado")
+                                .font(.system(size: 30))
+                            Text("下痢")
+                                .font(.system(size: 20))
+                        }
+                    }
+                    .frame(width: 150, height: 100)
+                    .onTapGesture {
                         selectedDiarrhea.toggle()
                         if selectedDiarrhea {
                             selectedType.append(.diarrhea)
                         } else {
                             selectedType.removeAll { $0 == .diarrhea }
                         }
-                    }) {
-                        Text("下痢")
+
                     }
-                    .frame(width: 70, height: 50)
+
+//                    CustomAddButtonView(color: .gray, isPresented: selectedConstipation, action: {
+//                        selectedConstipation.toggle()
+//                        if selectedConstipation {
+//                            selectedType.append(.constipation)
+//                        } else {
+//                            selectedType.removeAll { $0 == .constipation }
+//                        }
+//                    }) {
+//                        VStack(spacing: 13) {
+//                            Image(systemName: "xmark")
+//                                .font(.system(size: 30))
+//                            Text("便秘")
+//                                .font(.system(size: 20))
+//                        }
+//                    }
+//                    .frame(width: 150, height: 100)
                     
-                    CustomAddButtonView(isPresented: selectedConstipation, action: {
+                    CustomAddButtonView(color: .gray, isPresented: $selectedConstipation) {
+                        VStack(spacing: 13) {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 30))
+                            Text("便秘")
+                                .font(.system(size: 20))
+                        }
+                    }
+                    .frame(width: 150, height: 100)
+                    .onTapGesture {
                         selectedConstipation.toggle()
                         if selectedConstipation {
                             selectedType.append(.constipation)
                         } else {
                             selectedType.removeAll { $0 == .constipation }
                         }
-                    }) {
-                        Text("便秘")
+
                     }
-                    .frame(width: 70, height: 50)
+
+//                    CustomAddButtonView(color: .red, isPresented: selectedBlood, action: {
+//                        selectedBlood.toggle()
+//                        if selectedBlood {
+//                            selectedType.append(.blood)
+//                        } else {
+//                            selectedType.removeAll { $0 == .blood }
+//                        }
+//                    }) {
+//                        VStack(spacing: 13) {
+//                            Image(systemName: "drop.fill")
+//                                .font(.system(size: 30))
+//                            Text("血便")
+//                                .font(.system(size: 20))
+//                        }
+//                    }
+//                    .frame(width: 150, height: 100)
                     
-                    CustomAddButtonView(isPresented: selectedBlood, action: {
+                    CustomAddButtonView(color: .red, isPresented: $selectedBlood) {
+                        VStack(spacing: 13) {
+                            Image(systemName: "drop.fill")
+                                .font(.system(size: 30))
+                            Text("血便")
+                                .font(.system(size: 20))
+                        }
+                    }
+                    .frame(width: 150, height: 100)
+                    .onTapGesture {
                         selectedBlood.toggle()
                         if selectedBlood {
                             selectedType.append(.blood)
                         } else {
                             selectedType.removeAll { $0 == .blood }
                         }
-                    }) {
-                        Text("血便")
+
                     }
-                    .frame(width: 70, height: 50)
                 }
                 
             }
