@@ -22,7 +22,8 @@ struct UlcerativeColitisApp: App {
     var body: some Scene {
         WindowGroup {
 //            ContentView()
-            MainTabView()
+//            MainTabView()
+            CalendarView2()
         }
     }
     
