@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CalendarView2: View {
-    @State private var currentDate = Date() // @Stateに変更
+    @State private var currentDate = Date()
     @State private var dragOffset: CGFloat = 0
     @State private var isAnimating = false
     
@@ -19,7 +19,6 @@ struct CalendarView2: View {
         cal.locale = Locale(identifier: "ja_JP")
         return cal.veryShortWeekdaySymbols
     }
-
     
     // グリッドアイテム
     let columns: [GridItem] = Array(repeating: .init(.fixed(40)), count: 7)
@@ -36,7 +35,7 @@ struct CalendarView2: View {
     private var calendarDates: [CalendarDates] {
         createCalendarDates(currentDate)
     }
-
+    
     var body: some View {
         
         VStack(spacing: 50) {
@@ -45,14 +44,13 @@ struct CalendarView2: View {
                     .font(.system(size: 16))
                     .foregroundColor(.blue)
             }
-
+            
             HStack {
                 Button(action: {
                     changeMonth(-1)
                 }) {
                     Image(systemName: "plus")
                 }
-                // yyyy/MM
                 Text(String(format: "%04d/%02d", year, month))
                     .font(.system(size: 24))
                 Button(action: {
@@ -70,34 +68,27 @@ struct CalendarView2: View {
                 }
             }
             
-
-            
             // カレンダー
             LazyVGrid(columns: columns, spacing: 20) {
                 ForEach(calendarDates) { calendarDates in
-                    if let date = calendarDates.date, let day = Calendar.current.day(for: date),
-                        let day = Calendar.current.day(for: date),
+                    if let date = calendarDates.date,
+                       let day = Calendar.current.day(for: date),
                        let weekday = Calendar.current.weekday(for: date) {
                         
                         let isCurrentMonth = Calendar.current.month(for: date) == Calendar.current.month(for: currentDate)
                         let isSelected = selectedDate != nil && Calendar.current.isDate(date, inSameDayAs: selectedDate!)
                         
-                        // ---- 土日色のロジック ----
                         let textColor: Color = {
                             if isSelected { return .white }
                             
                             if isCurrentMonth {
-                                if weekday == 1 { return .red }   // 日曜
-                                if weekday == 7 { return .blue }  // 土曜
-                                return .black                     // 平日
+                                if weekday == 1 { return .red }
+                                if weekday == 7 { return .blue }
+                                return .black
                             } else {
-                                return .gray                      // 他の月は土日も gray
+                                return .gray
                             }
                         }()
-                        // --------------------------
-                        
-
-
                         
                         Text("\(day)")
                             .frame(width: 40, height: 40)
@@ -115,7 +106,7 @@ struct CalendarView2: View {
                     }
                 }
             }
-            .frame(height: 240) // 6行 × 40px = 240px固定
+            .frame(height: 240)
             .offset(x: dragOffset)
             .gesture(
                 DragGesture()
@@ -182,7 +173,6 @@ struct CalendarView2: View {
         formatter.dateFormat = "yyyy/MM/dd"
         return formatter.string(from: date)
     }
-
 }
 
 #Preview {
