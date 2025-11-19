@@ -13,6 +13,7 @@ struct CalendarView2: View {
     @State private var isAnimating = false
     
     @State private var selectedDate: Date? = Date()
+    @State private var showCalendarPicker = false
     
     private var weekdays: [String] {
         var cal = Calendar(identifier: .gregorian)
@@ -31,6 +32,10 @@ struct CalendarView2: View {
     private var month: Int {
         Calendar.current.component(.month, from: currentDate)
     }
+    
+    // Picker用の一時変数
+    @State private var tempYear: Int = Calendar.current.component(.year, from: Date())
+    @State private var tempMonth: Int = Calendar.current.component(.month, from: Date())
     
     private var calendarDates: [CalendarDates] {
         createCalendarDates(currentDate)
@@ -53,6 +58,26 @@ struct CalendarView2: View {
                 }
                 Text(String(format: "%04d/%02d", year, month))
                     .font(.system(size: 24))
+                    .onTapGesture {
+                        tempYear = year
+                        tempMonth = month
+                        showCalendarPicker.toggle()
+                    }
+                    .sheet(isPresented: $showCalendarPicker) {
+                        HStack {
+                            YearPicker(yearPicker: $tempYear, doneButton: {}, cancelButton: {})
+                            MonthPicker(monthPicker: $tempMonth, doneButton: {}, cancelButton: {})
+                            
+                            Button("完了") {
+                                // Pickerで選択された年月からcurrentDateを更新
+                                if let newDate = Calendar.current.date(from: DateComponents(year: tempYear, month: tempMonth, day: 1)) {
+                                    currentDate = newDate
+                                }
+                                showCalendarPicker = false
+                            }
+                            .padding()
+                        }
+                    }
                 Button(action: {
                     changeMonth(1)
                 }) {
