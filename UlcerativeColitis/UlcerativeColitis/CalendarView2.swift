@@ -50,6 +50,19 @@ struct CalendarView2: View {
                     .foregroundColor(.blue)
             }
             
+            Text("今日")
+                .foregroundColor(.blue)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(
+                    RoundedRectangle(cornerRadius: 5)
+                        .fill(Color.blue.opacity(0.3))
+                )
+                .onTapGesture {
+                    currentDate = Date()
+                    selectedDate = Date()
+                }
+            
             HStack {
                 Button(action: {
                     changeMonth(-1)
