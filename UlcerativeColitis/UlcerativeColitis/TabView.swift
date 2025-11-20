@@ -35,6 +35,12 @@ struct MainTabView: View {
                 .tabItem {
                     Label("お薬情報", systemImage: "pills")
                 }
+            
+            View1()
+                .tag(2)
+                .tabItem {
+                    Label("記録", systemImage: "pills")
+                }
         }
     }
 }

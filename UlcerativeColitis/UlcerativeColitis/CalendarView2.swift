@@ -43,161 +43,154 @@ struct CalendarView2: View {
     
     var body: some View {
         
-        VStack(spacing: 50) {
+        VStack {
+            ZStack {
+                RoundedRectangle(cornerRadius: 15)
+                    .fill(Color.white)
+                    .shadow(radius: 1)
+                    .frame(height: 400)
+                VStack(alignment: .center, spacing: 20) {
+                    
+                    HStack {
+                        HStack(spacing: 8) {
+                            Button(action: {
+                                changeMonth(-1)
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .foregroundColor(.black)
+                            }
+                            Text(String(format: "%04d年%02d月", year, month))
+                                .font(.system(size: 24))
+                                .onTapGesture {
+                                    tempYear = year
+                                    tempMonth = month
+                                    showCalendarPicker.toggle()
+                                }
+                                .sheet(isPresented: $showCalendarPicker) {
+                                    HStack {
+                                        YearPicker(yearPicker: $tempYear, doneButton: {}, cancelButton: {})
+                                        MonthPicker(monthPicker: $tempMonth, doneButton: {}, cancelButton: {})
+                                        
+                                        Button("完了") {
+                                            if let newDate = Calendar.current.date(from: DateComponents(year: tempYear, month: tempMonth, day: 1)) {
+                                                currentDate = newDate
+                                            }
+                                            showCalendarPicker = false
+                                        }
+                                        .padding()
+                                    }
+                                }
+                            Button(action: {
+                                changeMonth(1)
+                            }) {
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.black)
+                            }
+                        }
+                        
+                        Text("今日")
+                            .foregroundColor(
+                                selectedDate.map { Calendar.current.isDateInToday($0) } ?? false
+                                ? .clear
+                                : .blue
+                            )
+                            .font(.system(size: 13))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 5)
+                                    .fill(
+                                        selectedDate.map { Calendar.current.isDateInToday($0) } ?? false
+                                        ? Color.clear : Color.blue.opacity(0.13)
+                                    )
+                            )
+                            .onTapGesture {
+                                currentDate = Date()
+                                selectedDate = Date()
+                            }
+                        Spacer()
+                    }
+                    .padding(.horizontal, 10)
+                    
+                    VStack(spacing: 15) {
+                        // 曜日
+                        HStack {
+                            ForEach(weekdays, id: \.self) { weekday in
+                                Text(weekday).frame(width: 40, height: 40, alignment: .center)
+                                    .foregroundColor(weekday == "日" ? .red : (weekday == "土" ? .blue : .black))
+                            }
+                        }
+                        
+                        // カレンダー
+                        LazyVGrid(columns: columns, spacing: 5) {
+                            ForEach(calendarDates) { calendarDates in
+                                if let date = calendarDates.date,
+                                   let day = Calendar.current.day(for: date),
+                                   let weekday = Calendar.current.weekday(for: date) {
+                                    
+                                    let isCurrentMonth = Calendar.current.month(for: date) == Calendar.current.month(for: currentDate)
+                                    let isSelected = selectedDate != nil && Calendar.current.isDate(date, inSameDayAs: selectedDate!)
+                                    
+                                    let textColor: Color = {
+                                        if isSelected { return .white }
+                                        
+                                        if isCurrentMonth {
+                                            if weekday == 1 { return .red }
+                                            if weekday == 7 { return .blue }
+                                            return .black
+                                        } else {
+                                            return .gray
+                                        }
+                                    }()
+                                    
+                                    Text("\(day)")
+                                        .frame(width: 40, height: 40)
+                                        .background(isSelected ? Color.blue : Color.clear)
+                                        .foregroundColor(textColor)
+                                        .opacity(isCurrentMonth || isSelected ? 1.0 : 0.4)
+                                        .cornerRadius(20)
+                                        .onTapGesture {
+                                            selectedDate = date
+                                            print("選択された日付: \(formatDate(date))")
+                                        }
+                                } else {
+                                    Text("")
+                                        .frame(width: 40, height: 40)
+                                }
+                            }
+                        }
+                        .frame(height: 240)
+                        .offset(x: dragOffset)
+                        .gesture(
+                            DragGesture()
+                                .onEnded { value in
+                                    // 横方向の移動距離
+                                    let horizontalAmount = value.translation.width
+                                    
+                                    withAnimation(.none) {
+                                        if horizontalAmount < -50 {
+                                            // 左スワイプ → 次の月へ
+                                            changeMonth(1)
+                                        } else if horizontalAmount > 50 {
+                                            // 右スワイプ → 前の月へ
+                                            changeMonth(-1)
+                                        }
+                                    }
+                                }
+                        )
+                    }
+                }
+                .padding()
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+            
             if let selected = selectedDate {
                 Text("選択: \(formatDate(selected))")
                     .font(.system(size: 16))
                     .foregroundColor(.blue)
             }
-            
-            Text("今日")
-                .foregroundColor(.blue)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(
-                    RoundedRectangle(cornerRadius: 5)
-                        .fill(Color.blue.opacity(0.3))
-                )
-                .onTapGesture {
-                    currentDate = Date()
-                    selectedDate = Date()
-                }
-            
-            HStack {
-                Button(action: {
-                    changeMonth(-1)
-                }) {
-                    Image(systemName: "plus")
-                }
-                Text(String(format: "%04d/%02d", year, month))
-                    .font(.system(size: 24))
-                    .onTapGesture {
-                        tempYear = year
-                        tempMonth = month
-                        showCalendarPicker.toggle()
-                    }
-                    .sheet(isPresented: $showCalendarPicker) {
-                        HStack {
-                            YearPicker(yearPicker: $tempYear, doneButton: {}, cancelButton: {})
-                            MonthPicker(monthPicker: $tempMonth, doneButton: {}, cancelButton: {})
-                            
-                            Button("完了") {
-                                // Pickerで選択された年月からcurrentDateを更新
-                                if let newDate = Calendar.current.date(from: DateComponents(year: tempYear, month: tempMonth, day: 1)) {
-                                    currentDate = newDate
-                                }
-                                showCalendarPicker = false
-                            }
-                            .padding()
-                        }
-                    }
-                Button(action: {
-                    changeMonth(1)
-                }) {
-                    Image(systemName: "plus")
-                }
-            }
-            
-            // 曜日
-            HStack {
-                ForEach(weekdays, id: \.self) { weekday in
-                    Text(weekday).frame(width: 40, height: 40, alignment: .center)
-                        .foregroundColor(weekday == "日" ? .red : (weekday == "土" ? .blue : .black))
-                }
-            }
-            
-            // カレンダー
-            LazyVGrid(columns: columns, spacing: 20) {
-                ForEach(calendarDates) { calendarDates in
-                    if let date = calendarDates.date,
-                       let day = Calendar.current.day(for: date),
-                       let weekday = Calendar.current.weekday(for: date) {
-                        
-                        let isCurrentMonth = Calendar.current.month(for: date) == Calendar.current.month(for: currentDate)
-                        let isSelected = selectedDate != nil && Calendar.current.isDate(date, inSameDayAs: selectedDate!)
-                        
-                        let textColor: Color = {
-                            if isSelected { return .white }
-                            
-                            if isCurrentMonth {
-                                if weekday == 1 { return .red }
-                                if weekday == 7 { return .blue }
-                                return .black
-                            } else {
-                                return .gray
-                            }
-                        }()
-                        
-                        Text("\(day)")
-                            .frame(width: 40, height: 40)
-                            .background(isSelected ? Color.blue : Color.clear)
-                            .foregroundColor(textColor)
-                            .opacity(isCurrentMonth || isSelected ? 1.0 : 0.4)
-                            .cornerRadius(20)
-                            .onTapGesture {
-                                selectedDate = date
-                                print("選択された日付: \(formatDate(date))")
-                            }
-                    } else {
-                        Text("")
-                            .frame(width: 40, height: 40)
-                    }
-                }
-            }
-            .frame(height: 240)
-            .offset(x: dragOffset)
-            .gesture(
-                DragGesture()
-                    .onChanged { value in
-                        if !isAnimating {
-                            dragOffset = value.translation.width
-                        }
-                    }
-                    .onEnded { value in
-                        let horizontalAmount = value.translation.width
-                        
-                        if horizontalAmount < -50 {
-                            // 左スワイプ → 次の月へ
-                            withAnimation(.easeOut(duration: 0.3)) {
-                                dragOffset = -400
-                                isAnimating = true
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                                changeMonth(1)
-                                dragOffset = 400
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                                withAnimation(.easeOut(duration: 0.15)) {
-                                    dragOffset = 0
-                                    isAnimating = false
-                                }
-                            }
-                        } else if horizontalAmount > 50 {
-                            // 右スワイプ → 前の月へ
-                            withAnimation(.easeOut(duration: 0.3)) {
-                                dragOffset = 400
-                                isAnimating = true
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                                changeMonth(-1)
-                                dragOffset = -400
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                                withAnimation(.easeOut(duration: 0.15)) {
-                                    dragOffset = 0
-                                    isAnimating = false
-                                }
-                            }
-                        } else {
-                            // スワイプ距離が足りない場合は元に戻す
-                            withAnimation(.easeOut(duration: 0.2)) {
-                                dragOffset = 0
-                            }
-                        }
-                    }
-            )
         }
-        .frame(width: 400, alignment: .center)
     }
     
     private func changeMonth(_ offset: Int) {
@@ -215,4 +208,5 @@ struct CalendarView2: View {
 
 #Preview {
     CalendarView2()
+        .background(Color.cyan.opacity(0.1))
 }
