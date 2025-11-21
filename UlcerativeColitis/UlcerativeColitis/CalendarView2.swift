@@ -48,9 +48,8 @@ struct CalendarView2: View {
                 RoundedRectangle(cornerRadius: 15)
                     .fill(Color.white)
                     .shadow(radius: 1)
-                    .frame(height: 400)
-                VStack(alignment: .center, spacing: 20) {
-                    
+                    .frame(height: 370)
+                VStack(alignment: .center, spacing: 5) { //年月とカレンダーのspacing
                     HStack {
                         HStack(spacing: 8) {
                             Button(action: {
