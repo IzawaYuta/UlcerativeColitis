@@ -13,6 +13,9 @@ struct StoolRecordView: View {
     @ObservedResults(StoolRecord.self) var stoolRecords
     @ObservedResults(DayRecord.self) var dayRecord
     
+    @State private var showStoolAddView = false
+    @State private var showRecord = false
+    
     @Binding var selectDay: Date
     
     var body: some View {
@@ -20,7 +23,6 @@ struct StoolRecordView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 15)
                 .fill(Color.white)
-                .shadow(radius: 1)
                 .frame(height: 100)
             HStack(spacing: 30) {
                     Image(systemName: "text.document")
@@ -48,7 +50,9 @@ struct StoolRecordView: View {
                 
                 Spacer()
                 
-                Button(action: {}) {
+                Button(action: {
+                    showStoolAddView.toggle()
+                }) {
                     Image(systemName: "plus")
                         .foregroundColor(.black)
                         .background(
@@ -57,6 +61,24 @@ struct StoolRecordView: View {
                                 .frame(width: 40, height: 40)
                         )
                 }
+                .sheet(isPresented: $showStoolAddView) {
+                    AddStoolRecord(selectDay: $selectDay, showView: { showStoolAddView = false })
+                }
+                Button(action: {
+                    showRecord.toggle()
+                }) {
+                    Image(systemName: "plus")
+                        .foregroundColor(.black)
+                        .background(
+                            Circle()
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(width: 40, height: 40)
+                        )
+                }
+                .sheet(isPresented: $showRecord) {
+                    StoolRecordList(selectDay: $selectDay, showView: {})
+                }
+
             }
             .padding(.horizontal, 30)
         }

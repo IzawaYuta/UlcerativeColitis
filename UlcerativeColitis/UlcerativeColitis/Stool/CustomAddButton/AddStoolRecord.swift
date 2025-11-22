@@ -56,14 +56,22 @@ struct AddStoolRecord: View {
                     }
                     .frame(width: 150, height: 100)
                     .onTapGesture {
+                        print("普通ボタンがタップされました")
                         selectedNormal.toggle()
+                        print("selectedNormal: \(selectedNormal)")
+                        
                         if selectedNormal {
-                            selectedType.append(.normal)
+                            if !selectedType.contains(.normal) {
+                                selectedType.append(.normal)
+                                print("selectedTypeに.normalを追加")
+                            }
                         } else {
                             selectedType.removeAll { $0 == .normal }
+                            print("selectedTypeから.normalを削除")
                         }
+                        print("現在のselectedType: \(selectedType)")
                     }
-                    
+
                     CustomAddButtonView(color: rgbBrown, color2: rgbBrown2, isPresented: $selectedHard) {
                         VStack(spacing: 13) {
                             Image(systemName: "square.fill")
@@ -74,6 +82,7 @@ struct AddStoolRecord: View {
                     }
                     .frame(width: 150, height: 100)
                     .onTapGesture {
+                        print("普通ボタンがタップされました")
                         selectedHard.toggle()
                         if selectedHard {
                             selectedType.append(.hard)
@@ -139,6 +148,7 @@ struct AddStoolRecord: View {
                     }
                     .frame(width: 150, height: 100)
                     .onTapGesture {
+                        print("普通ボタンがタップされました")
                         selectedConstipation.toggle()
                         if selectedConstipation {
                             selectedType.append(.constipation)
@@ -205,6 +215,8 @@ struct AddStoolRecord: View {
                                                        of: selectDay)
         else { return }
         
+        print("保存する種類: \(selectedType)")
+        
         try! realm.write {
             // 既存のDayRecordがあるか検索
             let dayRecord = realm.objects(DayRecord.self).filter("date == %@", startOfDay).first
@@ -212,6 +224,8 @@ struct AddStoolRecord: View {
             let stool = StoolRecord()
             stool.time = combinedDate
             stool.type.append(objectsIn: selectedType)
+            
+            print("StoolRecordに追加された種類: \(stool.type)")
             
             // 連番を決める
             if let dayRecord = dayRecord {

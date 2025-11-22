@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct View1: View {
+    
+    @Binding var selectDay: Date
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -16,7 +19,9 @@ struct View1: View {
                 
                 ScrollView {
                     VStack {
-                        CalendarView2()
+                        CalendarView2(selectDay: $selectDay)
+                        
+                        View1_2(selectDay: $selectDay)
                         Spacer()
                     }
                 }
@@ -31,5 +36,5 @@ struct View1: View {
 }
 
 #Preview {
-    View1()
+    View1(selectDay: .constant(Date()))
 }

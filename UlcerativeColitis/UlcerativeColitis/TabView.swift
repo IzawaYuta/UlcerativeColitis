@@ -11,7 +11,11 @@ struct MainTabView: View {
     
     @State private var selectedTab: Int = 0
     
-    init() {
+    @Binding var selectDay: Date
+    
+    init(selectDay: Binding<Date>) {
+        self._selectDay = selectDay
+        
         // UITabBarの背景を変更
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -36,7 +40,7 @@ struct MainTabView: View {
                     Label("お薬情報", systemImage: "pills")
                 }
             
-            View1()
+            View1(selectDay: $selectDay)
                 .tag(2)
                 .tabItem {
                     Label("記録", systemImage: "pills")

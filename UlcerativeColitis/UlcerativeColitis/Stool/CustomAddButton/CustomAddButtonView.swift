@@ -50,11 +50,11 @@ struct CustomAddButtonView<Content: View>: View {
             }
 //        }
 //        .buttonStyle(.plain)
-            .onTapGesture {
-                isPresented.toggle()
-            }
+//            .onTapGesture {
+//                isPresented.toggle()
+//            }
         .scaleEffect(isPresented ? 1.0 : 0.8)
-        .animation(.linear, value: isPresented)
+        .animation(.none, value: isPresented)
     }
 }
 

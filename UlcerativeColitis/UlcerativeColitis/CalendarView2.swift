@@ -12,7 +12,7 @@ struct CalendarView2: View {
     @State private var dragOffset: CGFloat = 0
     @State private var isAnimating = false
     
-    @State private var selectedDate: Date? = Date()
+    @Binding var selectDay: Date
     @State private var showCalendarPicker = false
     
     private var weekdays: [String] {
@@ -89,7 +89,7 @@ struct CalendarView2: View {
                         
                         Text("今日")
                             .foregroundColor(
-                                selectedDate.map { Calendar.current.isDateInToday($0) } ?? false
+                                Calendar.current.isDateInToday(selectDay)
                                 ? .clear
                                 : .blue
                             )
@@ -99,13 +99,13 @@ struct CalendarView2: View {
                             .background(
                                 RoundedRectangle(cornerRadius: 5)
                                     .fill(
-                                        selectedDate.map { Calendar.current.isDateInToday($0) } ?? false
+                                        Calendar.current.isDateInToday(selectDay)
                                         ? Color.clear : Color.blue.opacity(0.13)
                                     )
                             )
                             .onTapGesture {
                                 currentDate = Date()
-                                selectedDate = Date()
+                                selectDay = Date()
                             }
                         Spacer()
                     }
@@ -128,7 +128,7 @@ struct CalendarView2: View {
                                    let weekday = Calendar.current.weekday(for: date) {
                                     
                                     let isCurrentMonth = Calendar.current.month(for: date) == Calendar.current.month(for: currentDate)
-                                    let isSelected = selectedDate != nil && Calendar.current.isDate(date, inSameDayAs: selectedDate!)
+                                    let isSelected = Calendar.current.isDate(date, inSameDayAs: selectDay)
                                     
                                     let textColor: Color = {
                                         if isSelected { return .white }
@@ -149,7 +149,7 @@ struct CalendarView2: View {
                                         .opacity(isCurrentMonth || isSelected ? 1.0 : 0.4)
                                         .cornerRadius(20)
                                         .onTapGesture {
-                                            selectedDate = date
+                                            selectDay = date
                                             print("選択された日付: \(formatDate(date))")
                                         }
                                 } else {
@@ -184,11 +184,9 @@ struct CalendarView2: View {
             .frame(maxWidth: .infinity)
             .padding()
             
-            if let selected = selectedDate {
-                Text("選択: \(formatDate(selected))")
-                    .font(.system(size: 16))
-                    .foregroundColor(.blue)
-            }
+            Text("選択: \(formatDate(selectDay))")
+                .font(.system(size: 16))
+                .foregroundColor(.blue)
         }
     }
     
@@ -206,6 +204,6 @@ struct CalendarView2: View {
 }
 
 #Preview {
-    CalendarView2()
+    CalendarView2(selectDay: .constant(Date()))
         .background(Color.cyan.opacity(0.1))
 }

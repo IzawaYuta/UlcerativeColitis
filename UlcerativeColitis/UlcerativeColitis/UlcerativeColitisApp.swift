@@ -12,6 +12,8 @@ import IQKeyboardManagerSwift
 @main
 struct UlcerativeColitisApp: App {
     
+    @State private var selectDay: Date = Date()
+    
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     init() {
@@ -22,8 +24,8 @@ struct UlcerativeColitisApp: App {
     var body: some Scene {
         WindowGroup {
 //            ContentView()
-//            MainTabView()
-            CalendarView2()
+            MainTabView(selectDay: $selectDay)
+//            CalendarView2(selectDay: $selectDay)
         }
     }
     
