@@ -38,8 +38,8 @@ struct AddStoolRecord: View {
                 }
             }
             .buttonStyle(.bordered)
-            HStack(spacing: 15) {
-                VStack(spacing: 17) {
+            VStack(spacing: 15) {
+                HStack(spacing: 7) {
                     let rgbGreen = Color(red: 210/255, green: 242/255, blue: 221/255)
                     let rgbGreen2 = Color(red: 173/255, green: 250/255, blue: 177/255)
                     let rgbBrown = Color(red: 231/255, green: 195/255, blue: 183/255)
@@ -54,22 +54,16 @@ struct AddStoolRecord: View {
                                 .font(.system(size: 20))
                         }
                     }
-                    .frame(width: 150, height: 100)
+                    .frame(width: 120, height: 100)
                     .onTapGesture {
-                        print("普通ボタンがタップされました")
                         selectedNormal.toggle()
-                        print("selectedNormal: \(selectedNormal)")
-                        
                         if selectedNormal {
                             if !selectedType.contains(.normal) {
                                 selectedType.append(.normal)
-                                print("selectedTypeに.normalを追加")
                             }
                         } else {
                             selectedType.removeAll { $0 == .normal }
-                            print("selectedTypeから.normalを削除")
                         }
-                        print("現在のselectedType: \(selectedType)")
                     }
 
                     CustomAddButtonView(color: rgbBrown, color2: rgbBrown2, isPresented: $selectedHard) {
@@ -80,9 +74,8 @@ struct AddStoolRecord: View {
                                 .font(.system(size: 20))
                         }
                     }
-                    .frame(width: 150, height: 100)
+                    .frame(width: 120, height: 100)
                     .onTapGesture {
-                        print("普通ボタンがタップされました")
                         selectedHard.toggle()
                         if selectedHard {
                             selectedType.append(.hard)
@@ -100,7 +93,7 @@ struct AddStoolRecord: View {
                                 .font(.system(size: 20))
                         }
                     }
-                    .frame(width: 150, height: 100)
+                    .frame(width: 120, height: 100)
                     .onTapGesture {
                         selectedSoft.toggle()
                         if selectedSoft {
@@ -112,7 +105,7 @@ struct AddStoolRecord: View {
                     }
                 }
                 
-                VStack(spacing: 17) {
+                HStack(spacing: 7) {
                     let rgbOrange = Color(red: 255/255, green: 227/255, blue: 203/255)
                     
                     let rgbOrange2 = Color(red: 254/255, green: 207/255, blue: 126/255)
@@ -125,7 +118,7 @@ struct AddStoolRecord: View {
                                 .font(.system(size: 20))
                         }
                     }
-                    .frame(width: 150, height: 100)
+                    .frame(width: 120, height: 100)
                     .onTapGesture {
                         selectedDiarrhea.toggle()
                         if selectedDiarrhea {
@@ -146,9 +139,8 @@ struct AddStoolRecord: View {
                                 .font(.system(size: 20))
                         }
                     }
-                    .frame(width: 150, height: 100)
+                    .frame(width: 120, height: 100)
                     .onTapGesture {
-                        print("普通ボタンがタップされました")
                         selectedConstipation.toggle()
                         if selectedConstipation {
                             selectedType.append(.constipation)
@@ -169,7 +161,7 @@ struct AddStoolRecord: View {
                                 .font(.system(size: 20))
                         }
                     }
-                    .frame(width: 150, height: 100)
+                    .frame(width: 120, height: 100)
                     .onTapGesture {
                         selectedBlood.toggle()
                         if selectedBlood {
