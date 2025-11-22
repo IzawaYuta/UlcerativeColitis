@@ -40,7 +40,12 @@ struct AddStoolRecord: View {
             .buttonStyle(.bordered)
             HStack(spacing: 15) {
                 VStack(spacing: 17) {
-                    let rgbGreen = Color(red: 180/255, green: 255/255, blue: 166/255)
+                    let rgbGreen = Color(red: 210/255, green: 242/255, blue: 221/255)
+                    let rgbGreen2 = Color(red: 173/255, green: 250/255, blue: 177/255)
+                    let rgbBrown = Color(red: 231/255, green: 195/255, blue: 183/255)
+                    let rgbBrown2 = Color(red: 191/255, green: 155/255, blue: 142/255)
+                    let rgbYellow = Color(red: 254/255, green: 249/255, blue: 195/255)
+                    let rgbYellow2 = Color(red: 254/255, green: 250/255, blue: 109/255)
 //                    CustomAddButtonView(color: rgbGreen, isPresented: selectedNormal, action: {
 //                        selectedNormal.toggle()
 //                        if selectedNormal {
@@ -57,7 +62,7 @@ struct AddStoolRecord: View {
 //                        }
 //                    }
 //                    .frame(width: 150, height: 100)
-                    CustomAddButtonView(color: rgbGreen, isPresented: $selectedNormal) {
+                    CustomAddButtonView(color: rgbGreen, color2: rgbGreen2, isPresented: $selectedNormal) {
                         VStack(spacing: 13) {
                             Image(systemName: "checkmark")
                                 .font(.system(size: 30))
@@ -92,9 +97,9 @@ struct AddStoolRecord: View {
 //                    }
 //                    .frame(width: 150, height: 100)
                     
-                    CustomAddButtonView(color: .brown, isPresented: $selectedHard) {
+                    CustomAddButtonView(color: rgbBrown, color2: rgbBrown2, isPresented: $selectedHard) {
                         VStack(spacing: 13) {
-                            Image(systemName: "triangle.fill")
+                            Image(systemName: "square.fill")
                                 .font(.system(size: 30))
                             Text("硬便")
                                 .font(.system(size: 20))
@@ -129,7 +134,7 @@ struct AddStoolRecord: View {
 //                    }
 //                    .frame(width: 150, height: 100)
                     
-                    CustomAddButtonView(color: .yellow, isPresented: $selectedSoft) {
+                    CustomAddButtonView(color: rgbYellow, color2: rgbYellow2, isPresented: $selectedSoft) {
                         VStack(spacing: 13) {
                             Image(systemName: "alternatingcurrent")
                                 .font(.system(size: 30))
@@ -166,10 +171,13 @@ struct AddStoolRecord: View {
 //                        }
 //                    }
 //                    .frame(width: 150, height: 100)
-                    
-                    CustomAddButtonView(color: .orange, isPresented: $selectedDiarrhea) {
+                    let rgbOrange = Color(red: 255/255, green: 227/255, blue: 203/255)
+
+                    let rgbOrange2 = Color(red: 254/255, green: 207/255, blue: 126/255)
+
+                    CustomAddButtonView(color: rgbOrange, color2: rgbOrange2, isPresented: $selectedDiarrhea) {
                         VStack(spacing: 13) {
-                            Image(systemName: "tornado")
+                            Image(systemName: "wind")
                                 .font(.system(size: 30))
                             Text("下痢")
                                 .font(.system(size: 20))
@@ -202,8 +210,10 @@ struct AddStoolRecord: View {
 //                        }
 //                    }
 //                    .frame(width: 150, height: 100)
-                    
-                    CustomAddButtonView(color: .gray, isPresented: $selectedConstipation) {
+                    let rgbGray = Color(red: 213/255, green: 214/255, blue: 216/255)
+                    let rgbGray2 = Color(red: 189/255, green: 191/255, blue: 195/255)
+
+                    CustomAddButtonView(color: rgbGray, color2: rgbGray2, isPresented: $selectedConstipation) {
                         VStack(spacing: 13) {
                             Image(systemName: "xmark")
                                 .font(.system(size: 30))
@@ -238,8 +248,10 @@ struct AddStoolRecord: View {
 //                        }
 //                    }
 //                    .frame(width: 150, height: 100)
-                    
-                    CustomAddButtonView(color: .red, isPresented: $selectedBlood) {
+                    let rgbRed = Color(red: 254/255, green: 216/255, blue: 216/255)
+                    let rgbRed2 = Color(red: 254/255, green: 166/255, blue: 166/255)
+
+                    CustomAddButtonView(color: rgbRed, color2: rgbRed2, isPresented: $selectedBlood) {
                         VStack(spacing: 13) {
                             Image(systemName: "drop.fill")
                                 .font(.system(size: 30))

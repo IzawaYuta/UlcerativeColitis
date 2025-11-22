@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CustomAddButtonView<Content: View>: View {
     let color: Color
+    let color2: Color
     let shadowRadius: CGFloat
     @Binding var isPresented: Bool
 //    let action: () -> Void
@@ -16,6 +17,7 @@ struct CustomAddButtonView<Content: View>: View {
     
     init(
         color: Color,
+        color2: Color,
         shadowRadius: CGFloat = 3,
 //        isPresented: Bool = false,
         isPresented: Binding<Bool>,   // ← Binding を受け取る
@@ -23,6 +25,7 @@ struct CustomAddButtonView<Content: View>: View {
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.color = color
+        self.color2 = color2
         self.shadowRadius = shadowRadius
 //        self.isPresented = isPresented
 //        self.action = action
@@ -34,14 +37,14 @@ struct CustomAddButtonView<Content: View>: View {
 //        Button(action: action) {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(isPresented ? color.opacity(0.7) : color.opacity(0.3))
-//                    .shadow(radius: shadowRadius)
+                    .fill(isPresented ? color2.opacity(1.0) : color.opacity(1.0))
+//                    .shadow(radius: isPresented ? 3 : 0)
 //                    .overlay(
 //                        RoundedRectangle(cornerRadius: 5)
 //                            .stroke(isPresented ? Color.black.opacity(0.7) : Color.clear, lineWidth: 2.0)
 //                    )
                 content()
-                    .foregroundColor(/*isPresented ? */.black/* : .gray*/)
+                    .foregroundColor(isPresented ? .black : .black.opacity(0.5))
 //                    .padding(.vertical)
 //                    .padding(.horizontal)
             }
