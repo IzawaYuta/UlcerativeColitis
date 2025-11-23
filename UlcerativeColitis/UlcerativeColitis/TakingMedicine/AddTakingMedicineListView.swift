@@ -15,7 +15,11 @@ struct AddTakingMedicineListView: View {
     var body: some View {
         List {
             ForEach(medicineInfo, id: \.id) { medicine in
-                Text(medicine.medicineName)
+                HStack {
+                    Text(medicine.medicineName)
+                    Text("\(String(medicine.dosage ?? 0))")
+                    Text(medicine.unit?.unitName ?? "-")
+                }
             }
         }
     }
