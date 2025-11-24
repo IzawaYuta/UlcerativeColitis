@@ -45,7 +45,7 @@ struct MainTabView: View {
                 .tabItem {
                     Label("記録", systemImage: "pills")
                 }
-            AddTakingMedicineListView()
+            AddTakingMedicineListView(selectDay: $selectDay)
                 .tag(3)
                 .tabItem {
                     Label("記録", systemImage: "pills")
