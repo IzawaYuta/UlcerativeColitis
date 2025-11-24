@@ -50,7 +50,7 @@ struct MedicineInfoView: View {
     @State private var showMemoDeleteAlert = false
     
     @State private var selectedUnit: UnitArray?
-    @State private var selectedStockUnit: UnitArray? //在庫用単位の選択状態
+//    @State private var selectedStockUnit: UnitArray? //在庫用単位の選択状態
     
     var isNewMedicine: Bool {
         medicine.realm == nil
@@ -166,7 +166,8 @@ struct MedicineInfoView: View {
                                                         .frame(width: 100, height: 36)
                                                         .textFieldStyle(.roundedBorder)
                                                     
-                                                    Text(getUnitDisplayText())
+                                                    Text(getDosageUnitDisplayText())
+//                                                    Text(getUnitDisplayText())
                                                         .foregroundColor(isDosageEmpty(for: timing) ? .gray : .black)
                                                         .font(.footnote)
                                                 }
@@ -269,6 +270,7 @@ struct MedicineInfoView: View {
                             .textFieldStyle(.roundedBorder)
                         
                         Text(getDosageUnitDisplayText())
+//                        Text(getDosageUnitDisplayText())
                             .font(.footnote)
                     }
                     .padding(.horizontal)
@@ -389,7 +391,14 @@ struct MedicineInfoView: View {
                     stockText = medicine.stock.map { String($0) } ?? ""
                     memo = medicine.memo ?? ""
                     selectedSecondTiming = medicine.secondTiming
+//                    if let existingUnit = medicine.unit {
                     selectedUnit = medicine.unit
+//                    }
+                    // 新規の場合はunitArrayの最初の要素を使用
+//                    else {
+//                        let defaultUnit = UnitArray(unit: .tablet)
+//                        selectedUnit = defaultUnit
+//                    }
                     tentativeTime = medicine.time.map { $0.time }
                     toggleMemo = medicine.toggleMemo
                 }
@@ -474,9 +483,10 @@ struct MedicineInfoView: View {
                 model.toggleMemo = toggleMemo
                 
                 if let selectedUnit = selectedUnit {
-                    model.unit = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
+                    let unitCopy = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
+                    model.unit = unitCopy
                 }
-                
+
                 if let morningDosage = Int(morningDosageText) {
                     model.morningDosage = morningDosage
                 }
@@ -508,7 +518,7 @@ struct MedicineInfoView: View {
                 print(model)
                 medicineName = ""
                 dosageText = ""
-                selectedUnit = nil
+//                selectedUnit = nil
                 selectedFirstTimings = []
                 morningDosageText = ""
                 noonDosageText = ""
@@ -532,11 +542,12 @@ struct MedicineInfoView: View {
                     thawedMedicine.toggleMemo = toggleMemo
                     
                     if let selectedUnit = selectedUnit {
-                        thawedMedicine.unit = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
+                        let unitCopy = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
+                        thawedMedicine.unit = unitCopy
                     } else {
                         thawedMedicine.unit = nil
                     }
-                    
+
                     if let stockInt = Int(stockText) {
                         thawedMedicine.stock = stockInt
                     } else {
@@ -697,20 +708,18 @@ struct MedicineInfoView: View {
         }
     }
     
-    private func getStockUnitDisplayText() -> String {
-        if let firstStockUnit = medicineInfo.first?.stockUnit,
-           let unitName = firstStockUnit.unit?.unitName {
-            return unitName
-        } else if let selectedStockUnit = selectedStockUnit {
-            return selectedStockUnit.unitName
-        } else if let selectedUnit = selectedUnit {
-            return selectedUnit.unitName
-        } else if let firstUnit = unitArray.first {
-            return firstUnit.unitName
-        } else {
-            return "-"
-        }
-    }
+//    private func getStockUnitDisplayText() -> String {
+//        if let firstMedicine = medicineInfo.first {
+//            if let customName = firstMedicine.unit.customUnitName, !customName.isEmpty {
+//                return customName
+//            } else {
+//                return firstMedicine.unit.unitName.japaneseText
+//            }
+//        } else {
+//            // デフォルトは tablet
+//            return UnitArrayEnum.tablet.japaneseText
+//        }
+//    }
     
     // ヘルパー関数
     @ViewBuilder
@@ -727,26 +736,39 @@ struct MedicineInfoView: View {
         }
     }
     
-    private func getUnitDisplayText() -> String {
-        if let selectedUnit = selectedUnit,
-           unitArray.contains(where: { $0.id == selectedUnit.id }) {
-            return selectedUnit.unitName
-        } else if let firstUnit = unitArray.first {
-            return firstUnit.unitName
-        } else {
-            return "-"
-        }
-    }
+//    private func getUnitDisplayText() -> String {
+//        if let selectedUnit = selectedUnit,
+//           unitArray.contains(where: { $0.id == selectedUnit.id }) {
+//            return selectedUnit.unitName
+//        } else if let firstUnit = unitArray.first {
+//            return firstUnit.unitName
+//        } else {
+//            return "-"
+//        }
+//    }
     
     private func getDosageUnitDisplayText() -> String {
+        // selectedUnitがnilの場合も考慮
         if let selectedUnit = selectedUnit,
            unitArray.contains(where: { $0.id == selectedUnit.id }) {
-            return selectedUnit.unitName
-        } else if let firstUnit = unitArray.first {
-            return firstUnit.unitName
-        } else {
-            return "-"
+            if let customName = selectedUnit.customUnitName, !customName.isEmpty {
+                return customName
+            }
+            if let unitName = selectedUnit.unitName?.japaneseText {
+                return unitName
+            }
         }
+        
+        if let firstUnit = unitArray.first {
+            if let customName = firstUnit.customUnitName, !customName.isEmpty {
+                return customName
+            }
+            if let unitName = firstUnit.unitName?.japaneseText {
+                return unitName
+            }
+        }
+        
+        return UnitArrayEnum.tablet.japaneseText
     }
     
     private func isDosageEmpty(for timing: FirstTiming) -> Bool {

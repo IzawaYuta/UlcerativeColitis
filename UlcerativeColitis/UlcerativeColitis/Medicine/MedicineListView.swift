@@ -150,14 +150,7 @@ struct MedicineListView: View {
             return nil
         }
         
-        let unitText: String
-        if let unit = unit {
-            unitText = unit.unitName
-        } else if let firstUnit = unitArray.first {
-            unitText = firstUnit.unitName
-        } else {
-            unitText = "-"
-        }
+        let unitText = unit?.customUnitName ?? unit?.unitName?.japaneseText ?? UnitArrayEnum.tablet.japaneseText
         
         return "\(stock) \(unitText)"
     }
