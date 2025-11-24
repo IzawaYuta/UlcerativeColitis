@@ -108,6 +108,7 @@ class DayRecord: Object, Identifiable {
     @Persisted var date: Date
     @Persisted var stoolRecord = List<StoolRecord>()
     @Persisted var schedule = List<Schedule>()
+    @Persisted var takingMedicine = List<TakingMedicine>()
 }
 
 class StoolRecord: Object, Identifiable {
@@ -172,4 +173,10 @@ class Schedule: Object, Identifiable {
     @Persisted var startDate: Date?
     @Persisted var endDate: Date?
     @Persisted var memo: String?
+}
+
+class TakingMedicine: Object, Identifiable {
+    @Persisted(primaryKey: true) var id: ObjectId
+    @Persisted var medicineName: String
+    @Persisted var dosage: Int?
 }
