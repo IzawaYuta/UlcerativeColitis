@@ -45,16 +45,16 @@ struct MainTabView: View {
                 .tabItem {
                     Label("記録", systemImage: "pills")
                 }
-            AddTakingMedicineListView(selectDay: $selectDay)
-                .tag(3)
-                .tabItem {
-                    Label("記録", systemImage: "pills")
-                }
-            TakingMedicineListView(selectDay: $selectDay)
-                .tag(4)
-                .tabItem {
-                    Label("記録", systemImage: "pills")
-                }
+//            AddTakingMedicineListView(selectDay: $selectDay)
+//                .tag(3)
+//                .tabItem {
+//                    Label("記録", systemImage: "pills")
+//                }
+//            TakingMedicineListView(selectDay: $selectDay)
+//                .tag(4)
+//                .tabItem {
+//                    Label("記録", systemImage: "pills")
+//                }
         }
     }
 }

@@ -20,7 +20,10 @@ struct View1_2: View {
                 .shadow(radius: 1)
                 .frame(height: 300)
             
-            StoolRecordView(selectDay: $selectDay)
+            VStack {
+                StoolRecordView(selectDay: $selectDay)
+                TakingMedicineView(selectDay: $selectDay)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding()
