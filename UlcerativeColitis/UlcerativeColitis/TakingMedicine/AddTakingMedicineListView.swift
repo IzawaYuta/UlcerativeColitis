@@ -15,14 +15,17 @@ struct AddTakingMedicineListView: View {
     
     @State private var dosageTextField: [String: String] = [:]
     @State private var isSelected = false
-    @State private var selectedMedicine = Set<String>()
+    @State private var selectedMedicine: [String] = []
     
     @Binding var selectDay: Date
+    
+    var addButton: () -> Void
     
     var body: some View {
         VStack {
             Button(action: {
                 addTakingMedicine()
+                addButton()
             }) {
                 Image(systemName: "plus")
             }
@@ -63,10 +66,10 @@ struct AddTakingMedicineListView: View {
                     }
                     .onTapGesture {
                         isSelected.toggle()
-                        if selectedMedicine.contains(medicine.medicineName) {
-                            selectedMedicine.remove(medicine.medicineName)
+                        if let index = selectedMedicine.firstIndex(of: medicine.medicineName) {
+                            selectedMedicine.remove(at: index)
                         } else {
-                            selectedMedicine.insert(medicine.medicineName)
+                            selectedMedicine.append(medicine.medicineName)
                         }
                         print(selectedMedicine)
                     }
@@ -79,20 +82,28 @@ struct AddTakingMedicineListView: View {
         let realm = try! Realm()
         
         try! realm.write {
-            let dayModel = DayRecord()
-            dayModel.date = selectDay
+            // 既存のDayRecordを取得
+            let existingDay = dayRecord.first { Calendar.current.isDate($0.date, inSameDayAs: selectDay) }
             
-            for medicineName in selectedMedicine {
-                let medicine = TakingMedicine()
-                medicine.medicineName = medicineName
-                dayModel.takingMedicine.append(medicine)
+            let dayModel: DayRecord
+            if let thawedDay = existingDay?.thaw() {
+                dayModel = thawedDay
+            } else {
+                dayModel = DayRecord()
+                dayModel.date = selectDay
+                realm.add(dayModel)
             }
             
-            realm.add(dayModel)
+            // 選択された薬を追加
+            for medicineId in selectedMedicine {
+                let medicine = TakingMedicine()
+                medicine.medicineName = medicineId
+                dayModel.takingMedicine.append(medicine)
+            }
         }
     }
 }
 
 #Preview {
-    AddTakingMedicineListView(selectDay: .constant(Date()))
+    AddTakingMedicineListView(selectDay: .constant(Date()), addButton: {})
 }

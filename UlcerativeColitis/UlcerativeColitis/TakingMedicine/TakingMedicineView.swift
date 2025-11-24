@@ -26,7 +26,7 @@ struct TakingMedicineView: View {
                     Image(systemName: "plus")
                 }
                 .sheet(isPresented: $showAddTakingMedicineView) {
-                    AddTakingMedicineListView(selectDay: $selectDay)
+                    AddTakingMedicineListView(selectDay: $selectDay, addButton: { showAddTakingMedicineView = false })
                 }
                 
                 Button(action: {
