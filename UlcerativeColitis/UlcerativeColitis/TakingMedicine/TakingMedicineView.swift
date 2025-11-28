@@ -19,7 +19,14 @@ struct TakingMedicineView: View {
             RoundedRectangle(cornerRadius: 15)
                 .fill(Color.white)
                 .frame(height: 100)
-            HStack {
+            HStack(spacing: 30) {
+                Image(systemName: "pills")
+                    .foregroundColor(.blue)
+                    .background(
+                        Circle()
+                            .fill(Color.green.opacity(0.15))
+                            .frame(width: 40, height: 40)
+                    )
                 Button(action: {
                     showAddTakingMedicineView.toggle()
                 }) {
