@@ -19,7 +19,14 @@ struct TakingMedicineListView: View {
         if let day = dayRecord.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectDay) }) {
             List {
                 ForEach(day.takingMedicine, id: \.id) { medicine in
-                    Text(medicine.medicineName)
+                    HStack {
+                        Text(medicine.medicineName)
+                        if let dosage = medicine.dosage {
+                            Text("\(dosage)")
+                        } else {
+                            Text("-")
+                        }
+                    }
                 }
             }
         } else {

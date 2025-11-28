@@ -15,8 +15,8 @@ struct AddTakingMedicineListView: View {
     
     @State private var dosageTextField: [String: String] = [:]
     @State private var isSelected = false
-    @State private var selectedMedicine: [String] = []
-    
+    @State private var selectedMedicine = Set<String>()
+
     @Binding var selectDay: Date
     
     var addButton: () -> Void
@@ -32,11 +32,7 @@ struct AddTakingMedicineListView: View {
             List {
                 ForEach(medicineInfo, id: \.id) { medicine in
                     HStack {
-                        Image(systemName:
-                                selectedMedicine.contains(medicine.medicineName)
-                              ? "checkmark.circle"
-                              : "circle"
-                        )
+                        Image(systemName: isSelected(medicine) ? "checkmark.circle" : "circle")
                         
                         Text(medicine.medicineName)
                         
@@ -64,13 +60,9 @@ struct AddTakingMedicineListView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
+                    .contentShape(Rectangle())
                     .onTapGesture {
-                        isSelected.toggle()
-                        if let index = selectedMedicine.firstIndex(of: medicine.medicineName) {
-                            selectedMedicine.remove(at: index)
-                        } else {
-                            selectedMedicine.append(medicine.medicineName)
-                        }
+                        toggleSelection(for: medicine)
                         print(selectedMedicine)
                     }
                 }
@@ -96,11 +88,32 @@ struct AddTakingMedicineListView: View {
             
             // 選択された薬を追加
             for medicineId in selectedMedicine {
+                guard let selectedInfo = medicineInfo.first(where: { $0.id == medicineId }) else { continue }
                 let medicine = TakingMedicine()
-                medicine.medicineName = medicineId
+                medicine.medicineName = selectedInfo.medicineName
+                if let text = dosageTextField[medicine.medicineName], let value = Int(text) {
+                    medicine.dosage = value
+                } else {
+                    medicine.dosage = nil
+                }
                 dayModel.takingMedicine.append(medicine)
             }
         }
+    }
+    
+    /// 薬が選択されているかチェック
+    private func isSelected(_ medicine: MedicineInfo) -> Bool {
+        selectedMedicine.contains(medicine.id)
+    }
+    
+    /// 薬の選択/解除を切り替え
+    private func toggleSelection(for medicine: MedicineInfo) {
+        if selectedMedicine.contains(medicine.id) {
+            selectedMedicine.remove(medicine.id)
+        } else {
+            selectedMedicine.insert(medicine.id)
+        }
+        print("選択された薬のID: \(selectedMedicine)")
     }
 }
 
