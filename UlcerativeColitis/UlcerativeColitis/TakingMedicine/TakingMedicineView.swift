@@ -21,16 +21,32 @@ struct TakingMedicineView: View {
                 .frame(height: 100)
             HStack(spacing: 30) {
                 Image(systemName: "pills")
-                    .foregroundColor(.blue)
+                    .foregroundColor(.green)
                     .background(
                         Circle()
                             .fill(Color.green.opacity(0.15))
                             .frame(width: 40, height: 40)
                     )
+                VStack {
+                    Text("服用")
+                        .foregroundColor(.gray)
+                        .font(.subheadline)
+                    
+                    Text("服用あり")
+                }
+                
+                Spacer()
+                
                 Button(action: {
                     showAddTakingMedicineView.toggle()
                 }) {
                     Image(systemName: "plus")
+                        .foregroundColor(.black)
+                        .background(
+                            Circle()
+                                .fill(Color.gray.opacity(0.15))
+                                .frame(width: 40, height: 40)
+                        )
                 }
                 .sheet(isPresented: $showAddTakingMedicineView) {
                     AddTakingMedicineListView(selectDay: $selectDay, addButton: { showAddTakingMedicineView = false })
@@ -45,6 +61,7 @@ struct TakingMedicineView: View {
                     TakingMedicineListView(selectDay: $selectDay)
                 }
             }
+            .padding(.horizontal, 30)
         }
         .frame(maxWidth: .infinity)
         .padding()

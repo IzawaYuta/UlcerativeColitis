@@ -57,7 +57,7 @@ struct StoolRecordView: View {
                         .foregroundColor(.black)
                         .background(
                             Circle()
-                                .fill(Color.gray.opacity(0.2))
+                                .fill(Color.gray.opacity(0.15))
                                 .frame(width: 40, height: 40)
                         )
                 }
