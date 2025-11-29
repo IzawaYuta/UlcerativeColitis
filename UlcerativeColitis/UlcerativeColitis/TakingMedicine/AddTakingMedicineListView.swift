@@ -109,6 +109,10 @@ struct AddTakingMedicineListView: View {
                     medicine.dosage = nil
                 }
                 
+                medicine.unit = selectedInfo.unit?.customUnitName
+                ?? selectedInfo.unit?.unitName?.japaneseText
+                ?? UnitArrayEnum.tablet.japaneseText
+                
                 dayModel.takingMedicine.append(medicine)
             }
         }

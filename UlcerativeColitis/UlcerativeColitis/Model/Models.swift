@@ -179,4 +179,5 @@ class TakingMedicine: Object, Identifiable {
     @Persisted(primaryKey: true) var id: ObjectId
     @Persisted var medicineName: String
     @Persisted var dosage: Int?
+    @Persisted var unit: String?
 }

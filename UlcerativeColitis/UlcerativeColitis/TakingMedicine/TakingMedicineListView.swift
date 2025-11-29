@@ -21,10 +21,14 @@ struct TakingMedicineListView: View {
                 ForEach(day.takingMedicine, id: \.id) { medicine in
                     HStack {
                         Text(medicine.medicineName)
+                            .foregroundColor(.black)
+                        Spacer()
                         if let dosage = medicine.dosage {
                             Text("\(dosage)")
-                        } else {
-                            Text("-")
+                                .foregroundColor(.black)
+                        }
+                        if let dosage = medicine.dosage, let unit = medicine.unit {
+                            Text(unit)
                         }
                     }
                 }
