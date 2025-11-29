@@ -14,7 +14,7 @@ struct YearPicker: View {
     var doneButton: () -> Void
     var cancelButton: () -> Void
     
-    private let years = Array(2000...2050)
+    private let years = Array(2000...2100)
     
     var body: some View {
         VStack {
