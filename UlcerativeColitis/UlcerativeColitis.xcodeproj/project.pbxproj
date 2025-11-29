@@ -23,6 +23,8 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		A66EEFB22EA1050E00E22E9D /* UlcerativeColitis */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = UlcerativeColitis;
 			sourceTree = "<group>";
 		};
@@ -183,13 +185,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-UlcerativeColitis/Pods-UlcerativeColitis-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-UlcerativeColitis/Pods-UlcerativeColitis-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

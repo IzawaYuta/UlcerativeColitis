@@ -46,7 +46,7 @@ struct AddTakingMedicineListView: View {
                                 TextField(
                                     "",
                                     text: Binding(
-                                        get: { dosageTextField[medicine.id] ?? "\(medicine.dosage ?? 0)" },
+                                        get: { dosageTextField[medicine.id] ?? String(medicine.dosage ?? 0) },
                                         set: { dosageTextField[medicine.id] = $0 }
                                     )
                                 )
@@ -94,13 +94,21 @@ struct AddTakingMedicineListView: View {
             // 選択された薬を追加
             for medicineId in selectedMedicine {
                 guard let selectedInfo = medicineInfo.first(where: { $0.id == medicineId }) else { continue }
+                
                 let medicine = TakingMedicine()
                 medicine.medicineName = selectedInfo.medicineName
-                if let text = dosageTextField[medicine.medicineName], let value = Int(text) {
-                    medicine.dosage = value
+                
+                if let text = dosageTextField[medicineId], !text.isEmpty {
+                    // 空でなければ Int に変換
+                    medicine.dosage = Int(text)
+                } else if let initialDosage = selectedInfo.dosage {
+                    // TextField が空でもモデルに初期値がある場合はその値を使う
+                    medicine.dosage = initialDosage
                 } else {
+                    // どちらもなければ nil
                     medicine.dosage = nil
                 }
+                
                 dayModel.takingMedicine.append(medicine)
             }
         }
