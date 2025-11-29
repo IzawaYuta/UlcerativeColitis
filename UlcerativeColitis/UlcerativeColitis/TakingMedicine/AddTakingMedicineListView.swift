@@ -23,47 +23,52 @@ struct AddTakingMedicineListView: View {
     
     var body: some View {
         VStack {
-            Button(action: {
-                addTakingMedicine()
-                addButton()
-            }) {
-                Image(systemName: "plus")
-            }
-            List {
-                ForEach(medicineInfo, id: \.id) { medicine in
-                    HStack {
-                        Image(systemName: isSelected(medicine) ? "checkmark.circle" : "circle")
-                        
-                        Text(medicine.medicineName)
-                        
-                        Spacer()
-                        
-                        if let dosage = medicine.dosage {
-                            TextField(
-                                "",
-                                text: Binding(
-                                    get: { dosageTextField[medicine.id] ?? "\(medicine.dosage ?? 0)" },
-                                    set: { dosageTextField[medicine.id] = $0 }
+            if medicineInfo.isEmpty {
+                Text("お薬がありません")
+                    .foregroundColor(.secondary)
+            } else {
+                Button(action: {
+                    addTakingMedicine()
+                    addButton()
+                }) {
+                    Image(systemName: "plus")
+                }
+                List {
+                    ForEach(medicineInfo, id: \.id) { medicine in
+                        HStack {
+                            Image(systemName: isSelected(medicine) ? "checkmark.circle" : "circle")
+                            
+                            Text(medicine.medicineName)
+                            
+                            Spacer()
+                            
+                            if let dosage = medicine.dosage {
+                                TextField(
+                                    "",
+                                    text: Binding(
+                                        get: { dosageTextField[medicine.id] ?? "\(medicine.dosage ?? 0)" },
+                                        set: { dosageTextField[medicine.id] = $0 }
+                                    )
                                 )
-                            )
-                            .keyboardType(.numberPad)
-                            .foregroundColor(.black)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 50)
-                            .multilineTextAlignment(.trailing)
-                            Text(medicine.unit?.customUnitName ?? medicine.unit?.unitName?.japaneseText ?? UnitArrayEnum.tablet.japaneseText)
+                                .keyboardType(.numberPad)
                                 .foregroundColor(.black)
-                        } else {
-                            Text("-")
-                                .foregroundColor(.secondary)
-                            Text(medicine.unit?.customUnitName ?? medicine.unit?.unitName?.japaneseText ?? UnitArrayEnum.tablet.japaneseText)
-                                .foregroundColor(.secondary)
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 50)
+                                .multilineTextAlignment(.trailing)
+                                Text(medicine.unit?.customUnitName ?? medicine.unit?.unitName?.japaneseText ?? UnitArrayEnum.tablet.japaneseText)
+                                    .foregroundColor(.black)
+                            } else {
+                                Text("-")
+                                    .foregroundColor(.secondary)
+                                Text(medicine.unit?.customUnitName ?? medicine.unit?.unitName?.japaneseText ?? UnitArrayEnum.tablet.japaneseText)
+                                    .foregroundColor(.secondary)
+                            }
                         }
-                    }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        toggleSelection(for: medicine)
-                        print(selectedMedicine)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            toggleSelection(for: medicine)
+                            print(selectedMedicine)
+                        }
                     }
                 }
             }
@@ -118,5 +123,27 @@ struct AddTakingMedicineListView: View {
 }
 
 #Preview {
-    AddTakingMedicineListView(selectDay: .constant(Date()), addButton: {})
+    // in-memory Realm 設定
+    let config = Realm.Configuration(inMemoryIdentifier: "Preview")
+    let realm = try! Realm(configuration: config)
+    
+    // ダミーデータ挿入
+    try! realm.write {
+        let m1 = MedicineInfo()
+        m1.medicineName = "薬A"
+        m1.dosage = 1
+        realm.add(m1)
+        
+        let m2 = MedicineInfo()
+        m2.medicineName = "薬B"
+        m2.dosage = 2
+        realm.add(m2)
+    }
+    
+    // PreviewContainer から environment を注入するのが重要
+    return AddTakingMedicineListView(
+        selectDay: .constant(Date()),
+        addButton: {}
+    )
+    .environment(\.realmConfiguration, config) // ← ここが View の init の前に効く
 }
