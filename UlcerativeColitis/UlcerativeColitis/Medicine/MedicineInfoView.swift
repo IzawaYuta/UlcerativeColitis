@@ -49,14 +49,11 @@ struct MedicineInfoView: View {
     @State private var showEffectDeleteAlert = false
     @State private var showMemoDeleteAlert = false
     
-//    @State private var medicineTitle: String = "薬の時間です"
-//    @State private var medicineBody: String = "服用してください"
-    
     @State private var selectedUnit: UnitArray?
-    @State private var selectedStockUnit: UnitArray? //在庫用単位の選択状態
+//    @State private var selectedStockUnit: UnitArray? //在庫用単位の選択状態
     
     var isNewMedicine: Bool {
-        medicine.realm == nil  // Realmに保存されていなければ新規
+        medicine.realm == nil
     }
     
     var body: some View {
@@ -169,7 +166,8 @@ struct MedicineInfoView: View {
                                                         .frame(width: 100, height: 36)
                                                         .textFieldStyle(.roundedBorder)
                                                     
-                                                    Text(getUnitDisplayText())
+                                                    Text(getDosageUnitDisplayText())
+//                                                    Text(getUnitDisplayText())
                                                         .foregroundColor(isDosageEmpty(for: timing) ? .gray : .black)
                                                         .font(.footnote)
                                                 }
@@ -197,118 +195,58 @@ struct MedicineInfoView: View {
                                 }
                             }
                             
-//                            if let firstMedicine = medicineInfo.first, !firstMedicine.time.isEmpty {
-//                                HStack {
-//                                    ForEach(firstMedicine.time, id: \.id) { timeEntry in
-//                                        HStack {
-//                                            Text(timeEntry.time.formatted(date: .omitted, time: .shortened))
-//                                                .font(.system(size: 14))
-//                                            
-//                                            Spacer()
-//                                            
-//                                            Button(action: {
-//                                                deleteTime(timeEntry)
-//                                            }) {
-//                                                Image(systemName: "trash")
-//                                                    .foregroundColor(.red.opacity(0.5))
-//                                                    .font(.system(size: 12))
-//                                            }
-//                                        }
-//                                        .padding(.horizontal, 12)
-//                                        .padding(.vertical, 8)
-//                                        .background(
-//                                            RoundedRectangle(cornerRadius: 8)
-//                                                .fill(Color.white)
-//                                        )
-//                                    }
-//                                }
-//                            } else {
-//                                HStack {
-//                                    ForEach(Array(tentativeTime.sorted().enumerated()), id: \.offset) { index, time in
-//                                        HStack {
-//                                            Text("\(index + 1)")
-//                                                .foregroundColor(.gray)
-//                                                .font(.system(size: 10))
-//                                            Text(time.formatted(date: .omitted, time: .shortened))
-//                                                .font(.system(size: 14))
-//                                            
-//                                            Spacer()
-//                                            
-//                                            Button(action: {
-//                                                if let originalIndex = tentativeTime.firstIndex(of: time) {
-//                                                    tentativeTime.remove(at: originalIndex)
-//                                                }
-//                                            }) {
-//                                                Image(systemName: "trash")
-//                                                    .foregroundColor(.red.opacity(0.5))
-//                                                    .font(.system(size: 12))
-//                                            }
-//                                        }
-//                                        .padding(.horizontal, 12)
-//                                        .padding(.vertical, 8)
-//                                        .background(
-//                                            RoundedRectangle(cornerRadius: 8)
-//                                                .fill(Color.white)
-//                                        )
-//                                    }
-//                                }
-//                            }
-//                            if !isNewMedicine {
-                                HStack {
-                                    ForEach(Array(tentativeTime.sorted().enumerated()), id: \.offset) { index, time in
-                                        HStack {
-                                            Text("\(index + 1)")
-                                                .foregroundColor(.gray)
-                                                .font(.system(size: 10))
-                                            Text(time.formatted(date: .omitted, time: .shortened))
-                                                .font(.system(size: 14))
-                                            
-                                            Spacer()
-                                            
-                                            Button(action: {
-                                                if let originalIndex = tentativeTime.firstIndex(of: time) {
-                                                    tentativeTime.remove(at: originalIndex)
-                                                }
-                                            }) {
-                                                Image(systemName: "trash")
-                                                    .foregroundColor(.red.opacity(0.5))
-                                                    .font(.system(size: 12))
+                            HStack {
+                                ForEach(Array(tentativeTime.sorted().enumerated()), id: \.offset) { index, time in
+                                    HStack {
+                                        Text("\(index + 1)")
+                                            .foregroundColor(.gray)
+                                            .font(.system(size: 10))
+                                        Text(time.formatted(date: .omitted, time: .shortened))
+                                            .font(.system(size: 14))
+                                        
+                                        Spacer()
+                                        
+                                        Button(action: {
+                                            if let originalIndex = tentativeTime.firstIndex(of: time) {
+                                                tentativeTime.remove(at: originalIndex)
                                             }
+                                        }) {
+                                            Image(systemName: "trash")
+                                                .foregroundColor(.red.opacity(0.5))
+                                                .font(.system(size: 12))
                                         }
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 8)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .fill(Color.white)
-                                        )
                                     }
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.white)
+                                    )
                                 }
-//                            } else {
-//                                
-//                            }
+                            }
                             
                             if (medicineInfo.first?.time.count ?? 0) < 3 && tentativeTime.count < 3 {
-                                    Button(action: {
-                                        showTimeView.toggle()
-                                    }) {
-                                        Text("時間を追加")
-                                            .foregroundColor(.black.opacity(0.7))
-                                            .font(.caption)
-                                            .background(
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(Color.gray.opacity(0.2))
-                                                    .frame(width: 80, height: 25)
-                                            )
-                                    }
-                                    .padding(.bottom, 6)
-                                    .sheet(isPresented: $showTimeView) {
-                                        TimeView(time: $time, done: {
-                                            showTimeView = false
-                                            tentativeTime.append(time)
-                                        })
-                                        .presentationDetents([.height(350)])
-                                        .presentationCornerRadius(30)
-                                    }
+                                Button(action: {
+                                    showTimeView.toggle()
+                                }) {
+                                    Text("時間を追加")
+                                        .foregroundColor(.black.opacity(0.7))
+                                        .font(.caption)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(Color.gray.opacity(0.2))
+                                                .frame(width: 80, height: 25)
+                                        )
+                                }
+                                .padding(.bottom, 6)
+                                .sheet(isPresented: $showTimeView) {
+                                    TimeView(time: $time, done: {
+                                        showTimeView = false
+                                        tentativeTime.append(time)
+                                    })
+                                    .presentationDetents([.height(350)])
+                                    .presentationCornerRadius(30)
+                                }
                             }
                         }
                     }
@@ -332,6 +270,7 @@ struct MedicineInfoView: View {
                             .textFieldStyle(.roundedBorder)
                         
                         Text(getDosageUnitDisplayText())
+//                        Text(getDosageUnitDisplayText())
                             .font(.footnote)
                     }
                     .padding(.horizontal)
@@ -452,7 +391,14 @@ struct MedicineInfoView: View {
                     stockText = medicine.stock.map { String($0) } ?? ""
                     memo = medicine.memo ?? ""
                     selectedSecondTiming = medicine.secondTiming
+//                    if let existingUnit = medicine.unit {
                     selectedUnit = medicine.unit
+//                    }
+                    // 新規の場合はunitArrayの最初の要素を使用
+//                    else {
+//                        let defaultUnit = UnitArray(unit: .tablet)
+//                        selectedUnit = defaultUnit
+//                    }
                     tentativeTime = medicine.time.map { $0.time }
                     toggleMemo = medicine.toggleMemo
                 }
@@ -537,9 +483,10 @@ struct MedicineInfoView: View {
                 model.toggleMemo = toggleMemo
                 
                 if let selectedUnit = selectedUnit {
-                    model.unit = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
+                    let unitCopy = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
+                    model.unit = unitCopy
                 }
-                
+
                 if let morningDosage = Int(morningDosageText) {
                     model.morningDosage = morningDosage
                 }
@@ -571,7 +518,7 @@ struct MedicineInfoView: View {
                 print(model)
                 medicineName = ""
                 dosageText = ""
-                selectedUnit = nil
+//                selectedUnit = nil
                 selectedFirstTimings = []
                 morningDosageText = ""
                 noonDosageText = ""
@@ -580,7 +527,7 @@ struct MedicineInfoView: View {
                 effect = ""
                 stockText = ""
                 memo = ""
-//                tentativeTime = []
+                //                tentativeTime = []
                 toggleMemo = false
                 
             } else {
@@ -595,11 +542,12 @@ struct MedicineInfoView: View {
                     thawedMedicine.toggleMemo = toggleMemo
                     
                     if let selectedUnit = selectedUnit {
-                        thawedMedicine.unit = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
+                        let unitCopy = realm.create(UnitArray.self, value: selectedUnit, update: .modified)
+                        thawedMedicine.unit = unitCopy
                     } else {
                         thawedMedicine.unit = nil
                     }
-                    
+
                     if let stockInt = Int(stockText) {
                         thawedMedicine.stock = stockInt
                     } else {
@@ -760,20 +708,18 @@ struct MedicineInfoView: View {
         }
     }
     
-    private func getStockUnitDisplayText() -> String {
-        if let firstStockUnit = medicineInfo.first?.stockUnit,
-           let unitName = firstStockUnit.unit?.unitName {
-            return unitName
-        } else if let selectedStockUnit = selectedStockUnit {
-            return selectedStockUnit.unitName
-        } else if let selectedUnit = selectedUnit {
-            return selectedUnit.unitName
-        } else if let firstUnit = unitArray.first {
-            return firstUnit.unitName
-        } else {
-            return "-"
-        }
-    }
+//    private func getStockUnitDisplayText() -> String {
+//        if let firstMedicine = medicineInfo.first {
+//            if let customName = firstMedicine.unit.customUnitName, !customName.isEmpty {
+//                return customName
+//            } else {
+//                return firstMedicine.unit.unitName.japaneseText
+//            }
+//        } else {
+//            // デフォルトは tablet
+//            return UnitArrayEnum.tablet.japaneseText
+//        }
+//    }
     
     // ヘルパー関数
     @ViewBuilder
@@ -790,26 +736,39 @@ struct MedicineInfoView: View {
         }
     }
     
-    private func getUnitDisplayText() -> String {
-        if let selectedUnit = selectedUnit,
-           unitArray.contains(where: { $0.id == selectedUnit.id }) {
-            return selectedUnit.unitName
-        } else if let firstUnit = unitArray.first {
-            return firstUnit.unitName
-        } else {
-            return "-"
-        }
-    }
+//    private func getUnitDisplayText() -> String {
+//        if let selectedUnit = selectedUnit,
+//           unitArray.contains(where: { $0.id == selectedUnit.id }) {
+//            return selectedUnit.unitName
+//        } else if let firstUnit = unitArray.first {
+//            return firstUnit.unitName
+//        } else {
+//            return "-"
+//        }
+//    }
     
     private func getDosageUnitDisplayText() -> String {
+        // selectedUnitがnilの場合も考慮
         if let selectedUnit = selectedUnit,
            unitArray.contains(where: { $0.id == selectedUnit.id }) {
-            return selectedUnit.unitName
-        } else if let firstUnit = unitArray.first {
-            return firstUnit.unitName
-        } else {
-            return "-"
+            if let customName = selectedUnit.customUnitName, !customName.isEmpty {
+                return customName
+            }
+            if let unitName = selectedUnit.unitName?.japaneseText {
+                return unitName
+            }
         }
+        
+        if let firstUnit = unitArray.first {
+            if let customName = firstUnit.customUnitName, !customName.isEmpty {
+                return customName
+            }
+            if let unitName = firstUnit.unitName?.japaneseText {
+                return unitName
+            }
+        }
+        
+        return UnitArrayEnum.tablet.japaneseText
     }
     
     private func isDosageEmpty(for timing: FirstTiming) -> Bool {
@@ -857,45 +816,10 @@ struct MedicineInfoView: View {
         NotificationManager.instance.checkPendingNotifications()
     }
     
-//    private func scheduleNotification() {
-//        // 1回だけ通知する場合
-////        NotificationManager.instance.scheduleNotification(
-////            title: medicineTitle,
-////            body: medicineBody,
-////            date: time,
-////            identifier: "medicine_reminder"
-////        )
-//        
-//        // または、毎日同じ時間に通知する場合
-//        let calendar = Calendar.current
-//        let hour = calendar.component(.hour, from: time)
-//        let minute = calendar.component(.minute, from: time)
-//        let title: String = "お薬の時間です"
-//        let nMedicineName = medicine.medicineName
-//        
-//        if isNewMedicine {
-//            NotificationManager.instance.scheduleRepeatingNotification(
-//                title: title,
-//                body: nMedicineName,
-//                hour: hour,
-//                minute: minute,
-//                identifier: "medicine_reminder_daily"
-//            )
-//        } else {
-//            NotificationManager.instance.scheduleRepeatingNotification(
-//                title: title,
-//                body: medicineName,
-//                hour: hour,
-//                minute: minute,
-//                identifier: "medicine_reminder_daily"
-//            )
-//        }
-//    }
-    
     private func scheduleNotification(medicineId: String) {
         // この薬の既存の通知をすべてキャンセル
         cancelMedicineNotifications(medicineId: medicineId)
-
+        
         // 保存された時間を取得
         let timesToSchedule: [Date]
         if !isNewMedicine && !medicine.time.isEmpty {
@@ -917,10 +841,8 @@ struct MedicineInfoView: View {
             let minute = calendar.component(.minute, from: notificationTime)
             
             // 時間帯に応じたメッセージ（オプション）
-//            let timingText = getTimingText(for: index)
             
             NotificationManager.instance.scheduleRepeatingNotification(
-//                title: timingText.isEmpty ? "薬の時間です" : "\(timingText)の薬の時間です",
                 title: "お薬",
                 body: "\(medicineName) \(selectedSecondTiming.japaneseText)",
                 hour: hour,
@@ -941,7 +863,6 @@ struct MedicineInfoView: View {
             )
         }
     }
-
 }
 
 #Preview {

@@ -86,11 +86,29 @@ enum SecondTiming: String, PersistableEnum {
     }
 }
 
+enum UnitArrayEnum: String, PersistableEnum, CaseIterable {
+    case tablet //錠
+    case package //包
+    case mg //mg
+    
+    var japaneseText: String {
+        switch self {
+        case .tablet:
+            return "錠"
+        case .package:
+            return "包"
+        case .mg:
+            return "mg"
+        }
+    }
+}
+
 class DayRecord: Object, Identifiable {
     @Persisted(primaryKey: true) var id: ObjectId
     @Persisted var date: Date
     @Persisted var stoolRecord = List<StoolRecord>()
     @Persisted var schedule = List<Schedule>()
+    @Persisted var takingMedicine = List<TakingMedicine>()
 }
 
 class StoolRecord: Object, Identifiable {
@@ -129,11 +147,17 @@ class MedicineTime: Object, Identifiable {
 
 class UnitArray: Object, Identifiable {
     @Persisted(primaryKey: true) var id: String = UUID().uuidString
-    @Persisted var unitName: String //単位
+    @Persisted var unitName: UnitArrayEnum? //単位（固定）
+    @Persisted var customUnitName: String? //単位（固定）
     
-    convenience init(_ unitName: String) {
+    convenience init(unit: UnitArrayEnum) {
         self.init()
-        self.unitName = unitName
+        self.unitName = unit
+    }
+    
+    convenience init(_ customUnitName: String) {
+        self.init()
+        self.customUnitName = customUnitName
     }
 }
 
@@ -149,4 +173,11 @@ class Schedule: Object, Identifiable {
     @Persisted var startDate: Date?
     @Persisted var endDate: Date?
     @Persisted var memo: String?
+}
+
+class TakingMedicine: Object, Identifiable {
+    @Persisted(primaryKey: true) var id: ObjectId
+    @Persisted var medicineName: String
+    @Persisted var dosage: Int?
+    @Persisted var unit: String?
 }
